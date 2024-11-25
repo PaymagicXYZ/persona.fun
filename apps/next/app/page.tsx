@@ -2,7 +2,7 @@
 
 import ActionComponent from '@/components/action'
 import PostFeed from '@/components/post-feed'
-import { ANON_ADDRESS } from '@anon/utils/src/config'
+import { ANON_ADDRESS } from '@persona/utils/src/config'
 
 export default function Home() {
   return (

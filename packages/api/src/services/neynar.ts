@@ -1,4 +1,4 @@
-import { getSignerForAddress } from '@anon/db'
+import { getSignerForAddress } from '@persona/db'
 import crypto from 'crypto'
 import { Redis } from 'ioredis'
 import {

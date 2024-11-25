@@ -2,9 +2,9 @@ import { Redis } from 'ioredis'
 import { createElysia } from '../utils'
 import { t } from 'elysia'
 import { neynar } from '../services/neynar'
-import { TOKEN_CONFIG } from '@anon/utils/src/config'
+import { TOKEN_CONFIG } from '@persona/utils/src/config'
 import { Cast, GetCastsResponse } from '../services/types'
-import { getPostMappings, getPostReveals } from '@anon/db'
+import { getPostMappings, getPostReveals } from '@persona/db'
 
 const redis = new Redis(process.env.REDIS_URL as string)
 

@@ -1,5 +1,5 @@
 {
-  "name": "@anon/cron",
+  "name": "@persona/cron",
   "version": "0.0.1",
   "private": true,
   "types": "./src",
@@ -13,7 +13,7 @@
     "update-merkle-tree": "bun run src/update-merkle-tree.ts"
   },
   "dependencies": {
-    "@anon/utils": "*",
+    "@persona/utils": "*",
     "@farcaster/hub-nodejs": "^0.12.7",
     "ioredis": "^5.4.1"
   },

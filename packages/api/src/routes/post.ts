@@ -1,6 +1,6 @@
 import { createElysia } from '../utils'
 import { t } from 'elysia'
-import { ProofType, verifyProof } from '@anon/utils/src/proofs'
+import { ProofType, verifyProof } from '@persona/utils/src/proofs'
 import { verifyMessage, zeroAddress } from 'viem'
 import { CreatePostParams, SubmitHashParams } from '../services/types'
 import { neynar } from '../services/neynar'
@@ -11,10 +11,10 @@ import {
   deletePostMapping,
   getPostMapping,
   markPostReveal,
-} from '@anon/db'
-import { getQueue, QueueName } from '@anon/queue/src/utils'
+} from '@persona/db'
+import { getQueue, QueueName } from '@persona/queue/src/utils'
 import { Noir } from '@noir-lang/noir_js'
-import { getValidRoots } from '@anon/utils/src/merkle-tree'
+import { getValidRoots } from '@persona/utils/src/merkle-tree'
 import { augmentCasts } from './feed'
 
 export function getPostRoutes(createPostBackend: Noir, submitHashBackend: Noir) {

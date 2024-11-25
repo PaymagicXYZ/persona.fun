@@ -4,7 +4,7 @@ import { CircleCheckIcon } from 'lucide-react'
 import { CircleXIcon } from 'lucide-react'
 import { CircleMinusIcon } from 'lucide-react'
 import { CreatePost } from '../create-post'
-import { ANON_ADDRESS, TOKEN_CONFIG } from '@anon/utils/src/config'
+import { ANON_ADDRESS, TOKEN_CONFIG } from '@persona/utils/src/config'
 import { useAccount } from 'wagmi'
 
 export default function ActionComponent({

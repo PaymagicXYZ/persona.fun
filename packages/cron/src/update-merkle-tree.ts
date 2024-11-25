@@ -1,6 +1,6 @@
-import { buildHoldersTree, setTree } from '@anon/utils/src/merkle-tree'
-import { TOKEN_CONFIG, ANON_ADDRESS } from '@anon/utils/src/config'
-import { ProofType } from '@anon/utils/src/proofs'
+import { buildHoldersTree, setTree } from '@persona/utils/src/merkle-tree'
+import { TOKEN_CONFIG, ANON_ADDRESS } from '@persona/utils/src/config'
+import { ProofType } from '@persona/utils/src/proofs'
 
 const main = async () => {
   const config = TOKEN_CONFIG[ANON_ADDRESS]

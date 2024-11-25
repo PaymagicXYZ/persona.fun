@@ -1,5 +1,5 @@
-import { ANON_ADDRESS, TOKEN_CONFIG } from '@anon/utils/src/config'
-import { Cast, GetCastsResponse } from '@anon/api/src/services/types'
+import { ANON_ADDRESS, TOKEN_CONFIG } from '@persona/utils/src/config'
+import { Cast, GetCastsResponse } from '@persona/api/src/services/types'
 import {
   bytesToHexString,
   createDefaultMetadataKeyInterceptor,
