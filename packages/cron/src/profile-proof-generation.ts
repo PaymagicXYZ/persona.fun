@@ -1,5 +1,5 @@
-import {} from '@anon/utils/src/config'
-import { generateProof, verifyProof } from '@anon/utils/src/proofs'
+import {} from '@persona/utils/src/config'
+import { generateProof, verifyProof } from '@persona/utils/src/proofs'
 
 const input = {
   tokenAddress: '0x0db510e79909666d6dec7f5e49370838c16d950f',

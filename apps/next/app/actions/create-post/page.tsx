@@ -2,7 +2,7 @@
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { api } from '@/lib/api'
-import { ANON_ADDRESS } from '@anon/utils/src/config'
+import { ANON_ADDRESS } from '@persona/utils/src/config'
 import { useQuery } from '@tanstack/react-query'
 import { CircleHelp, ExternalLink, Loader2 } from 'lucide-react'
 import React from 'react'

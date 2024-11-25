@@ -1,5 +1,5 @@
 {
-  "name": "@anon/next",
+  "name": "@persona/next",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,10 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@anon/api": "*",
-    "@anon/circuits": "*",
-    "@anon/db": "*",
-    "@anon/utils": "*",
+    "@persona/api": "*",
+    "@persona/circuits": "*",
+    "@persona/db": "*",
+    "@persona/utils": "*",
     "@noir-lang/backend_barretenberg": "^0.17.0",
     "@noir-lang/noir_js": "^0.17.0",
     "@radix-ui/react-alert-dialog": "^1.1.2",

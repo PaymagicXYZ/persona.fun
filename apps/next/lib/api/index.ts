@@ -1,4 +1,4 @@
-import type { ProofType, Tree } from '@anon/utils/src/proofs'
+import type { ProofType, Tree } from '@persona/utils/src/proofs'
 import type {
   Cast,
   Channel,
@@ -8,7 +8,7 @@ import type {
   UploadImageResponse,
 } from '../types'
 import { ApiClient } from './client'
-import { Identity } from '@anon/api/src/services/types'
+import { Identity } from '@persona/api/src/services/types'
 
 const apiClient = new ApiClient(process.env.NEXT_PUBLIC_API_URL || '')
 

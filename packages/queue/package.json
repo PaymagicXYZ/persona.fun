@@ -1,5 +1,5 @@
 {
-  "name": "@anon/queue",
+  "name": "@persona/queue",
   "version": "0.0.1",
   "private": true,
   "types": "./src",
@@ -14,8 +14,8 @@
     "process-failed:promote-post": "while true; do bun run src/process-failed.ts promote-post; sleep 60; done"
   },
   "dependencies": {
-    "@anon/api": "*",
-    "@anon/utils": "*",
+    "@persona/api": "*",
+    "@persona/utils": "*",
     "@bull-board/api": "^6.5.3",
     "@bull-board/fastify": "^6.5.3",
     "@bull-board/ui": "^6.5.3",

@@ -1,8 +1,8 @@
 import { createElysia } from '../utils'
 import { t } from 'elysia'
-import { buildHoldersTree, getTree, setTree } from '@anon/utils/src/merkle-tree'
-import { ProofType } from '@anon/utils/src/proofs'
-import { TOKEN_CONFIG } from '@anon/utils/src/config'
+import { buildHoldersTree, getTree, setTree } from '@persona/utils/src/merkle-tree'
+import { ProofType } from '@persona/utils/src/proofs'
+import { TOKEN_CONFIG } from '@persona/utils/src/config'
 
 export const merkleTreeRoutes = createElysia({ prefix: '/merkle-tree' }).post(
   '/',

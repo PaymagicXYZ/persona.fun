@@ -1,7 +1,7 @@
 import { QueueName, getWorker, getQueue } from './utils'
 import { handler } from './handler'
 import { Redis } from 'ioredis'
-import { ProofType } from '@anon/utils/src/proofs'
+import { ProofType } from '@persona/utils/src/proofs'
 
 const redis = new Redis(process.env.REDIS_URL as string)
 

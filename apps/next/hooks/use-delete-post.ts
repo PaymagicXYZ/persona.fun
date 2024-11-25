@@ -1,5 +1,5 @@
 import { api } from '@/lib/api'
-import { generateProof, ProofType } from '@anon/utils/src/proofs'
+import { generateProof, ProofType } from '@persona/utils/src/proofs'
 import { useState } from 'react'
 import { hashMessage } from 'viem'
 import { useAccount, useSignMessage } from 'wagmi'

@@ -1,6 +1,6 @@
 import { Post } from '@/components/post'
 import { api } from '@/lib/api'
-import { ANON_ADDRESS } from '@anon/utils/src/config'
+import { ANON_ADDRESS } from '@persona/utils/src/config'
 
 export default async function Page({ params }: { params: { hash: string } }) {
   const data = await api.getPost(params.hash)

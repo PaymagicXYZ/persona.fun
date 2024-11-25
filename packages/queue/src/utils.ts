@@ -1,6 +1,6 @@
 import Redis from 'ioredis'
 import { Job, Queue, QueueOptions, Worker } from 'bullmq'
-import { ProofType } from '@anon/utils/src/proofs'
+import { ProofType } from '@persona/utils/src/proofs'
 
 export enum QueueName {
   Default = 'default',
