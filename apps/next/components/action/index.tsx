@@ -27,7 +27,7 @@ export default function ActionComponent({
     BigInt(TOKEN_CONFIG[ANON_ADDRESS].deleteAmount) / BigInt(10 ** 18);
 
   return (
-    <Alert className="flex flex-col gap-4 bg-zinc-900 border border-zinc-700">
+    <Alert className="flex flex-col gap-4 bg-zinc-900 border border-zinc-700 top-20">
       <AlertDescription>
         <p className="text-zinc-400">
           Posts are made anonymous using zk proofs. Due to the complex
