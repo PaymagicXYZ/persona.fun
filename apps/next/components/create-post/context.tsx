@@ -1,106 +1,114 @@
-import { useToast } from '@/hooks/use-toast'
-import { api } from '@/lib/api'
-import { Cast, Channel } from '@/lib/types'
-import { generateProof, ProofType } from '@persona/utils/src/proofs'
-import { createContext, useContext, useState, ReactNode } from 'react'
-import { hashMessage } from 'viem'
-import { useAccount, useSignMessage } from 'wagmi'
+import { useToast } from "@/hooks/use-toast";
+import { api } from "@/lib/api";
+import { Cast, Channel } from "@/lib/types";
+import { Persona } from "@/lib/types/persona";
+import { generateProof, ProofType } from "@persona/utils/src/proofs";
+import { createContext, useContext, useState, ReactNode } from "react";
+import { hashMessage } from "viem";
+import { useAccount, useSignMessage } from "wagmi";
 
 type State =
   | {
-      status: 'idle' | 'signature' | 'generating' | 'done'
+      status: "idle" | "signature" | "generating" | "done";
     }
   | {
-      status: 'error'
-      error: string
-    }
+      status: "error";
+      error: string;
+    };
 
 interface CreatePostContextProps {
-  text: string | null
-  setText: (text: string) => void
-  image: string | null
-  setImage: (image: string | null) => void
-  embed: string | null
-  setEmbed: (embed: string | null) => void
-  quote: Cast | null
-  setQuote: (quote: Cast | null) => void
-  channel: Channel | null
-  setChannel: (channel: Channel | null) => void
-  parent: Cast | null
-  setParent: (parent: Cast | null) => void
-  createPost: () => Promise<void>
-  embedCount: number
-  state: State
-  confetti: boolean
-  setConfetti: (confetti: boolean) => void
-  revealPhrase: string | null
-  setRevealPhrase: (revealPhrase: string | null) => void
+  text: string | null;
+  setText: (text: string) => void;
+  image: string | null;
+  setImage: (image: string | null) => void;
+  embed: string | null;
+  setEmbed: (embed: string | null) => void;
+  quote: Cast | null;
+  setQuote: (quote: Cast | null) => void;
+  channel: Channel | null;
+  setChannel: (channel: Channel | null) => void;
+  parent: Cast | null;
+  setParent: (parent: Cast | null) => void;
+  createPost: () => Promise<void>;
+  embedCount: number;
+  state: State;
+  confetti: boolean;
+  setConfetti: (confetti: boolean) => void;
+  revealPhrase: string | null;
+  setRevealPhrase: (revealPhrase: string | null) => void;
+  persona: Persona | null;
+  setPersona: (persona: Persona | null) => void;
 }
 
-const CreatePostContext = createContext<CreatePostContextProps | undefined>(undefined)
+const CreatePostContext = createContext<CreatePostContextProps | undefined>(
+  undefined
+);
 
 export const CreatePostProvider = ({
   tokenAddress,
   children,
 }: {
-  tokenAddress: string
-  children: ReactNode
+  tokenAddress: string;
+  children: ReactNode;
 }) => {
-  const [text, setText] = useState<string | null>(null)
-  const [image, setImage] = useState<string | null>(null)
-  const [embed, setEmbed] = useState<string | null>(null)
-  const [quote, setQuote] = useState<Cast | null>(null)
-  const [channel, setChannel] = useState<Channel | null>(null)
-  const [parent, setParent] = useState<Cast | null>(null)
-  const [revealPhrase, setRevealPhrase] = useState<string | null>(null)
-  const [state, setState] = useState<State>({ status: 'idle' })
-  const [confetti, setConfetti] = useState(false)
-  const { toast } = useToast()
-  const { address } = useAccount()
-  const { signMessageAsync } = useSignMessage()
+  const [text, setText] = useState<string | null>(null);
+  const [image, setImage] = useState<string | null>(null);
+  const [embed, setEmbed] = useState<string | null>(null);
+  const [quote, setQuote] = useState<Cast | null>(null);
+  const [channel, setChannel] = useState<Channel | null>(null);
+  const [parent, setParent] = useState<Cast | null>(null);
+  const [revealPhrase, setRevealPhrase] = useState<string | null>(null);
+  const [state, setState] = useState<State>({ status: "idle" });
+  const [confetti, setConfetti] = useState(false);
+  const { toast } = useToast();
+  const { address } = useAccount();
+  const { signMessageAsync } = useSignMessage();
+  const [persona, setPersona] = useState<Persona | null>(null);
 
   const resetState = () => {
-    setState({ status: 'idle' })
-    setText(null)
-    setImage(null)
-    setEmbed(null)
-    setQuote(null)
-    setChannel(null)
-    setParent(null)
-    setRevealPhrase(null)
-  }
+    setState({ status: "idle" });
+    setText(null);
+    setImage(null);
+    setEmbed(null);
+    setQuote(null);
+    setChannel(null);
+    setParent(null);
+    setRevealPhrase(null);
+  };
 
   const createPost = async () => {
-    if (!address) return
-    setState({ status: 'signature' })
+    if (!address) return;
+    setState({ status: "signature" });
     try {
-      const embeds = [image, embed].filter((e) => e !== null) as string[]
+      const embeds = [image, embed].filter((e) => e !== null) as string[];
       const input = {
         text,
         embeds,
         quote: quote?.hash ?? null,
         channel: channel?.id ?? null,
         parent: parent?.hash ?? null,
-      }
+      };
 
-      const message = JSON.stringify(input)
+      const message = JSON.stringify(input);
       const signature = await signMessageAsync({
         message,
-      })
+      });
       if (!signature) {
-        setState({ status: 'error', error: 'Failed to get signature' })
-        return
+        setState({ status: "error", error: "Failed to get signature" });
+        return;
       }
 
-      const messageHash = hashMessage(message)
-      const revealHash = revealPhrase ? hashMessage(message + revealPhrase) : null
+      const messageHash = hashMessage(message);
+      const revealHash = revealPhrase
+        ? hashMessage(message + revealPhrase)
+        : null;
 
-      const timestamp = Math.floor(Date.now() / 1000)
-
-      setState({ status: 'generating' })
+      const timestamp = Math.floor(Date.now() / 1000);
+      console.log("CMOOON");
+      setState({ status: "generating" });
 
       const proof = await generateProof({
-        tokenAddress,
+        tokenAddress: persona?.token.address,
         userAddress: address,
         proofType: ProofType.CREATE_POST,
         signature: {
@@ -112,38 +120,40 @@ export const CreatePostProvider = ({
           ...input,
           revealHash,
         },
-      })
+      });
+      console.log("proof", proof);
       if (!proof) {
-        setState({ status: 'error', error: 'Not allowed to post' })
-        return
+        setState({ status: "error", error: "Not allowed to post" });
+        return;
       }
-
+      console.log("you?", process.env.NEXT_PUBLIC_DISABLE_QUEUE);
       if (process.env.NEXT_PUBLIC_DISABLE_QUEUE) {
         await api.createPost(
           Array.from(proof.proof),
           proof.publicInputs.map((i) => Array.from(i))
-        )
+        );
       } else {
         await api.submitAction(
           ProofType.CREATE_POST,
           Array.from(proof.proof),
           proof.publicInputs.map((i) => Array.from(i)),
           {}
-        )
+        );
       }
 
-      resetState()
-      setConfetti(true)
+      resetState();
+      setConfetti(true);
       toast({
-        title: 'Post will be created in 1-2 minutes',
-      })
+        title: "Post will be created in 1-2 minutes",
+      });
     } catch (e) {
-      setState({ status: 'error', error: 'Failed to post' })
-      console.error(e)
+      console.log("ERROR", e);
+      setState({ status: "error", error: "Failed to post" });
+      console.error(e);
     }
-  }
+  };
 
-  const embedCount = [image, embed, quote].filter((e) => e !== null).length
+  const embedCount = [image, embed, quote].filter((e) => e !== null).length;
 
   return (
     <CreatePostContext.Provider
@@ -167,17 +177,19 @@ export const CreatePostProvider = ({
         setConfetti,
         revealPhrase,
         setRevealPhrase,
+        persona,
+        setPersona,
       }}
     >
       {children}
     </CreatePostContext.Provider>
-  )
-}
+  );
+};
 
 export const useCreatePost = () => {
-  const context = useContext(CreatePostContext)
+  const context = useContext(CreatePostContext);
   if (context === undefined) {
-    throw new Error('useCreatePost must be used within a CreatePostProvider')
+    throw new Error("useCreatePost must be used within a CreatePostProvider");
   }
-  return context
-}
+  return context;
+};

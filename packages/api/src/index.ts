@@ -5,7 +5,7 @@ import { merkleTreeRoutes } from "./routes/merkle-tree";
 import { getPostRoutes } from "./routes/post";
 import { uploadRoutes } from "./routes/upload";
 import { neynar } from "./services/neynar";
-import { getProvingBackend, ProofType } from "@anon/utils/src/proofs";
+import { getProvingBackend, ProofType } from "@persona/utils/src/proofs";
 import { personaRoutes } from "./routes/personas";
 (async () => {
   const [createPostBackend, submitHashBackend] = await Promise.all([

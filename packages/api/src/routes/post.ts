@@ -1,6 +1,6 @@
 import { createElysia } from "../utils";
 import { t } from "elysia";
-import { ProofType, verifyProof } from "@anon/utils/src/proofs";
+import { ProofType } from "@persona/utils/src/proofs";
 import { verifyMessage, zeroAddress } from "viem";
 import { CreatePostParams, SubmitHashParams } from "../services/types";
 import { neynar } from "../services/neynar";
@@ -11,11 +11,12 @@ import {
   deletePostMapping,
   getPostMapping,
   markPostReveal,
-} from "@anon/db";
-import { getQueue, QueueName } from "@anon/queue/src/utils";
+} from "@persona/db";
+import { getQueue, QueueName } from "@persona/queue/src/utils";
 import { Noir } from "@noir-lang/noir_js";
-import { getValidRoots } from "@anon/utils/src/merkle-tree";
+import { getValidRoots } from "@persona/utils/src/merkle-tree";
 import { augmentCasts } from "./feed";
+import { gpt } from "../services/gpt-service";
 
 export function getPostRoutes(
   createPostBackend: Noir,
@@ -54,6 +55,7 @@ export function getPostRoutes(
           proof: new Uint8Array(body.proof),
           publicInputs: body.publicInputs.map((i) => new Uint8Array(i)),
         });
+
         if (!isValid) {
           throw new Error("Invalid proof");
         }
@@ -364,7 +366,9 @@ async function validateRoot(
   tokenAddress: string,
   root: string
 ) {
+  console.log("VALIDATE ROOT", tokenAddress, type, root);
   const validRoots = await getValidRoots(tokenAddress, type);
+  console.log("validateRoot validRoots", validRoots);
   if (!validRoots.length) {
     throw new Error("No valid roots found");
   }

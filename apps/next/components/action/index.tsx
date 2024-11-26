@@ -1,37 +1,50 @@
-import { useBalance } from '@/hooks/use-balance'
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
-import { CircleCheckIcon } from 'lucide-react'
-import { CircleXIcon } from 'lucide-react'
-import { CircleMinusIcon } from 'lucide-react'
-import { CreatePost } from '../create-post'
-import { ANON_ADDRESS, TOKEN_CONFIG } from '@persona/utils/src/config'
-import { useAccount } from 'wagmi'
+import { useBalance } from "@/hooks/use-balance";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { CircleCheckIcon } from "lucide-react";
+import { CircleXIcon } from "lucide-react";
+import { CircleMinusIcon } from "lucide-react";
+import { CreatePost } from "../create-post";
+import { ANON_ADDRESS, TOKEN_CONFIG } from "@persona/utils/src/config";
+import { useAccount } from "wagmi";
+import Personas from "../personas";
+import { useState } from "react";
+import { Persona } from "@/lib/types/persona";
 
 export default function ActionComponent({
   tokenAddress,
 }: {
-  tokenAddress: string
+  tokenAddress: string;
 }) {
-  const { address } = useAccount()
-  const { data, isLoading } = useBalance(tokenAddress)
+  const { address } = useAccount();
+  const { data, isLoading } = useBalance(tokenAddress);
 
-  const BALANCE = data ? data / BigInt(10 ** 18) : BigInt(0)
-  const FARCASTER_POST = BigInt(TOKEN_CONFIG[ANON_ADDRESS].postAmount) / BigInt(10 ** 18)
+  const BALANCE = data ? data / BigInt(10 ** 18) : BigInt(0);
+  const FARCASTER_POST =
+    BigInt(TOKEN_CONFIG[ANON_ADDRESS].postAmount) / BigInt(10 ** 18);
   const TWITTER_PROMOTE =
-    BigInt(TOKEN_CONFIG[ANON_ADDRESS].promoteAmount) / BigInt(10 ** 18)
-  const DELETE_POST = BigInt(TOKEN_CONFIG[ANON_ADDRESS].deleteAmount) / BigInt(10 ** 18)
+    BigInt(TOKEN_CONFIG[ANON_ADDRESS].promoteAmount) / BigInt(10 ** 18);
+  const DELETE_POST =
+    BigInt(TOKEN_CONFIG[ANON_ADDRESS].deleteAmount) / BigInt(10 ** 18);
 
   return (
     <Alert className="flex flex-col gap-4 bg-zinc-900 border border-zinc-700">
-      <AlertTitle className="font-semibold text-xl">
+      <AlertDescription>
+        <p className="text-zinc-400">
+          Posts are made anonymous using zk proofs. Due to the complex
+          calculations required, it could take up to a few minutes. Do not post
+          porn, doxes, shills, or threats. This is not about censorship
+          resistance - it&apos;s about great anonymous posts.
+        </p>
+      </AlertDescription>
+      {/* <AlertTitle className="font-semibold text-xl">
         Post anonymously to Farcaster and X/Twitter
       </AlertTitle>
       <AlertDescription>
         <p className="text-zinc-400">
-          Posts are made anonymous using zk proofs. Due to the complex calculations
-          required, it could take up to a few minutes. Do not post porn, doxes, shills, or
-          threats. This is not about censorship resistance - it&apos;s about great
-          anonymous posts.
+          Posts are made anonymous using zk proofs. Due to the complex
+          calculations required, it could take up to a few minutes. Do not post
+          porn, doxes, shills, or threats. This is not about censorship
+          resistance - it&apos;s about great anonymous posts.
         </p>
         <br />
         <p className="text-zinc-400 ">Holder requirements:</p>
@@ -65,7 +78,11 @@ export default function ActionComponent({
             className="text-sm decoration-dotted underline font-medium"
           >
             <span className="hidden sm:inline">X/Twitter</span>
-            <img src="/x.svg" alt="X/Twitter" className="w-4 h-4 sm:hidden invert" />
+            <img
+              src="/x.svg"
+              alt="X/Twitter"
+              className="w-4 h-4 sm:hidden invert"
+            />
           </a>
 
           <a
@@ -109,8 +126,8 @@ export default function ActionComponent({
             Github
           </a>
         </div>
-      </div>
-      {address && !isLoading ? (
+      </div> */}
+      {/* {address && !isLoading ? (
         FARCASTER_POST > BALANCE ? (
           <a
             href={`https://app.uniswap.org/swap?outputCurrency=${tokenAddress}&chain=base`}
@@ -124,13 +141,16 @@ export default function ActionComponent({
             </div>
           </a>
         ) : (
-          <CreatePost />
+          
         )
       ) : (
         <></>
-      )}
+      )} */}
+
+      <Personas />
+      <CreatePost />
     </Alert>
-  )
+  );
 }
 
 function TokenRequirement({
@@ -140,13 +160,15 @@ function TokenRequirement({
   string,
   isConnected,
 }: {
-  tokenAmount: bigint | undefined
-  tokenNeeded: bigint
-  oldTokenNeeded?: bigint
-  string: string
-  isConnected: boolean
+  tokenAmount: bigint | undefined;
+  tokenNeeded: bigint;
+  oldTokenNeeded?: bigint;
+  string: string;
+  isConnected: boolean;
 }) {
-  const tokenAmountInTokens = tokenAmount ? tokenAmount / BigInt(10 ** 18) : BigInt(0)
+  const tokenAmountInTokens = tokenAmount
+    ? tokenAmount / BigInt(10 ** 18)
+    : BigInt(0);
 
   return (
     <li className="flex flex-row items-center gap-2 font-medium text-xs sm:text-base">
@@ -163,11 +185,11 @@ function TokenRequirement({
         {oldTokenNeeded && (
           <>
             <span className="line-through text-zinc-500">{`${oldTokenNeeded.toLocaleString()}`}</span>
-            <span>{'  '}</span>
+            <span>{"  "}</span>
           </>
         )}
         {`${tokenNeeded.toLocaleString()} $ANON: ${string}`}
       </p>
     </li>
-  )
+  );
 }
