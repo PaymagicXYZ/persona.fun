@@ -9,11 +9,7 @@ import { useCreatePost } from "../create-post/context";
 import Link from "next/link";
 import { generateWarpcastUrl } from "@/lib/utils";
 
-export default function ActionComponent({
-  tokenAddress,
-}: {
-  tokenAddress: string;
-}) {
+export default function ActionComponent() {
   // const BALANCE = data ? data / BigInt(10 ** 18) : BigInt(0);
   // const FARCASTER_POST =
   //   BigInt(TOKEN_CONFIG[ANON_ADDRESS].postAmount) / BigInt(10 ** 18);

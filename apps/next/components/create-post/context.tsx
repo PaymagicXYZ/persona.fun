@@ -46,13 +46,7 @@ const CreatePostContext = createContext<CreatePostContextProps | undefined>(
   undefined
 );
 
-export const CreatePostProvider = ({
-  tokenAddress,
-  children,
-}: {
-  tokenAddress: string;
-  children: ReactNode;
-}) => {
+export const CreatePostProvider = ({ children }: { children: ReactNode }) => {
   const [text, setText] = useState<string | null>(null);
   const [image, setImage] = useState<string | null>(null);
   const [embed, setEmbed] = useState<string | null>(null);
@@ -126,6 +120,8 @@ export const CreatePostProvider = ({
           revealHash,
         },
       });
+
+      console.log("proof", proof);
 
       if (!proof) {
         setState({ status: "error", error: "Not allowed to post" });
