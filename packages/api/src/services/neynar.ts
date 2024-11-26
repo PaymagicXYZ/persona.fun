@@ -127,8 +127,7 @@ class NeynarService {
     channel?: string;
   }) {
     const persona = await getSignerForAddress(params.tokenAddress);
-    console.log("PErsona", persona);
-    console.log("raw text", params.text);
+
     const transformedText = await gpt.transformInput(
       params.text,
       persona.persona_personality
@@ -145,7 +144,6 @@ class NeynarService {
     }> = _params.embeds.map((embed) => ({
       url: embed,
     }));
-    console.log("post 2");
 
     if (_params.quote) {
       const quote = await this.getCast(_params.quote);
@@ -157,15 +155,12 @@ class NeynarService {
       });
     }
 
-    console.log("post 3");
-
     let parentAuthorFid = undefined;
     if (_params.parent) {
       const parent = await this.getCast(_params.parent);
       parentAuthorFid = parent.cast.author.fid;
     }
 
-    console.log("post 4");
     const body = {
       signer_uuid: persona.persona_signer_uuid,
       parent: _params.parent,
@@ -175,20 +170,18 @@ class NeynarService {
       channel_id: _params.channel,
     };
 
-    console.log("post 5");
-
     const hash = crypto
       .createHash("sha256")
       .update(JSON.stringify(body))
       .digest("hex");
-    console.log("post 6");
+
     const exists = await redis.get(`post:hash:${hash}`);
     if (exists) {
       return {
         success: false,
       };
     }
-    console.log("post 7");
+
     const response = await this.makeRequest<PostCastResponse>(
       "/farcaster/cast",
       {
@@ -202,9 +195,9 @@ class NeynarService {
         success: false,
       };
     }
-    console.log("post 8");
+
     await redis.set(`post:hash:${hash}`, "true", "EX", 60 * 5);
-    console.log("post 9 response: ", response);
+
     return response;
   }
 

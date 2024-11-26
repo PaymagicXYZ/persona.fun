@@ -1,62 +1,64 @@
-'use client'
+"use client";
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { api } from '@/lib/api'
-import { ANON_ADDRESS } from '@persona/utils/src/config'
-import { useQuery } from '@tanstack/react-query'
-import { CircleHelp, ExternalLink, Loader2 } from 'lucide-react'
-import React from 'react'
-import { createPublicClient, erc20Abi, http } from 'viem'
-import { base } from 'viem/chains'
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { api } from "@/lib/api";
+import { ANON_ADDRESS } from "@persona/utils/src/config";
+import { useQuery } from "@tanstack/react-query";
+import { CircleHelp, ExternalLink, Loader2 } from "lucide-react";
+import React from "react";
+import { createPublicClient, erc20Abi, http } from "viem";
+import { base } from "viem/chains";
 
-const client = createPublicClient({
+export const publicClient = createPublicClient({
   chain: base,
   transport: http(),
-})
+});
 
 async function getConnectedAddress(data: string) {
-  const frameData = await api.validateFrame(data)
-  if (!frameData) return null
+  const frameData = await api.validateFrame(data);
+  if (!frameData) return null;
 
   const balances = await Promise.all(
-    frameData.action.interactor.verified_addresses.eth_addresses.map(async (address) => {
-      const balance = await client.readContract({
-        address: ANON_ADDRESS,
-        abi: erc20Abi,
-        functionName: 'balanceOf',
-        args: [address as `0x${string}`],
-      })
+    frameData.action.interactor.verified_addresses.eth_addresses.map(
+      async (address) => {
+        const balance = await publicClient.readContract({
+          address: ANON_ADDRESS,
+          abi: erc20Abi,
+          functionName: "balanceOf",
+          args: [address as `0x${string}`],
+        });
 
-      return {
-        address,
-        balance: balance.toString(),
+        return {
+          address,
+          balance: balance.toString(),
+        };
       }
-    })
-  )
+    )
+  );
 
-  if (balances.length === 0) return null
+  if (balances.length === 0) return null;
 
-  const validBalance = balances.find((b) => BigInt(b.balance) >= BigInt(20000))
+  const validBalance = balances.find((b) => BigInt(b.balance) >= BigInt(20000));
 
-  return validBalance?.address || balances[0].address
+  return validBalance?.address || balances[0].address;
 }
 
 export default function CreatePostPage({
   searchParams,
 }: {
-  searchParams: { data: string }
+  searchParams: { data: string };
 }) {
   const { isLoading } = useQuery({
-    queryKey: ['validate-frame', searchParams.data],
+    queryKey: ["validate-frame", searchParams.data],
     queryFn: () => getConnectedAddress(searchParams.data),
-  })
+  });
 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Loader2 className="animate-spin" />
       </div>
-    )
+    );
   }
 
   return (
@@ -66,11 +68,14 @@ export default function CreatePostPage({
       </div>
       <Alert>
         <CircleHelp className="h-4 w-4" />
-        <AlertTitle className="font-bold">Post anonymously to Farcaster</AlertTitle>
+        <AlertTitle className="font-bold">
+          Post anonymously to Farcaster
+        </AlertTitle>
         <AlertDescription>
-          Must have <b>20,000 $ANON</b> in your wallet to post. Posts are made anonymous
-          using zk proofs. Due to the complex calculations required, it could take up to a
-          few minutes to post. We&apos;ll work on speeding this up in the future.
+          Must have <b>20,000 $ANON</b> in your wallet to post. Posts are made
+          anonymous using zk proofs. Due to the complex calculations required,
+          it could take up to a few minutes to post. We&apos;ll work on speeding
+          this up in the future.
         </AlertDescription>
       </Alert>
       <a href="https://anoncast.org" target="_blank" rel="noreferrer">
@@ -82,5 +87,5 @@ export default function CreatePostPage({
         </div>
       </a>
     </div>
-  )
+  );
 }
