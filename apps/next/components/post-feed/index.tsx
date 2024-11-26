@@ -1,47 +1,47 @@
-import { Cast } from '@/lib/types'
-import { useQuery } from '@tanstack/react-query'
-import { useState } from 'react'
-import { api } from '@/lib/api'
-import AnimatedTabs from './animated-tabs'
-import { Skeleton } from '../ui/skeleton'
-import { Post } from '../post'
-import Link from 'next/link'
+import { Cast } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { api } from "@/lib/api";
+import AnimatedTabs from "./animated-tabs";
+import { Skeleton } from "../ui/skeleton";
+import { Post } from "../post";
+import Link from "next/link";
 
 export default function PostFeed({
   tokenAddress,
-  defaultTab = 'trending',
+  defaultTab = "trending",
 }: {
-  tokenAddress: string
-  defaultTab?: 'new' | 'trending'
+  tokenAddress: string;
+  defaultTab?: "new" | "trending";
 }) {
-  const [selected, setSelected] = useState<'new' | 'trending'>(defaultTab)
+  const [selected, setSelected] = useState<"new" | "trending">(defaultTab);
 
   const { data: trendingPosts, isLoading: isTrendingLoading } = useQuery({
-    queryKey: ['trending', tokenAddress],
+    queryKey: ["trending", tokenAddress],
     queryFn: async (): Promise<Cast[]> => {
-      const response = await api.getTrendingPosts(tokenAddress)
-      return response?.casts || []
+      const response = await api.getTrendingPosts(tokenAddress);
+      return response?.casts || [];
     },
-  })
+  });
 
   const { data: newPosts, isLoading: isNewLoading } = useQuery({
-    queryKey: ['posts', tokenAddress],
+    queryKey: ["posts", tokenAddress],
     queryFn: async (): Promise<Cast[]> => {
-      const response = await api.getNewPosts(tokenAddress)
-      return response?.casts || []
+      const response = await api.getNewPosts(tokenAddress);
+      return response?.casts || [];
     },
-  })
+  });
 
   return (
-    <div className="flex flex-col gap-4 ">
+    <div className="flex flex-col gap-4 mt-20">
       <div className="flex flex-row justify-between">
         <AnimatedTabs
-          tabs={['trending', 'new']}
+          tabs={["trending", "new"]}
           activeTab={selected}
-          onTabChange={(tab) => setSelected(tab as 'new' | 'trending')}
+          onTabChange={(tab) => setSelected(tab as "new" | "trending")}
         />
       </div>
-      {selected === 'new' ? (
+      {selected === "new" ? (
         isNewLoading ? (
           <SkeletonPosts />
         ) : newPosts?.length && newPosts?.length > 0 ? (
@@ -57,7 +57,7 @@ export default function PostFeed({
         <h1>Something went wrong. Please refresh the page.</h1>
       )}
     </div>
-  )
+  );
 }
 
 function SkeletonPosts() {
@@ -68,7 +68,7 @@ function SkeletonPosts() {
       <SkeletonPost />
       <SkeletonPost />
     </div>
-  )
+  );
 }
 
 function SkeletonPost() {
@@ -83,15 +83,15 @@ function SkeletonPost() {
         <Skeleton className="h-4 w-[100px]" />
       </div>
     </div>
-  )
+  );
 }
 
 function Posts({
   casts,
   tokenAddress,
 }: {
-  casts?: Cast[]
-  tokenAddress: string
+  casts?: Cast[];
+  tokenAddress: string;
 }) {
   return (
     <div className="flex flex-col gap-4">
@@ -101,5 +101,5 @@ function Posts({
         </Link>
       ))}
     </div>
-  )
+  );
 }
