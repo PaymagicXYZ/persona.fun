@@ -6,8 +6,7 @@ import {
   setTree,
 } from "@persona/utils/src/merkle-tree";
 import { ProofType } from "@persona/utils/src/proofs";
-import { TOKEN_CONFIG } from "@persona/utils/src/config";
-import { getSignerForAddress, getTokenConfig } from "@persona/db";
+import { getTokenConfig } from "@persona/db";
 
 export const merkleTreeRoutes = createElysia({ prefix: "/merkle-tree" }).post(
   "/",
@@ -20,7 +19,7 @@ export const merkleTreeRoutes = createElysia({ prefix: "/merkle-tree" }).post(
 
     // const config = TOKEN_CONFIG[body.tokenAddress];
     const config = await getTokenConfig(body.tokenAddress);
-    console.log("Token COnfig", config);
+    // console.log("Token COnfig", config);
     let minAmount = config.post_amount;
     if (body.proofType === ProofType.DELETE_POST) {
       minAmount = config.delete_amount;

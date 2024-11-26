@@ -1,30 +1,28 @@
-import { useBalance } from "@/hooks/use-balance";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { CircleCheckIcon } from "lucide-react";
 import { CircleXIcon } from "lucide-react";
-import { CircleMinusIcon } from "lucide-react";
+import { CircleMinusIcon, ExternalLink } from "lucide-react";
 import { CreatePost } from "../create-post";
-import { ANON_ADDRESS, TOKEN_CONFIG } from "@persona/utils/src/config";
-import { useAccount } from "wagmi";
 import Personas from "../personas";
-import { useState } from "react";
-import { Persona } from "@/lib/types/persona";
+
+import { useCreatePost } from "../create-post/context";
+import Link from "next/link";
+import { generateWarpcastUrl } from "@/lib/utils";
 
 export default function ActionComponent({
   tokenAddress,
 }: {
   tokenAddress: string;
 }) {
-  const { address } = useAccount();
-  const { data, isLoading } = useBalance(tokenAddress);
+  // const BALANCE = data ? data / BigInt(10 ** 18) : BigInt(0);
+  // const FARCASTER_POST =
+  //   BigInt(TOKEN_CONFIG[ANON_ADDRESS].postAmount) / BigInt(10 ** 18);
+  // const TWITTER_PROMOTE =
+  //   BigInt(TOKEN_CONFIG[ANON_ADDRESS].promoteAmount) / BigInt(10 ** 18);
+  // const DELETE_POST =
+  //   BigInt(TOKEN_CONFIG[ANON_ADDRESS].deleteAmount) / BigInt(10 ** 18);
 
-  const BALANCE = data ? data / BigInt(10 ** 18) : BigInt(0);
-  const FARCASTER_POST =
-    BigInt(TOKEN_CONFIG[ANON_ADDRESS].postAmount) / BigInt(10 ** 18);
-  const TWITTER_PROMOTE =
-    BigInt(TOKEN_CONFIG[ANON_ADDRESS].promoteAmount) / BigInt(10 ** 18);
-  const DELETE_POST =
-    BigInt(TOKEN_CONFIG[ANON_ADDRESS].deleteAmount) / BigInt(10 ** 18);
+  const { createdCast } = useCreatePost();
 
   return (
     <Alert className="flex flex-col gap-4 bg-zinc-900 border border-zinc-700 top-20">
@@ -149,7 +147,31 @@ export default function ActionComponent({
 
       <Personas />
       <CreatePost />
+      {createdCast && (
+        <SuccessCastLink castUrl={generateWarpcastUrl(createdCast)} />
+      )}
     </Alert>
+  );
+}
+
+function SuccessCastLink({ castUrl }: { castUrl: string }) {
+  return (
+    <div className="flex flex-col items-center gap-3 p-4 mt-6 rounded-lg bg-green-50 border border-green-200">
+      <div className="text-green-600 text-center font-medium">
+        🎉 Your cast has been successfully created!
+      </div>
+      <Link
+        href={castUrl}
+        target="_blank"
+        className="group flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full font-medium shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-105"
+      >
+        View on Warpcast
+        <ExternalLink className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+      </Link>
+      <span className="text-sm text-green-600/70">
+        Click to see your post on Warpcast
+      </span>
+    </div>
   );
 }
 

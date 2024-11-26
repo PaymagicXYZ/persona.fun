@@ -1,6 +1,6 @@
 import { useToast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
-import { Cast, Channel } from "@/lib/types";
+import { Cast, Channel, PostCastResponse } from "@/lib/types";
 import { Persona } from "@/lib/types/persona";
 import { generateProof, ProofType } from "@persona/utils/src/proofs";
 import { createContext, useContext, useState, ReactNode } from "react";
@@ -38,6 +38,8 @@ interface CreatePostContextProps {
   setRevealPhrase: (revealPhrase: string | null) => void;
   persona: Persona | null;
   setPersona: (persona: Persona | null) => void;
+  createdCast: PostCastResponse | null;
+  setCreatedCast: (createdCast: PostCastResponse | null) => void;
 }
 
 const CreatePostContext = createContext<CreatePostContextProps | undefined>(
@@ -64,6 +66,7 @@ export const CreatePostProvider = ({
   const { address } = useAccount();
   const { signMessageAsync } = useSignMessage();
   const [persona, setPersona] = useState<Persona | null>(null);
+  const [createdCast, setCreatedCast] = useState<PostCastResponse | null>(null);
 
   const resetState = () => {
     setState({ status: "idle" });
@@ -74,10 +77,12 @@ export const CreatePostProvider = ({
     setChannel(null);
     setParent(null);
     setRevealPhrase(null);
+    setPersona(null);
   };
 
   const createPost = async () => {
-    if (!address) return;
+    if (!address || !persona) return;
+    setCreatedCast(null);
     setState({ status: "signature" });
     try {
       const embeds = [image, embed].filter((e) => e !== null) as string[];
@@ -104,7 +109,7 @@ export const CreatePostProvider = ({
         : null;
 
       const timestamp = Math.floor(Date.now() / 1000);
-      console.log("CMOOON");
+
       setState({ status: "generating" });
 
       const proof = await generateProof({
@@ -121,17 +126,19 @@ export const CreatePostProvider = ({
           revealHash,
         },
       });
-      console.log("proof", proof);
+
       if (!proof) {
         setState({ status: "error", error: "Not allowed to post" });
         return;
       }
-      console.log("you?", process.env.NEXT_PUBLIC_DISABLE_QUEUE);
+
       if (process.env.NEXT_PUBLIC_DISABLE_QUEUE) {
-        await api.createPost(
+        const response = await api.createPost(
           Array.from(proof.proof),
           proof.publicInputs.map((i) => Array.from(i))
         );
+
+        setCreatedCast(response || null);
       } else {
         await api.submitAction(
           ProofType.CREATE_POST,
@@ -179,6 +186,8 @@ export const CreatePostProvider = ({
         setRevealPhrase,
         persona,
         setPersona,
+        createdCast,
+        setCreatedCast,
       }}
     >
       {children}

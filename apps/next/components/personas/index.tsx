@@ -1,13 +1,11 @@
-import { Persona } from "@/lib/types/persona";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { useState } from "react";
 import { useCreatePost } from "../create-post/context";
 import { personas } from "@/lib/api/personas";
 import Link from "next/link";
 
 export default function Personas() {
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["personas"],
     queryFn: personas.getPersonas,
   });

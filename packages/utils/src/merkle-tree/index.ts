@@ -104,7 +104,7 @@ export async function getTree(
   tokenAddress: string,
   proofType: ProofType
 ): Promise<Tree> {
-  const key = `anon:tree:${tokenAddress}:${proofType}`;
+  const key = `anon:tree:${tokenAddress.toLowerCase()}:${proofType}`;
   const tree = await redis.get(key);
   return tree ? JSON.parse(tree) : null;
 }
@@ -114,10 +114,10 @@ export async function setTree(
   proofType: ProofType,
   tree: Tree
 ) {
-  await redis.set(
-    `anon:tree:${tokenAddress}:${proofType}`,
-    JSON.stringify(tree)
-  );
+  const key = `anon:tree:${tokenAddress.toLowerCase()}:${proofType}`;
+
+  await redis.set(key, JSON.stringify(tree));
+
   await addRoot(tokenAddress, proofType, tree.root);
 }
 
