@@ -58,10 +58,12 @@ export type Database = {
           address: string
           chain_id: number
           created_at: string
+          delete_amount: string
           id: number
           image_url: string | null
-          min_token_amount: number
           name: string
+          post_amount: string
+          promote_amount: string
           supply: number
           symbol: string
         }
@@ -69,10 +71,12 @@ export type Database = {
           address: string
           chain_id?: number
           created_at?: string
+          delete_amount?: string
           id?: number
           image_url?: string | null
-          min_token_amount: number
           name: string
+          post_amount?: string
+          promote_amount?: string
           supply: number
           symbol: string
         }
@@ -80,10 +84,12 @@ export type Database = {
           address?: string
           chain_id?: number
           created_at?: string
+          delete_amount?: string
           id?: number
           image_url?: string | null
-          min_token_amount?: number
           name?: string
+          post_amount?: string
+          promote_amount?: string
           supply?: number
           symbol?: string
         }
@@ -94,7 +100,31 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_persona_by_token_address: {
+        Args: {
+          search_address: string
+        }
+        Returns: {
+          persona_id: number
+          persona_created_at: string
+          persona_name: string
+          persona_image_url: string
+          persona_fid: number
+          persona_signer_uuid: string
+          persona_personality: string
+          persona_token_id: number
+          persona_fc_profile: Json
+          token_id: number
+          token_created_at: string
+          token_address: string
+          token_name: string
+          token_symbol: string
+          token_supply: number
+          token_min_token_amount: number
+          token_image_url: string
+          token_chain_id: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

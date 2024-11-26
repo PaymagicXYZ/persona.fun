@@ -3,6 +3,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { postMappingTable, postRevealTable, signersTable } from "./db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { supabase } from "./config";
+import { getAddress } from "viem";
 
 export async function getPersonas() {
   const { data, error } = await supabase.from("personas").select(`
@@ -12,13 +13,19 @@ export async function getPersonas() {
       image_url, 
       token:token_id (
         id,
+        address,
         name,
         symbol,
         supply,
-        min_token_amount,
-        image_url
+        image_url,
+        post_amount,
+        delete_amount,
+        promote_amount,
+        base_scan_url,
+        dex_screener_url
       )
     `);
+  console.log("error", error);
   if (error) {
     throw error;
   }
@@ -28,12 +35,42 @@ export async function getPersonas() {
 const db = drizzle(process.env.DATABASE_URL as string);
 
 export async function getSignerForAddress(address: string) {
-  const [user] = await db
-    .select()
-    .from(signersTable)
-    .where(eq(signersTable.address, address))
-    .limit(1);
-  return user;
+  // const [user] = await db
+  //   .select()
+  //   .from(signersTable)
+  //   .where(eq(signersTable.address, address))
+  //   .limit(1);
+  // return user;
+
+  const { data, error } = await supabase
+    .rpc("get_persona_by_token_address", {
+      search_address: getAddress(address),
+    })
+    .limit(1)
+    .single();
+
+  console.log("data", data);
+  console.log("error", error);
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function getTokenConfig(tokenAddress: string) {
+  const { data, error } = await supabase
+    .from("tokens")
+    .select("*")
+    .eq("address", tokenAddress)
+    .limit(1)
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
 }
 
 export async function createSignerForAddress(

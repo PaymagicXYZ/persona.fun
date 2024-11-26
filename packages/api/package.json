@@ -14,16 +14,17 @@
     "start": "bun run src/index.ts"
   },
   "dependencies": {
-    "@persona/circuits": "*",
-    "@persona/db": "*",
-    "@persona/utils": "*",
     "@elysiajs/cors": "^1.1.1",
     "@noir-lang/backend_barretenberg": "^0.17.0",
     "@noir-lang/noir_js": "^0.17.0",
+    "@persona/circuits": "*",
+    "@persona/db": "*",
+    "@persona/utils": "*",
     "@supabase/supabase-js": "^2.46.1",
     "elysia": "^1.1.25",
     "ioredis": "^5.4.1",
     "logestic": "^1.2.4",
+    "openai": "^4.73.1",
     "twitter-api-v2": "^1.18.2",
     "viem": "^2.21.48"
   },
