@@ -603,3 +603,16 @@ export type Identity = {
   }>
   power_badge: boolean
 }
+
+export interface WebhookResponse {
+  webhook: {
+    webhook_id: string
+    subscription: {
+      'cast.created': {
+        mentioned_fids: number[]
+      }
+    }
+  }
+  target_url: string
+  title: string
+}
