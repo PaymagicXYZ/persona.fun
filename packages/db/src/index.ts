@@ -40,7 +40,8 @@ export async function getPersonaByFid(fid: number) {
       id, 
       name, 
       fid, 
-      image_url, 
+      image_url,
+      personality,
       token:token_id (
         id,
         address,
@@ -52,7 +53,6 @@ export async function getPersonaByFid(fid: number) {
         delete_amount,
         promote_amount,
         base_scan_url,
-        dex_screener_url
       )
     `)
     .eq('fid', fid)

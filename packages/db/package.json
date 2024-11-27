@@ -9,7 +9,8 @@
 		"dist"
 	],
 	"scripts": {
-		"push": "drizzle-kit push"
+		"push": "drizzle-kit push",
+		"gen-types": "supabase gen types typescript --project-id 'vaepovydothqawempmsn' --schema public > src/supabase-types.ts"
 	},
 	"dependencies": {
 		"@supabase/supabase-js": "^2.46.1",
