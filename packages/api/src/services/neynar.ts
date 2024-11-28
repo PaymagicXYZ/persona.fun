@@ -41,7 +41,7 @@ class NeynarService {
   private async makeRequest<T>(
     endpoint: string,
     options?: {
-      method?: "GET" | "POST" | "DELETE";
+      method?: "GET" | "POST" | "DELETE" | "PATCH";
       maxRetries?: number;
       retryDelay?: number;
       body?: string;
@@ -92,6 +92,14 @@ class NeynarService {
         hash.startsWith("0x") ? "hash" : "url"
       }&identifier=${hash}`
     );
+  }
+
+  async getUserByFid(fid: number) {
+    const response = await this.makeRequest<{ users: GetUserResponse[] }>(
+      `/farcaster/user/bulk?fids=${fid}`
+    );
+
+    return response.users[0];
   }
 
   async getChannel(identifier: string) {
@@ -276,6 +284,67 @@ class NeynarService {
     return this.makeRequest<GetBulkUsersResponse>(
       `/farcaster/user/bulk-by-address?addresses=${addresses.join(",")}`
     );
+  }
+
+  async getFid() {
+    return this.makeRequest<{ fid: number }>("/farcaster/user/fid", {
+      method: "GET",
+    });
+  }
+
+  async registerUser(params: {
+    signature: string;
+    fid: number;
+    requested_user_custody_address: string;
+    deadline: number;
+    fname: string;
+  }) {
+    return this.makeRequest<{
+      success: boolean;
+      message: string;
+      signer: {
+        signer_uuid: string;
+        public_key: string;
+        status: string;
+        fid: number;
+        permissions: Array<string>;
+      };
+    }>("/farcaster/user", {
+      method: "POST",
+      body: JSON.stringify(params),
+    });
+  }
+
+  async updateUser(params: {
+    signer_uuid: string;
+    display_name: string;
+    image_url: string;
+  }) {
+    return this.makeRequest("/farcaster/user", {
+      method: "PATCH",
+      body: JSON.stringify(params),
+    });
+  }
+
+  async createClankerToken({
+    signer_uuid,
+    personaName,
+    tokenName,
+    tokenSymbol,
+  }: {
+    signer_uuid: string;
+    personaName: string;
+    tokenName: string;
+    tokenSymbol: string;
+  }) {
+    return this.makeRequest("/farcaster/cast", {
+      method: "POST",
+      body: JSON.stringify({
+        signer_uuid,
+        text: `Hey @clanker, I'm ${personaName}, create token for me please name: ${tokenName} symbol: ${tokenSymbol}`,
+        parent: "https://warpcast.com/clanker/0x3ff2f850", // Clankers token creation cast
+      }),
+    });
   }
 }
 

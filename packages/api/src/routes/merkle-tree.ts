@@ -11,8 +11,8 @@ import { getTokenConfig } from "@persona/db";
 export const merkleTreeRoutes = createElysia({ prefix: "/merkle-tree" }).post(
   "/",
   async ({ body }) => {
-    console.log("generate tree for token address: ", body.tokenAddress);
     const cachedTree = await getTree(body.tokenAddress, body.proofType);
+
     if (cachedTree) {
       return cachedTree;
     }

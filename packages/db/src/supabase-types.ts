@@ -15,9 +15,10 @@ export type Database = {
           fc_profile: Json | null
           fid: number
           id: number
-          image_url: string
+          image_url: string | null
           name: string
           personality: string
+          private_key: string | null
           signer_uuid: string
           token_id: number | null
         }
@@ -26,9 +27,10 @@ export type Database = {
           fc_profile?: Json | null
           fid: number
           id?: number
-          image_url: string
+          image_url?: string | null
           name: string
           personality: string
+          private_key?: string | null
           signer_uuid: string
           token_id?: number | null
         }
@@ -37,9 +39,10 @@ export type Database = {
           fc_profile?: Json | null
           fid?: number
           id?: number
-          image_url?: string
+          image_url?: string | null
           name?: string
           personality?: string
+          private_key?: string | null
           signer_uuid?: string
           token_id?: number | null
         }
@@ -56,9 +59,11 @@ export type Database = {
       tokens: {
         Row: {
           address: string
+          base_scan_url: string
           chain_id: number
           created_at: string
           delete_amount: string
+          dex_screener_url: string
           id: number
           image_url: string | null
           name: string
@@ -69,22 +74,26 @@ export type Database = {
         }
         Insert: {
           address: string
+          base_scan_url: string
           chain_id?: number
           created_at?: string
           delete_amount?: string
+          dex_screener_url: string
           id?: number
           image_url?: string | null
           name: string
           post_amount?: string
           promote_amount?: string
-          supply: number
+          supply?: number
           symbol: string
         }
         Update: {
           address?: string
+          base_scan_url?: string
           chain_id?: number
           created_at?: string
           delete_amount?: string
+          dex_screener_url?: string
           id?: number
           image_url?: string | null
           name?: string
@@ -120,9 +129,13 @@ export type Database = {
           token_name: string
           token_symbol: string
           token_supply: number
-          token_min_token_amount: number
           token_image_url: string
           token_chain_id: number
+          token_post_amount: string
+          token_promote_amount: string
+          token_delete_amount: string
+          token_base_scan_url: string
+          token_dex_screener_url: string
         }[]
       }
     }
