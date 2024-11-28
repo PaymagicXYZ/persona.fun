@@ -2,17 +2,22 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Toaster } from "@/components/ui/toaster";
-import { GeistSans } from "geist/font/sans";
 import { ConnectButton } from "@/components/connect-button";
 import { Logo } from "@/components/logo";
+import { Instrument_Sans } from "next/font/google";
+
+const instrumentSans = Instrument_Sans({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "anoncast",
+  title: "Persona.fun",
   description: "Post anonymously to Farcaster.",
   openGraph: {
-    title: "anoncast",
+    title: "Persona.fun",
     description: "Post anonymously to Farcaster.",
-    images: ["/anon.webp"],
+    images: ["/logo.svg"],
   },
 };
 
@@ -24,15 +29,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${GeistSans.className} antialiased min-h-screen w-full`}
+        className={`${instrumentSans.className} antialiased min-h-screen w-full`}
       >
         <Providers>
-          <div className="flex h-screen flex-col p-4 xl:p-8 max-w-screen-lg mx-auto gap-8">
-            <div className="flex items-center justify-between xl:absolute xl:top-0 xl:left-0 xl:right-0 xl:p-8 xl:max-w-screen-xl xl:mx-auto">
+          <div className="flex min-h-screen flex-col gap-4 p-20">
+            <div className="flex items-center justify-between w-full">
               <Logo />
               <ConnectButton />
             </div>
-            <div className="z-10">{children}</div>
+            <div className="flex-1 mt-12">{children}</div>
           </div>
         </Providers>
         <Toaster />

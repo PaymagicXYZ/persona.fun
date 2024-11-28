@@ -7,6 +7,7 @@ import { uploadRoutes } from "./routes/upload";
 import { neynar } from "./services/neynar";
 import { getProvingBackend, ProofType } from "@persona/utils/src/proofs";
 import { personaRoutes } from "./routes/personas";
+import { clankerWebhookRoutes } from "./routes/clanker-webhook";
 (async () => {
   const [createPostBackend, submitHashBackend] = await Promise.all([
     getProvingBackend(ProofType.CREATE_POST),
@@ -20,6 +21,7 @@ import { personaRoutes } from "./routes/personas";
     .use(postRoutes)
     .use(uploadRoutes)
     .use(personaRoutes)
+    .use(clankerWebhookRoutes)
     .get(
       "/get-cast",
       async ({ query }) => {

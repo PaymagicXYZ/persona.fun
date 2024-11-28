@@ -1,7 +1,81 @@
-import { getPersonas } from "@persona/db";
-import { createElysia } from "../utils";
+import { t } from "elysia";
+import { insertPersona, getPersonas } from "@persona/db";
+import {
+  createElysia,
+  generateNeynarSignature,
+  createFCAccount,
+} from "../utils";
+import { neynar } from "../services/neynar";
 
-export const personaRoutes = createElysia({ prefix: "/personas" }).get(
-  "/",
-  async () => getPersonas()
-);
+/**
+ * Flow:
+ * 1. Register user on neynar
+ * 2. Update user profile on neynar
+ * 3. Get entire user profile from neynar ( 1. and 2. do not return it.....)
+ * 4. Store user data in db
+ * 5. Create token
+ * 6. Listen for reply from clanker bot in webhook
+ * 7. Store token data in db
+ * 8. Update user profile with ref of token_id in db
+ */
+
+const image_url =
+  "https://static.dc.com/dc/files/default_images/Char_Profile_Batman_20190116_5c3fc4b40faec2.47318964.jpg";
+
+export const personaRoutes = createElysia({ prefix: "/personas" })
+  .get("/", async () => getPersonas())
+  .post(
+    "/",
+    async ({ body }) => {
+      try {
+        console.log(0);
+
+        // 1. Create FC account
+        const fcAccount = await createFCAccount(body);
+        console.log(1);
+        // 2. Update user profile on neynar
+        await neynar.updateUser({
+          signer_uuid: fcAccount.response.signer.signer_uuid,
+          display_name: body.name,
+          image_url: "",
+        });
+        console.log(2);
+
+        // 3. Get entire user profile from neynar
+        const fcProfile = await neynar.getUserByFid(
+          fcAccount.response.signer.fid
+        );
+        console.log(3);
+        // 4. Store user data in db
+        await insertPersona({
+          fid: fcAccount.response.signer.fid,
+          name: body.name,
+          image_url: image_url,
+          signer_uuid: fcAccount.response.signer.signer_uuid,
+          personality: body.personality,
+          private_key: fcAccount.privateKey,
+          fc_profile: fcProfile,
+        });
+        console.log(4);
+        // 5. Create token
+
+        const response = await neynar.createClankerToken({
+          personaName: body.name,
+          tokenName: "Batman",
+          tokenSymbol: "B",
+          signer_uuid: fcAccount.response.signer.signer_uuid,
+        });
+
+        console.log(response);
+        console.log("fc account", fcAccount);
+      } catch (error) {
+        console.error("Error registering persona: ", error);
+      }
+    },
+    {
+      body: t.Object({
+        name: t.String(),
+        personality: t.String(),
+      }),
+    }
+  );

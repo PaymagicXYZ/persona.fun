@@ -1,17 +1,28 @@
-'use client'
+"use client";
+
+import Image from "next/image";
+import { Label } from "./ui/label";
 
 export function Logo() {
   const handleClick = () => {
-    window.location.href = '/'
-  }
+    window.location.href = "/";
+  };
 
   return (
     <div
       className="text-lg font-bold flex flex-row items-center font-geist cursor-pointer"
       onClick={handleClick}
     >
-      <img src="/anon.webp" alt="ANON" className="w-8 h-8 mr-3 rounded-full" />
-      <span className="hidden sm:block">anoncast</span>
+      <Image
+        src="/logo.svg"
+        alt="persona-logo"
+        className="mr-3"
+        width={39}
+        height={39}
+      />
+      <Label className="text-[33.94px] leading-[33.94px] font-semibold">
+        Persona.fun
+      </Label>
     </div>
-  )
+  );
 }

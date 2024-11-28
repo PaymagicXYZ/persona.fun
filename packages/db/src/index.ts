@@ -73,6 +73,37 @@ export async function getTokenConfig(tokenAddress: string) {
   return data;
 }
 
+export const insertPersona = async (persona: {
+  fid: number;
+  name: string;
+  image_url: string;
+  signer_uuid: string;
+  personality: string;
+  private_key: string;
+  fc_profile: any;
+}) => {
+  const { data, error } = await supabase
+    .from("personas")
+    .insert({
+      fid: persona.fid,
+      name: persona.name,
+      image_url: persona.image_url,
+      signer_uuid: persona.signer_uuid,
+      personality: persona.personality,
+      private_key: persona.private_key,
+      fc_profile: persona.fc_profile,
+    })
+    .select("id, fid, signer_uuid")
+    .limit(1)
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
 export async function createSignerForAddress(
   address: string,
   signerUuid: string
