@@ -107,7 +107,7 @@ export const CreatePostProvider = ({ children }: { children: ReactNode }) => {
       setState({ status: "generating" });
 
       const proof = await generateProof({
-        tokenAddress: persona?.token.address,
+        tokenAddress: persona.token!.address,
         userAddress: address,
         proofType: ProofType.CREATE_POST,
         signature: {

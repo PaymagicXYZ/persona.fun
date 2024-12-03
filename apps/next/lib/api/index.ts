@@ -13,16 +13,21 @@ import { Identity } from "@persona/api/src/services/types";
 const apiClient = new ApiClient(process.env.NEXT_PUBLIC_API_URL || "");
 
 export const api = {
-  getNewPosts: async (tokenAddress: string) => {
+  getNewPosts: async (fid: number) => {
     const response = await apiClient.request<GetCastsResponse>(
-      `/feed/${tokenAddress}/new`
+      `/feed/${fid}/new`
     );
     return response.data;
   },
-  getTrendingPosts: async (tokenAddress: string) => {
+  getTrendingPosts: async (fid: number) => {
     const response = await apiClient.request<GetCastsResponse>(
-      `/feed/${tokenAddress}/trending`
+      `/feed/${fid}/trending`
     );
+    return response.data;
+  },
+  getTestPosts: async (fid: number) => {
+    const response = await apiClient.request<Cast>(`/feed/test/${fid}`);
+
     return response.data;
   },
   getMerkleTree: async (tokenAddress: string, proofType: ProofType) => {

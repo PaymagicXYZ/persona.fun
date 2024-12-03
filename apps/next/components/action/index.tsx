@@ -18,8 +18,8 @@ export default function ActionComponent() {
   // const DELETE_POST =
   //   BigInt(TOKEN_CONFIG[ANON_ADDRESS].deleteAmount) / BigInt(10 ** 18);
 
-  const { createdCast } = useCreatePost();
-
+  const { createdCast, persona } = useCreatePost();
+  console.log("persona", persona);
   return (
     <Alert className="flex flex-col gap-4 bg-zinc-900 border border-zinc-700 top-20">
       <AlertDescription>
@@ -141,7 +141,6 @@ export default function ActionComponent() {
         <></>
       )} */}
 
-      <Personas />
       <CreatePost />
       {createdCast && (
         <SuccessCastLink castUrl={generateWarpcastUrl(createdCast)} />

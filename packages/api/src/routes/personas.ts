@@ -1,5 +1,5 @@
 import { t } from "elysia";
-import { insertPersona, getPersonas } from "@persona/db";
+import { insertPersona, getPersonas, getPersonaByFid } from "@persona/db";
 import {
   createElysia,
   generateNeynarSignature,
@@ -19,63 +19,65 @@ import { neynar } from "../services/neynar";
  * 8. Update user profile with ref of token_id in db
  */
 
-const image_url =
-  "https://static.dc.com/dc/files/default_images/Char_Profile_Batman_20190116_5c3fc4b40faec2.47318964.jpg";
-
 export const personaRoutes = createElysia({ prefix: "/personas" })
   .get("/", async () => getPersonas())
-  .post(
-    "/",
-    async ({ body }) => {
-      try {
-        console.log(0);
+  .get("/fid/:fid", async ({ params }) => getPersonaByFid(params.fid), {
+    params: t.Object({
+      fid: t.Number(),
+    }),
+  });
+// .post(
+//   "/",
+//   async ({ body }) => {
+//     try {
+//       console.log(0);
 
-        // 1. Create FC account
-        const fcAccount = await createFCAccount(body);
-        console.log(1);
-        // 2. Update user profile on neynar
-        await neynar.updateUser({
-          signer_uuid: fcAccount.response.signer.signer_uuid,
-          display_name: body.name,
-          image_url: "",
-        });
-        console.log(2);
+//       // 1. Create FC account
+//       const fcAccount = await createFCAccount(body);
+//       console.log(1);
+//       // 2. Update user profile on neynar
+//       await neynar.updateUser({
+//         signer_uuid: fcAccount.response.signer.signer_uuid,
+//         display_name: body.name,
+//         image_url: "",
+//       });
+//       console.log(2);
 
-        // 3. Get entire user profile from neynar
-        const fcProfile = await neynar.getUserByFid(
-          fcAccount.response.signer.fid
-        );
-        console.log(3);
-        // 4. Store user data in db
-        await insertPersona({
-          fid: fcAccount.response.signer.fid,
-          name: body.name,
-          image_url: image_url,
-          signer_uuid: fcAccount.response.signer.signer_uuid,
-          personality: body.personality,
-          private_key: fcAccount.privateKey,
-          fc_profile: fcProfile,
-        });
-        console.log(4);
-        // 5. Create token
+//       // 3. Get entire user profile from neynar
+//       const fcProfile = await neynar.getUserByFid(
+//         fcAccount.response.signer.fid
+//       );
+//       console.log(3);
+//       // 4. Store user data in db
+//       await insertPersona({
+//         fid: fcAccount.response.signer.fid,
+//         name: body.name,
+//         image_url: image_url,
+//         signer_uuid: fcAccount.response.signer.signer_uuid,
+//         personality: body.personality,
+//         private_key: fcAccount.privateKey,
+//         fc_profile: fcProfile,
+//       });
+//       console.log(4);
+//       // 5. Create token
 
-        const response = await neynar.createClankerToken({
-          personaName: body.name,
-          tokenName: "Batman",
-          tokenSymbol: "B",
-          signer_uuid: fcAccount.response.signer.signer_uuid,
-        });
+//       const response = await neynar.createClankerToken({
+//         personaName: body.name,
+//         tokenName: "Batman",
+//         tokenSymbol: "B",
+//         signer_uuid: fcAccount.response.signer.signer_uuid,
+//       });
 
-        console.log(response);
-        console.log("fc account", fcAccount);
-      } catch (error) {
-        console.error("Error registering persona: ", error);
-      }
-    },
-    {
-      body: t.Object({
-        name: t.String(),
-        personality: t.String(),
-      }),
-    }
-  );
+//       console.log(response);
+//       console.log("fc account", fcAccount);
+//     } catch (error) {
+//       console.error("Error registering persona: ", error);
+//     }
+//   },
+//   {
+//     body: t.Object({
+//       name: t.String(),
+//       personality: t.String(),
+//     }),
+//   }
+// );

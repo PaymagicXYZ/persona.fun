@@ -37,30 +37,24 @@ function formatNumber(num: number): string {
   return `${formattedNumber}${units[unitIndex]}`;
 }
 
-export function Post({
-  cast,
-  tokenAddress,
-}: {
-  cast: Cast;
-  tokenAddress: string;
-}) {
+export function Post({ cast, fid }: { cast: Cast; fid: number }) {
   const { address } = useAccount();
-  const { data: balance } = useBalance(tokenAddress);
+  // const { data: balance } = useBalance(tokenAddress);
   const [reveal, setReveal] = useState(cast.reveal);
 
-  const canDelete =
-    address &&
-    !!balance &&
-    balance >= BigInt(TOKEN_CONFIG[tokenAddress].deleteAmount) &&
-    cast.tweetId;
+  // const canDelete =
+  //   address &&
+  //   !!balance &&
+  //   balance >= BigInt(TOKEN_CONFIG[tokenAddress].deleteAmount) &&
+  //   cast.tweetId;
 
-  const canPromote =
-    address &&
-    !!balance &&
-    balance >= BigInt(TOKEN_CONFIG[tokenAddress].promoteAmount) &&
-    !cast.tweetId;
+  // const canPromote =
+  //   address &&
+  //   !!balance &&
+  //   balance >= BigInt(TOKEN_CONFIG[tokenAddress].promoteAmount) &&
+  //   !cast.tweetId;
 
-  const canReveal = address && !!cast.reveal && !cast.reveal.revealedAt;
+  // const canReveal = address && !!cast.reveal && !cast.reveal.revealedAt;
 
   const { setParent, setQuote } = useCreatePost();
   const cleanText = (text: string) => {
@@ -253,7 +247,7 @@ export function Post({
                   Reply
                 </p>
               )}
-              {canReveal && (
+              {/* {canReveal && (
                 <RevealButton
                   cast={cast}
                   onReveal={setReveal}
@@ -265,7 +259,7 @@ export function Post({
               )}
               {canDelete && (
                 <DeleteButton cast={cast} tokenAddress={tokenAddress} />
-              )}
+              )} */}
             </div>
           </div>
         </div>
@@ -487,7 +481,7 @@ function RevealButton({
           address,
           revealedAt: new Date().toISOString(),
         });
-        router.push(`/posts/${cast.hash}`);
+        router.push(`/persona/${cast.hash}`);
       }
     } catch {
       setIsRevealing(false);

@@ -1,12 +1,9 @@
 import "dotenv/config";
-import { drizzle } from "drizzle-orm/node-postgres";
-import { postMappingTable, postRevealTable, signersTable } from "./db/schema";
-import { eq, inArray } from "drizzle-orm";
+
 import { supabase } from "./config";
 import { getAddress } from "viem";
 
-export async function getPersonas() {
-  const { data, error } = await supabase.from("personas").select(`
+const personaSelect = `
       id, 
       name, 
       fid, 
@@ -24,7 +21,10 @@ export async function getPersonas() {
         base_scan_url,
         dex_screener_url
       )
-    `);
+    `;
+
+export async function getPersonas() {
+  const { data, error } = await supabase.from("personas").select(personaSelect);
   console.log("error", error);
   if (error) {
     throw error;
@@ -32,16 +32,22 @@ export async function getPersonas() {
   return data;
 }
 
-const db = drizzle(process.env.DATABASE_URL as string);
+export async function getPersonaByFid(fid: number) {
+  const { data, error } = await supabase
+    .from("personas")
+    .select(personaSelect)
+    .eq("fid", fid)
+    .limit(1)
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
 
 export async function getSignerForAddress(address: string) {
-  // const [user] = await db
-  //   .select()
-  //   .from(signersTable)
-  //   .where(eq(signersTable.address, address))
-  //   .limit(1);
-  // return user;
-
   const { data, error } = await supabase
     .rpc("get_persona_by_token_address", {
       search_address: getAddress(address),
@@ -104,63 +110,94 @@ export const insertPersona = async (persona: {
   return data;
 };
 
-export async function createSignerForAddress(
-  address: string,
-  signerUuid: string
-) {
-  const [user] = await db
-    .insert(signersTable)
-    .values({ address, signerUuid })
-    .onConflictDoUpdate({ target: signersTable.address, set: { signerUuid } })
-    .returning();
-  return user;
-}
-
 export async function createPostMapping(
   castHash: string,
   tweetId?: string,
   bestOfHash?: string
 ) {
-  await db
-    .insert(postMappingTable)
-    .values({ castHash, tweetId, bestOfHash })
-    .onConflictDoNothing();
+  const { data, error } = await supabase
+    .from("post_mapping")
+    .upsert(
+      { cast_hash: castHash, tweet_id: tweetId, best_of_hash: bestOfHash },
+      { onConflict: "cast_hash" }
+    );
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
 }
 
 export async function getPostMapping(castHash: string) {
-  const [row] = await db
+  const { data, error } = await supabase
+    .from("post_mapping")
     .select()
-    .from(postMappingTable)
-    .where(eq(postMappingTable.castHash, castHash))
-    .limit(1);
-  return row;
+    .eq("cast_hash", castHash)
+    .limit(1)
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
 }
 
 export async function deletePostMapping(castHash: string) {
-  await db
-    .delete(postMappingTable)
-    .where(eq(postMappingTable.castHash, castHash));
+  const { data, error } = await supabase
+    .from("post_mapping")
+    .delete()
+    .eq("cast_hash", castHash);
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
 }
 
 export async function getPostMappings(castHashes: string[]) {
-  const rows = await db
+  const { data, error } = await supabase
+    .from("post_mapping")
     .select()
-    .from(postMappingTable)
-    .where(inArray(postMappingTable.castHash, castHashes));
-  return rows;
+    .in("cast_hash", castHashes);
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
 }
 
 export async function createPostReveal(castHash: string, revealHash: string) {
-  await db.insert(postRevealTable).values({ castHash, revealHash });
+  const { data, error } = await supabase
+    .from("post_reveal")
+    .upsert(
+      { cast_hash: castHash, reveal_hash: revealHash },
+      { onConflict: "cast_hash" }
+    );
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
 }
 
 export async function getPostReveal(castHash: string) {
-  const [row] = await db
+  const { data, error } = await supabase
+    .from("post_reveal")
     .select()
-    .from(postRevealTable)
-    .where(eq(postRevealTable.castHash, castHash))
-    .limit(1);
-  return row;
+    .eq("cast_hash", castHash)
+    .limit(1)
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
 }
 
 export async function markPostReveal(
@@ -169,16 +206,30 @@ export async function markPostReveal(
   signature: string,
   address: string
 ) {
-  await db
-    .update(postRevealTable)
-    .set({ revealPhrase, signature, address, revealedAt: new Date() })
-    .where(eq(postRevealTable.castHash, castHash));
+  const { data, error } = await supabase
+    .from("post_reveal")
+    .update({
+      reveal_phrase: revealPhrase,
+      signature,
+      address,
+      revealed_at: new Date(),
+    })
+    .eq("cast_hash", castHash);
+
+  if (error) {
+    throw error;
+  }
 }
 
 export async function getPostReveals(castHashes: string[]) {
-  const rows = await db
+  const { data, error } = await supabase
+    .from("post_reveal")
     .select()
-    .from(postRevealTable)
-    .where(inArray(postRevealTable.castHash, castHashes));
-  return rows;
+    .in("cast_hash", castHashes);
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
 }

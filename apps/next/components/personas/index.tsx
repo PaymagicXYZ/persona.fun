@@ -4,6 +4,8 @@ import { useCreatePost } from '../create-post/context'
 import { personas } from '@/lib/api/personas'
 import Link from 'next/link'
 import type { Persona } from '@/lib/types/persona'
+import { useRouter } from 'next/navigation'
+import { formatEther } from 'viem'
 
 export default function Personas() {
   const { data } = useQuery({
@@ -43,16 +45,21 @@ function PersonaCard({
   setPersona: (persona: Persona) => void
   selectedPersonaId: number | undefined
 }) {
-  const isSelected = persona.id === selectedPersonaId
+  const router = useRouter()
+
+  const handleCardClick = (persona: Persona) => {
+    setPersona(persona)
+    router.push(`/persona/${persona.fid}`)
+  }
 
   return (
     <div
       key={persona.id}
       className={`
         relative flex flex-col items-center justify-center rounded-lg overflow-hidden
-        bg-[#1a1a1a] border ${isSelected ? 'border-blue-500' : 'border-[#333]'} h-fit p-4 gap-4
+        bg-[#1a1a1a] border border-[#333] h-fit p-4 gap-4
       `}
-      onClick={() => setPersona(persona)}
+      onClick={() => handleCardClick(persona)}
     >
       {/* Card Content */}
       <div className="relative w-full aspect-square">
@@ -81,19 +88,19 @@ function PersonaTokenRequirements({ persona }: { persona: Persona }) {
         <div className="flex justify-between items-center text-[#9A9A9A]">
           <span>Post:</span>
           <span className="font-mono">
-            {persona.token.post_amount} {persona.token.symbol}
+            {formatEther(BigInt(persona.token?.post_amount ?? 0))} {persona.token?.symbol}
           </span>
         </div>
         <div className="flex justify-between items-center text-[#9A9A9A]">
           <span>Delete:</span>
           <span className="font-mono">
-            {persona.token.delete_amount} {persona.token.symbol}
+            {formatEther(BigInt(persona.token?.delete_amount ?? 0))} {persona.token?.symbol}
           </span>
         </div>
         <div className="flex justify-between items-center text-[#9A9A9A]">
           <span>Promote:</span>
           <span className="font-mono">
-            {persona.token.promote_amount} {persona.token.symbol}
+            {formatEther(BigInt(persona.token?.promote_amount ?? 0))} {persona.token?.symbol}
           </span>
         </div>
       </div>
@@ -106,14 +113,14 @@ function PersonaFooterLinks({ persona }: { persona: Persona }) {
     <div className="w-full">
       <div className="flex flex-col gap-3">
         <Link
-          href={persona.token.base_scan_url}
+          href={persona.token?.base_scan_url ?? ''}
           target="_blank"
           className="flex items-center justify-center px-3 py-2 text-sm font-medium text-[#CD52D7] bg-[#2B112E] rounded-lg hover:bg-[#331537] transition-colors"
         >
           Basescan
         </Link>
         <Link
-          href={persona.token.dex_screener_url}
+          href={persona.token?.dex_screener_url ?? ''}
           target="_blank"
           className="flex items-center justify-center px-3 py-2 text-sm font-medium text-[#CD52D7] bg-[#2B112E] rounded-lg hover:bg-[#331537] transition-colors"
         >

@@ -5,6 +5,7 @@ import { neynar } from "../services/neynar";
 import { TOKEN_CONFIG } from "@persona/utils/src/config";
 import { Cast, GetCastsResponse } from "../services/types";
 import { getPostMappings, getPostReveals } from "@persona/db";
+import { fetchTrendingPosts } from "../get-trending-posts";
 
 const redis = new Redis(process.env.REDIS_URL as string);
 
@@ -19,9 +20,9 @@ export async function augmentCasts(casts: Cast[]) {
     .map((cast) => {
       const reveal = reveals.find(
         (reveal) =>
-          reveal.revealHash &&
-          reveal.castHash === cast.hash &&
-          BigInt(reveal.revealHash) != BigInt(0)
+          reveal.reveal_hash &&
+          reveal.cast_hash === cast.hash &&
+          BigInt(reveal.reveal_hash) != BigInt(0)
       );
       if (!reveal) {
         return cast;
@@ -44,9 +45,9 @@ export async function augmentCasts(casts: Cast[]) {
       };
     })
     .map((cast) => {
-      const mapping = mappings.find((m) => m.castHash === cast.hash);
+      const mapping = mappings.find((m) => m.cast_hash === cast.hash);
       if (mapping) {
-        return { ...cast, tweetId: mapping.tweetId };
+        return { ...cast, tweet_id: mapping.tweet_id };
       }
       return cast;
     });
@@ -54,23 +55,23 @@ export async function augmentCasts(casts: Cast[]) {
 
 export const feedRoutes = createElysia({ prefix: "/feed" })
   .get(
-    "/:tokenAddress/new",
+    "/:fid/new",
     async ({ params }) => {
-      let response: GetCastsResponse;
-      const cached = await redis.get(`new:${params.tokenAddress}`);
-      if (cached) {
-        response = JSON.parse(cached);
-      } else {
-        response = await neynar.getUserCasts(
-          TOKEN_CONFIG[params.tokenAddress].fid
-        );
-        await redis.set(
-          `new:${params.tokenAddress}`,
-          JSON.stringify(response),
-          "EX",
-          30
-        );
-      }
+      // let response: GetCastsResponse;
+      // const cached = await redis.get(`new:${params.tokenAddress}`);
+      // if (cached) {
+      //   response = JSON.parse(cached);
+      // } else {
+
+      //   await redis.set(
+      //     `new:${params.tokenAddress}`,
+      //     JSON.stringify(response),
+      //     "EX",
+      //     30
+      //   );
+      // }
+
+      const response = await neynar.getUserCasts(params.fid);
 
       return {
         casts: await augmentCasts(response.casts),
@@ -78,22 +79,23 @@ export const feedRoutes = createElysia({ prefix: "/feed" })
     },
     {
       params: t.Object({
-        tokenAddress: t.String(),
+        fid: t.Number(),
       }),
     }
   )
   .get(
-    "/:tokenAddress/trending",
+    "/:fid/trending",
     async ({ params }) => {
-      const trending = await redis.get(`trending:${params.tokenAddress}`);
-      if (!trending) {
+      const castsWithScores = await fetchTrendingPosts({ fid: params.fid });
+
+      if (!castsWithScores) {
         return {
           casts: [],
         };
       }
 
-      const castsWithScores: [string, number][] = JSON.parse(trending);
       const hashes = castsWithScores.map((cast) => cast[0]);
+
       const response = await neynar.getBulkCasts(hashes);
 
       return {
@@ -102,7 +104,7 @@ export const feedRoutes = createElysia({ prefix: "/feed" })
     },
     {
       params: t.Object({
-        tokenAddress: t.String(),
+        fid: t.Number(),
       }),
     }
   );
