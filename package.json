@@ -2,6 +2,7 @@
   "name": "persona",
   "private": true,
   "workspaces": ["packages/*", "apps/*"],
+  "packageManager": "bun@1.1.39",
   "scripts": {
     "build": "bun run --filter '**' build",
     "next:dev": "bun run --filter @persona/next dev",
@@ -16,5 +17,8 @@
     "queue:ui": "bun run --filter @persona/queue ui",
     "queue:process-failed": "bun run --filter @persona/queue process-failed",
     "queue:process-failed:promote-post": "bun run --filter @persona/queue process-failed:promote-post"
+  },
+  "devDependencies": {
+    "turbo": "^2.1.3"
   }
 }
