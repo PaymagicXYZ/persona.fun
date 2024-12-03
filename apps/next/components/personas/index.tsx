@@ -12,6 +12,14 @@ export default function Personas() {
   })
   const { persona, setPersona } = useCreatePost()
 
+  // const mockData = [
+  //   ...(data ?? []),
+  //   ...(data ?? []),
+  //   ...(data ?? []),
+  //   ...(data ?? []),
+  //   ...(data ?? []),
+  // ]
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 w-full max-w-[1920px] mx-auto cursor-pointer">
       {data?.map((e) => (
@@ -42,7 +50,7 @@ function PersonaCard({
       key={persona.id}
       className={`
         relative flex flex-col items-center justify-center rounded-lg overflow-hidden
-        bg-[#1a1a1a] border ${isSelected ? 'border-blue-500' : 'border-[#333]'} h-fit p-6 gap-6
+        bg-[#1a1a1a] border ${isSelected ? 'border-blue-500' : 'border-[#333]'} h-fit p-4 gap-4
       `}
       onClick={() => setPersona(persona)}
     >
@@ -55,10 +63,12 @@ function PersonaCard({
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover rounded-lg"
         />
-        <h3 className="absolute bottom-0 left-0 right-0 p-4 text-xl font-semibold text-white bg-gradient-to-t from-black/60 to-transparent">
-          {persona.name}
-        </h3>
       </div>
+      <h3 className="p-0 text-2xl font-semibold text-white left-0 text-left justify-self-start mr-auto">
+        {persona.name}
+      </h3>
+      <PersonaTokenRequirements persona={persona} />
+      <PersonaFooterLinks persona={persona} />
     </div>
   )
 }
@@ -66,22 +76,22 @@ function PersonaCard({
 function PersonaTokenRequirements({ persona }: { persona: Persona }) {
   return (
     <div className="flex-1 space-y-4 w-full">
-      <h4 className="text-sky-400 font-semibold mb-3">Required Tokens</h4>
+      <h4 className="text-white font-extralight mb-3 text-xl">Required Tokens</h4>
       <div className="space-y-2 text-gray-300">
-        <div className="flex justify-between items-center">
-          <span>POST:</span>
+        <div className="flex justify-between items-center text-[#9A9A9A]">
+          <span>Post:</span>
           <span className="font-mono">
             {persona.token.post_amount} {persona.token.symbol}
           </span>
         </div>
-        <div className="flex justify-between items-center">
-          <span>DELETE:</span>
+        <div className="flex justify-between items-center text-[#9A9A9A]">
+          <span>Delete:</span>
           <span className="font-mono">
             {persona.token.delete_amount} {persona.token.symbol}
           </span>
         </div>
-        <div className="flex justify-between items-center">
-          <span>PROMOTE:</span>
+        <div className="flex justify-between items-center text-[#9A9A9A]">
+          <span>Promote:</span>
           <span className="font-mono">
             {persona.token.promote_amount} {persona.token.symbol}
           </span>
@@ -94,20 +104,20 @@ function PersonaTokenRequirements({ persona }: { persona: Persona }) {
 function PersonaFooterLinks({ persona }: { persona: Persona }) {
   return (
     <div className="w-full">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="flex flex-col gap-3">
         <Link
           href={persona.token.base_scan_url}
           target="_blank"
-          className="flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-sky-600 rounded-lg hover:bg-sky-700 transition-colors"
+          className="flex items-center justify-center px-3 py-2 text-sm font-medium text-[#CD52D7] bg-[#2B112E] rounded-lg hover:bg-[#331537] transition-colors"
         >
-          Base Scan
+          Basescan
         </Link>
         <Link
           href={persona.token.dex_screener_url}
           target="_blank"
-          className="flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-sky-600 rounded-lg hover:bg-sky-700 transition-colors"
+          className="flex items-center justify-center px-3 py-2 text-sm font-medium text-[#CD52D7] bg-[#2B112E] rounded-lg hover:bg-[#331537] transition-colors"
         >
-          DEX Screener
+          Dexscreener
         </Link>
       </div>
     </div>
