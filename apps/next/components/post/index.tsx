@@ -19,7 +19,6 @@ import { useCreatePost } from "../create-post/context";
 import { useAccount, useSignMessage } from "wagmi";
 import { Checkbox } from "../ui/checkbox";
 import { useBalance } from "@/hooks/use-balance";
-import { TOKEN_CONFIG } from "@persona/utils/src/config";
 import { usePromotePost } from "@/hooks/use-promote-post";
 import { useDeletePost } from "@/hooks/use-delete-post";
 import { api } from "@/lib/api";
@@ -27,6 +26,7 @@ import { useRouter } from "next/navigation";
 import { hashMessage } from "viem";
 import { Input } from "../ui/input";
 import { useQuery } from "@tanstack/react-query";
+import usePersona from "@/hooks/use-persona";
 
 function formatNumber(num: number): string {
   if (num < 1000) return num.toString();
@@ -39,22 +39,25 @@ function formatNumber(num: number): string {
 
 export function Post({ cast, fid }: { cast: Cast; fid: number }) {
   const { address } = useAccount();
-  // const { data: balance } = useBalance(tokenAddress);
+
   const [reveal, setReveal] = useState(cast.reveal);
+  const persona = usePersona(fid);
+  const tokenAddress = persona?.token?.address;
+  const { data: balance } = useBalance(tokenAddress);
 
-  // const canDelete =
-  //   address &&
-  //   !!balance &&
-  //   balance >= BigInt(TOKEN_CONFIG[tokenAddress].deleteAmount) &&
-  //   cast.tweetId;
+  const canDelete =
+    address &&
+    !!balance &&
+    balance >= BigInt(persona?.token?.delete_amount ?? 0) &&
+    cast.tweetId;
 
-  // const canPromote =
-  //   address &&
-  //   !!balance &&
-  //   balance >= BigInt(TOKEN_CONFIG[tokenAddress].promoteAmount) &&
-  //   !cast.tweetId;
+  const canPromote =
+    address &&
+    !!balance &&
+    balance >= BigInt(persona?.token?.promote_amount ?? 0) &&
+    !cast.tweetId;
 
-  // const canReveal = address && !!cast.reveal && !cast.reveal.revealedAt;
+  const canReveal = address && !!cast.reveal && !cast.reveal.revealedAt;
 
   const { setParent, setQuote } = useCreatePost();
   const cleanText = (text: string) => {
@@ -251,14 +254,20 @@ export function Post({ cast, fid }: { cast: Cast; fid: number }) {
                 <RevealButton
                   cast={cast}
                   onReveal={setReveal}
-                  tokenAddress={tokenAddress}
+                  tokenAddress={persona?.token?.address}
                 />
               )}
               {canPromote && (
-                <PromoteButton cast={cast} tokenAddress={tokenAddress} />
+                <PromoteButton
+                  cast={cast}
+                  tokenAddress={persona?.token?.address}
+                />
               )}
               {canDelete && (
-                <DeleteButton cast={cast} tokenAddress={tokenAddress} />
+                <DeleteButton
+                  cast={cast}
+                  tokenAddress={persona?.token?.address}
+                />
               )} */}
             </div>
           </div>
@@ -297,10 +306,10 @@ function DeleteButton({
   tokenAddress,
 }: {
   cast: Cast;
-  tokenAddress: string;
+  tokenAddress?: string;
 }) {
   const { toast } = useToast();
-  const { deletePost, deleteState } = useDeletePost(tokenAddress);
+  const { deletePost, deleteState } = useDeletePost(tokenAddress!);
   const [open, setOpen] = useState(false);
 
   const handleDelete = async () => {
@@ -357,10 +366,10 @@ function PromoteButton({
   tokenAddress,
 }: {
   cast: Cast;
-  tokenAddress: string;
+  tokenAddress?: string;
 }) {
   const { toast } = useToast();
-  const { promotePost, promoteState } = usePromotePost(tokenAddress);
+  const { promotePost, promoteState } = usePromotePost(tokenAddress!);
   const [open, setOpen] = useState(false);
   const [asReply, setAsReply] = useState(false);
 
@@ -439,7 +448,7 @@ function RevealButton({
 }: {
   cast: Cast;
   onReveal: (reveal: Reveal) => void;
-  tokenAddress: string;
+  tokenAddress?: string;
 }) {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
@@ -472,7 +481,7 @@ function RevealButton({
           value,
           signature,
           address,
-          tokenAddress
+          tokenAddress!
         );
         onReveal({
           ...cast.reveal,

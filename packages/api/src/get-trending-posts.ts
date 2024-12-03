@@ -40,7 +40,14 @@ async function getCastData(hashes: string[]): Promise<Cast[]> {
     }
   );
   const data: { result: GetCastsResponse } = await response.json();
-  return data.result.casts;
+
+  const casts = data?.result?.casts?.filter(
+    (cast: Cast | null): cast is Cast => {
+      return cast !== null && cast !== undefined && typeof cast === "object";
+    }
+  );
+
+  return casts;
 }
 
 export async function fetchTrendingPosts({ fid }: { fid: number }) {
@@ -59,7 +66,10 @@ export async function fetchTrendingPosts({ fid }: { fid: number }) {
   for (let i = 0; i < hashes.length; i += batchSize) {
     const batch = hashes.slice(i, i + batchSize);
     const castData = await getCastData(batch);
-    casts.push(...castData);
+
+    if (castData) {
+      casts.push(...castData);
+    }
   }
 
   const now = Date.now();

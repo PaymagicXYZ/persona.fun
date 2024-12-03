@@ -2,8 +2,7 @@ import { Redis } from "ioredis";
 import { createElysia } from "../utils";
 import { t } from "elysia";
 import { neynar } from "../services/neynar";
-import { TOKEN_CONFIG } from "@persona/utils/src/config";
-import { Cast, GetCastsResponse } from "../services/types";
+import { Cast } from "../services/types";
 import { getPostMappings, getPostReveals } from "@persona/db";
 import { fetchTrendingPosts } from "../get-trending-posts";
 
@@ -86,7 +85,9 @@ export const feedRoutes = createElysia({ prefix: "/feed" })
   .get(
     "/:fid/trending",
     async ({ params }) => {
-      const castsWithScores = await fetchTrendingPosts({ fid: params.fid });
+      const castsWithScores = await fetchTrendingPosts({
+        fid: params.fid,
+      });
 
       if (!castsWithScores) {
         return {

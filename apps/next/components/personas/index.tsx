@@ -12,7 +12,7 @@ export default function Personas() {
     queryKey: ['personas'],
     queryFn: personas.getPersonas,
   })
-  const { persona, setPersona } = useCreatePost()
+  const { setPersona } = useCreatePost()
 
   // const mockData = [
   //   ...(data ?? []),
@@ -25,12 +25,7 @@ export default function Personas() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-6 w-full max-w-[1920px] mx-auto cursor-pointer">
       {data?.map((e) => (
-        <PersonaCard
-          key={e.id}
-          persona={e}
-          setPersona={setPersona}
-          selectedPersonaId={persona?.id}
-        />
+        <PersonaCard key={e.id} persona={e} setPersona={setPersona} />
       ))}
     </div>
   )
@@ -39,11 +34,9 @@ export default function Personas() {
 function PersonaCard({
   persona,
   setPersona,
-  selectedPersonaId,
 }: {
   persona: Persona
   setPersona: (persona: Persona) => void
-  selectedPersonaId: number | undefined
 }) {
   const router = useRouter()
 
@@ -94,13 +87,15 @@ function PersonaTokenRequirements({ persona }: { persona: Persona }) {
         <div className="flex justify-between items-center text-[#9A9A9A]">
           <span>Delete:</span>
           <span className="font-mono">
-            {formatEther(BigInt(persona.token?.delete_amount ?? 0))} {persona.token?.symbol}
+            {formatEther(BigInt(persona.token?.delete_amount ?? 0))}{' '}
+            {persona.token?.symbol}
           </span>
         </div>
         <div className="flex justify-between items-center text-[#9A9A9A]">
           <span>Promote:</span>
           <span className="font-mono">
-            {formatEther(BigInt(persona.token?.promote_amount ?? 0))} {persona.token?.symbol}
+            {formatEther(BigInt(persona.token?.promote_amount ?? 0))}{' '}
+            {persona.token?.symbol}
           </span>
         </div>
       </div>
