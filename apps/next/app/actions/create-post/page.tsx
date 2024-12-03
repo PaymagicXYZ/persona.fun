@@ -9,7 +9,7 @@ import React from "react";
 import { createPublicClient, erc20Abi, http } from "viem";
 import { base } from "viem/chains";
 
-export const publicClient = createPublicClient({
+const publicClient = createPublicClient({
   chain: base,
   transport: http(),
 });
