@@ -56,6 +56,54 @@ export type Database = {
           },
         ]
       }
+      post_mapping: {
+        Row: {
+          best_of_hash: string | null
+          cast_hash: string
+          created_at: string
+          tweet_id: string | null
+        }
+        Insert: {
+          best_of_hash?: string | null
+          cast_hash: string
+          created_at?: string
+          tweet_id?: string | null
+        }
+        Update: {
+          best_of_hash?: string | null
+          cast_hash?: string
+          created_at?: string
+          tweet_id?: string | null
+        }
+        Relationships: []
+      }
+      post_reveal: {
+        Row: {
+          address: string | null
+          cast_hash: string
+          created_at: string
+          reveal_hash: string | null
+          reveal_phrase: string | null
+          signature: string | null
+        }
+        Insert: {
+          address?: string | null
+          cast_hash: string
+          created_at?: string
+          reveal_hash?: string | null
+          reveal_phrase?: string | null
+          signature?: string | null
+        }
+        Update: {
+          address?: string | null
+          cast_hash?: string
+          created_at?: string
+          reveal_hash?: string | null
+          reveal_phrase?: string | null
+          signature?: string | null
+        }
+        Relationships: []
+      }
       tokens: {
         Row: {
           address: string

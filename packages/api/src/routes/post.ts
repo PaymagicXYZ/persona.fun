@@ -106,12 +106,12 @@ export function getPostRoutes(
 
         const postMapping = await getPostMapping(params.hash);
         if (postMapping) {
-          if (postMapping.tweetId) {
+          if (postMapping.tweet_id) {
             // await twitterClient.v2.deleteTweet(postMapping.tweetId)
           }
-          if (postMapping.bestOfHash) {
+          if (postMapping.best_of_hash) {
             await neynar.delete({
-              hash: postMapping.bestOfHash,
+              hash: postMapping.best_of_hash,
               tokenAddress: params.tokenAddress,
             });
           }
@@ -157,7 +157,7 @@ export function getPostRoutes(
         }
 
         const mapping = await getPostMapping(params.hash);
-        if (mapping?.tweetId) {
+        if (mapping?.tweet_id) {
           return {
             success: true,
           };

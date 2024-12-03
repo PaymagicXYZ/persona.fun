@@ -8,26 +8,26 @@ import { Post } from "../post";
 import Link from "next/link";
 
 export default function PostFeed({
-  tokenAddress,
+  fid,
   defaultTab = "trending",
 }: {
-  tokenAddress: string;
+  fid: number;
   defaultTab?: "new" | "trending";
 }) {
   const [selected, setSelected] = useState<"new" | "trending">(defaultTab);
 
   const { data: trendingPosts, isLoading: isTrendingLoading } = useQuery({
-    queryKey: ["trending", tokenAddress],
+    queryKey: ["trending", fid],
     queryFn: async (): Promise<Cast[]> => {
-      const response = await api.getTrendingPosts(tokenAddress);
+      const response = await api.getTrendingPosts(fid);
       return response?.casts || [];
     },
   });
 
   const { data: newPosts, isLoading: isNewLoading } = useQuery({
-    queryKey: ["posts", tokenAddress],
+    queryKey: ["posts", fid],
     queryFn: async (): Promise<Cast[]> => {
-      const response = await api.getNewPosts(tokenAddress);
+      const response = await api.getNewPosts(fid);
       return response?.casts || [];
     },
   });
@@ -45,14 +45,14 @@ export default function PostFeed({
         isNewLoading ? (
           <SkeletonPosts />
         ) : newPosts?.length && newPosts?.length > 0 ? (
-          <Posts casts={newPosts} tokenAddress={tokenAddress} />
+          <Posts casts={newPosts} fid={fid} />
         ) : (
           <h1>Something went wrong. Please refresh the page.</h1>
         )
       ) : isTrendingLoading ? (
         <SkeletonPosts />
       ) : trendingPosts?.length && trendingPosts?.length > 0 ? (
-        <Posts casts={trendingPosts} tokenAddress={tokenAddress} />
+        <Posts casts={trendingPosts} fid={fid} />
       ) : (
         <h1>Something went wrong. Please refresh the page.</h1>
       )}
@@ -86,18 +86,12 @@ function SkeletonPost() {
   );
 }
 
-function Posts({
-  casts,
-  tokenAddress,
-}: {
-  casts?: Cast[];
-  tokenAddress: string;
-}) {
+function Posts({ casts, fid }: { casts?: Cast[]; fid: number }) {
   return (
     <div className="flex flex-col gap-4">
       {casts?.map((cast) => (
-        <Link href={`/posts/${cast.hash}`} key={cast.hash}>
-          <Post cast={cast} tokenAddress={tokenAddress} />
+        <Link href={`/persona/${cast.hash}`} key={cast.hash}>
+          <Post cast={cast} fid={fid} />
         </Link>
       ))}
     </div>
