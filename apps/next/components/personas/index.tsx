@@ -4,6 +4,7 @@ import { useCreatePost } from "../create-post/context";
 import { personas } from "@/lib/api/personas";
 import Link from "next/link";
 import { Persona } from "@/lib/types/persona";
+import { useRouter } from "next/navigation";
 
 export default function Personas() {
   const { data } = useQuery({
@@ -35,7 +36,13 @@ function PersonaCard({
   setPersona: (persona: Persona) => void;
   selectedPersonaId: number | undefined;
 }) {
+  const router = useRouter();
   const isSelected = persona.id === selectedPersonaId;
+
+  const handleCardClick = (persona: Persona) => {
+    setPersona(persona);
+    router.push(`/persona/${persona.fid}`);
+  };
 
   return (
     <div
@@ -46,7 +53,7 @@ function PersonaCard({
           isSelected ? "border-blue-500" : "border-[#333]"
         } h-fit p-6 gap-6
       `}
-      onClick={() => setPersona(persona)}
+      onClick={() => handleCardClick(persona)}
     >
       {/* Card Content */}
       <div className="relative w-full">
@@ -71,19 +78,19 @@ function PersonaCard({
           <div className="flex justify-between items-center">
             <span>POST:</span>
             <span className="font-mono">
-              {persona.token.post_amount} {persona.token.symbol}
+              {persona.token?.post_amount} {persona.token?.symbol}
             </span>
           </div>
           <div className="flex justify-between items-center">
             <span>DELETE:</span>
             <span className="font-mono">
-              {persona.token.delete_amount} {persona.token.symbol}
+              {persona.token?.delete_amount} {persona.token?.symbol}
             </span>
           </div>
           <div className="flex justify-between items-center">
             <span>PROMOTE:</span>
             <span className="font-mono">
-              {persona.token.promote_amount} {persona.token.symbol}
+              {persona.token?.promote_amount} {persona.token?.symbol}
             </span>
           </div>
         </div>
@@ -93,14 +100,14 @@ function PersonaCard({
       <div className="w-full">
         <div className="grid grid-cols-2 gap-3">
           <Link
-            href={persona.token.base_scan_url}
+            href={persona.token?.base_scan_url || ""}
             target="_blank"
             className="flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-sky-600 rounded-lg hover:bg-sky-700 transition-colors"
           >
             Base Scan
           </Link>
           <Link
-            href={persona.token.dex_screener_url}
+            href={persona.token?.dex_screener_url || ""}
             target="_blank"
             className="flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-sky-600 rounded-lg hover:bg-sky-700 transition-colors"
           >

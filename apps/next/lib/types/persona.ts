@@ -3,7 +3,7 @@ export type Persona = {
   name: string;
   fid: string;
   image_url: string;
-  token: {
+  token?: {
     id: number;
     address: string;
     name: string;

@@ -8,4 +8,8 @@ export const personas = {
     const response = await apiClient.request<Persona[]>("/personas");
     return response.data;
   },
+  getPersonaByFid: async (fid: number) => {
+    const response = await apiClient.request<Persona>(`/personas/fid/${fid}`);
+    return response.data;
+  },
 };
