@@ -5,6 +5,7 @@ import { personas } from "@/lib/api/personas";
 import Link from "next/link";
 import { Persona } from "@/lib/types/persona";
 import { useRouter } from "next/navigation";
+import { formatEther } from "viem";
 
 export default function Personas() {
   const { data } = useQuery({
@@ -78,19 +79,22 @@ function PersonaCard({
           <div className="flex justify-between items-center">
             <span>POST:</span>
             <span className="font-mono">
-              {persona.token?.post_amount} {persona.token?.symbol}
+              {formatEther(BigInt(persona.token?.post_amount ?? 0))}{" "}
+              {persona.token?.symbol}
             </span>
           </div>
           <div className="flex justify-between items-center">
             <span>DELETE:</span>
             <span className="font-mono">
-              {persona.token?.delete_amount} {persona.token?.symbol}
+              {formatEther(BigInt(persona.token?.delete_amount ?? 0))}{" "}
+              {persona.token?.symbol}
             </span>
           </div>
           <div className="flex justify-between items-center">
             <span>PROMOTE:</span>
             <span className="font-mono">
-              {persona.token?.promote_amount} {persona.token?.symbol}
+              {formatEther(BigInt(persona.token?.promote_amount ?? 0))}{" "}
+              {persona.token?.symbol}
             </span>
           </div>
         </div>

@@ -17,9 +17,8 @@ export const merkleTreeRoutes = createElysia({ prefix: "/merkle-tree" }).post(
       return cachedTree;
     }
 
-    // const config = TOKEN_CONFIG[body.tokenAddress];
     const config = await getTokenConfig(body.tokenAddress);
-    // console.log("Token COnfig", config);
+
     let minAmount = config.post_amount;
     if (body.proofType === ProofType.DELETE_POST) {
       minAmount = config.delete_amount;

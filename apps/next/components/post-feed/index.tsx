@@ -90,9 +90,9 @@ function Posts({ casts, fid }: { casts?: Cast[]; fid: number }) {
   return (
     <div className="flex flex-col gap-4">
       {casts?.map((cast) => (
-        <Link href={`/persona/${cast.hash}`} key={cast.hash}>
-          <Post cast={cast} fid={fid} />
-        </Link>
+        // <Link href={`/persona/${cast.hash}`} key={cast.hash}>
+        <Post key={cast.hash} cast={cast} fid={fid} />
+        // </Link>
       ))}
     </div>
   );

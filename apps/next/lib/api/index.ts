@@ -25,11 +25,6 @@ export const api = {
     );
     return response.data;
   },
-  getTestPosts: async (fid: number) => {
-    const response = await apiClient.request<Cast>(`/feed/test/${fid}`);
-
-    return response.data;
-  },
   getMerkleTree: async (tokenAddress: string, proofType: ProofType) => {
     const response = await apiClient.request<Tree>(`/merkle-tree`, {
       method: "POST",

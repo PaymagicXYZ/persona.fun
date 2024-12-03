@@ -8,18 +8,29 @@ import Personas from "../personas";
 import { useCreatePost } from "../create-post/context";
 import Link from "next/link";
 import { generateWarpcastUrl } from "@/lib/utils";
+import { useBalance } from "@/hooks/use-balance";
+import { useAccount } from "wagmi";
 
 export default function ActionComponent() {
-  // const BALANCE = data ? data / BigInt(10 ** 18) : BigInt(0);
-  // const FARCASTER_POST =
-  //   BigInt(TOKEN_CONFIG[ANON_ADDRESS].postAmount) / BigInt(10 ** 18);
-  // const TWITTER_PROMOTE =
-  //   BigInt(TOKEN_CONFIG[ANON_ADDRESS].promoteAmount) / BigInt(10 ** 18);
-  // const DELETE_POST =
-  //   BigInt(TOKEN_CONFIG[ANON_ADDRESS].deleteAmount) / BigInt(10 ** 18);
-
   const { createdCast, persona } = useCreatePost();
-  console.log("persona", persona);
+  const { address } = useAccount();
+  const { data, isLoading } = useBalance(persona?.token?.address);
+  console.log(persona);
+  const BALANCE = data ? data / BigInt(10 ** 18) : BigInt(0);
+  const FARCASTER_POST =
+    BigInt(persona?.token?.post_amount ?? 0) / BigInt(10 ** 18);
+
+  const TWITTER_PROMOTE =
+    BigInt(persona?.token?.promote_amount ?? 0) / BigInt(10 ** 18);
+
+  const DELETE_POST =
+    BigInt(persona?.token?.delete_amount ?? 0) / BigInt(10 ** 18);
+
+  console.log("BALANCE", BALANCE);
+  console.log("FARCASTER POST", FARCASTER_POST);
+  console.log("TWITTER PROMOTE", TWITTER_PROMOTE);
+  console.log("DELETE POST", DELETE_POST);
+
   return (
     <Alert className="flex flex-col gap-4 bg-zinc-900 border border-zinc-700 top-20">
       <AlertDescription>
@@ -30,7 +41,7 @@ export default function ActionComponent() {
           resistance - it&apos;s about great anonymous posts.
         </p>
       </AlertDescription>
-      {/* <AlertTitle className="font-semibold text-xl">
+      <AlertTitle className="font-semibold text-xl">
         Post anonymously to Farcaster and X/Twitter
       </AlertTitle>
       <AlertDescription>
@@ -44,18 +55,21 @@ export default function ActionComponent() {
         <p className="text-zinc-400 ">Holder requirements:</p>
         <ul className="flex flex-col gap-1 mt-3">
           <TokenRequirement
+            tokenSymbol={persona?.token?.symbol}
             tokenAmount={data}
             tokenNeeded={FARCASTER_POST}
             string="Post on Farcaster"
             isConnected={!!address && !isLoading}
           />
           <TokenRequirement
+            tokenSymbol={persona?.token?.symbol}
             tokenAmount={data}
             tokenNeeded={TWITTER_PROMOTE}
             string="Promote posts to X/Twitter"
             isConnected={!!address && !isLoading}
           />
           <TokenRequirement
+            tokenSymbol={persona?.token?.symbol}
             tokenAmount={data}
             tokenNeeded={DELETE_POST}
             string="Delete posts"
@@ -96,35 +110,35 @@ export default function ActionComponent() {
 
         <div className="flex flex-row gap-4 justify-end">
           <a
-            href="https://dexscreener.com/base/0xc4ecaf115cbce3985748c58dccfc4722fef8247c"
+            href={persona?.token?.dex_screener_url}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm decoration-dotted underline font-medium"
           >
             DEX Screener
           </a>
-          <a
+          {/* <a
             href="https://app.uniswap.org/swap?outputCurrency=0x0Db510e79909666d6dEc7f5e49370838c16D950f&chain=base"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm decoration-dotted underline font-medium"
           >
             Uniswap
-          </a>
-          <a
+          </a> */}
+          {/* <a
             href="https://github.com/Slokh/anoncast"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm decoration-dotted underline font-medium"
           >
             Github
-          </a>
+          </a> */}
         </div>
-      </div> */}
-      {/* {address && !isLoading ? (
+      </div>
+      {address && !isLoading ? (
         FARCASTER_POST > BALANCE ? (
           <a
-            href={`https://app.uniswap.org/swap?outputCurrency=${tokenAddress}&chain=base`}
+            href={`https://app.uniswap.org/swap?outputCurrency=${persona?.token?.address}&chain=base`}
             target="_blank"
             rel="noreferrer"
           >
@@ -135,11 +149,11 @@ export default function ActionComponent() {
             </div>
           </a>
         ) : (
-          
+          <></>
         )
       ) : (
         <></>
-      )} */}
+      )}
 
       <CreatePost />
       {createdCast && (
@@ -171,12 +185,14 @@ function SuccessCastLink({ castUrl }: { castUrl: string }) {
 }
 
 function TokenRequirement({
+  tokenSymbol,
   tokenAmount,
   tokenNeeded,
   oldTokenNeeded,
   string,
   isConnected,
 }: {
+  tokenSymbol: string | undefined;
   tokenAmount: bigint | undefined;
   tokenNeeded: bigint;
   oldTokenNeeded?: bigint;
@@ -205,7 +221,7 @@ function TokenRequirement({
             <span>{"  "}</span>
           </>
         )}
-        {`${tokenNeeded.toLocaleString()} $ANON: ${string}`}
+        {`${tokenNeeded.toLocaleString()} ${tokenSymbol}: ${string}`}
       </p>
     </li>
   );
