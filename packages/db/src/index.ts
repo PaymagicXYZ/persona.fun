@@ -6,7 +6,8 @@ import { getAddress } from "viem";
 const personaSelect = `
       id, 
       name, 
-      fid, 
+      fid,
+      eliza_character,
       image_url, 
       token:token_id (
         id,

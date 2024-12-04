@@ -70,7 +70,7 @@ import { clankerWebhookRoutes } from "./routes/clanker-webhook";
       }
     );
 
-  app.listen(3001);
+  app.listen(3002);
 
   console.log(
     `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`

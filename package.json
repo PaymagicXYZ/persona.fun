@@ -5,7 +5,9 @@
   "packageManager": "bun@1.1.39",
   "scripts": {
     "build": "bun run --filter '**' build",
+    "gen-types": "bun run --filter @persona/db generate",
     "next:dev": "bun run --filter @persona/next dev",
+    "eliza:dev": "bun run --filter @persona/eliza dev",
     "api:dev": "bun run --filter @persona/api dev",
     "api:start": "bun run --filter @persona/api start",
     "db:push": "bun run --filter @persona/db push",
