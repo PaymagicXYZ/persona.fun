@@ -6,12 +6,13 @@ WORKDIR /app
 COPY ../../package.json ../../bun.lockb ../../turbo.json ./
 
 # Create necessary directories
-RUN mkdir -p apps/eliza packages/db packages/utils
+RUN mkdir -p apps/eliza packages/db packages/utils packages/circuits
 
 # Copy package files
 COPY ./package.json ./apps/eliza/
 COPY ../../packages/db/package.json ./packages/db/
 COPY ../../packages/utils/package.json ./packages/utils/
+COPY ../../packages/circuits/package.json ./packages/circuits/
 
 # Install dependencies
 RUN bun install
@@ -19,6 +20,7 @@ RUN bun install
 # Copy source code
 COPY ../../packages/db ./packages/db
 COPY ../../packages/utils ./packages/utils
+COPY ../../packages/circuits ./packages/circuits
 COPY ./ ./apps/eliza
 
 # Build packages
