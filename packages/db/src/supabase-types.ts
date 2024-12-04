@@ -110,6 +110,7 @@ export type Database = {
           base_scan_url: string
           chain_id: number
           created_at: string
+          decimals: number
           delete_amount: string
           dex_screener_url: string
           id: number
@@ -125,6 +126,7 @@ export type Database = {
           base_scan_url: string
           chain_id?: number
           created_at?: string
+          decimals?: number
           delete_amount?: string
           dex_screener_url: string
           id?: number
@@ -140,6 +142,7 @@ export type Database = {
           base_scan_url?: string
           chain_id?: number
           created_at?: string
+          decimals?: number
           delete_amount?: string
           dex_screener_url?: string
           id?: number

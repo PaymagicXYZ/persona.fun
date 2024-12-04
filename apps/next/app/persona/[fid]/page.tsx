@@ -1,12 +1,8 @@
 "use client";
 
 import ActionComponent from "@/components/action";
-import { useCreatePost } from "@/components/create-post/context";
 import PostFeed from "@/components/post-feed";
 import usePersona from "@/hooks/use-persona";
-import { personas } from "@/lib/api/personas";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
 
 export default function Page({ params }: { params: { fid: string } }) {
   const fid = parseInt(params.fid);

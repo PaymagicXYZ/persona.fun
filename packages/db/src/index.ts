@@ -64,7 +64,7 @@ export async function getSignerForAddress(address: string) {
   return data;
 }
 
-export async function getTokenConfig(tokenAddress: string) {
+export async function getToken(tokenAddress: string) {
   const { data, error } = await supabase
     .from("tokens")
     .select("*")
@@ -76,6 +76,18 @@ export async function getTokenConfig(tokenAddress: string) {
     throw error;
   }
 
+  return data;
+}
+
+export async function getTokens() {
+  const { data, error } = await supabase
+    .from("tokens")
+    .select(
+      "address, name, symbol, supply, post_amount, delete_amount, promote_amount, decimals"
+    );
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
