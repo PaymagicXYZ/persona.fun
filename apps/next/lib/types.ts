@@ -599,8 +599,17 @@ export type ValidateFrameResponse = {
 export interface UploadImageResponse {
   success: boolean;
   status: number;
-  data?: {
-    link: string;
-  };
+  url: string;
   error?: string;
+}
+
+export interface TokenResponse {
+  address: string;
+  name: string;
+  symbol: string;
+  supply: number;
+  post_amount: string;
+  delete_amount: string;
+  promote_amount: string;
+  decimals: number;
 }

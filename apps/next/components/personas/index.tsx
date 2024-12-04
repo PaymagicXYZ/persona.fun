@@ -1,18 +1,18 @@
-import { useQuery } from '@tanstack/react-query'
-import Image from 'next/image'
-import { useCreatePost } from '../create-post/context'
-import { personas } from '@/lib/api/personas'
-import Link from 'next/link'
-import type { Persona } from '@/lib/types/persona'
-import { useRouter } from 'next/navigation'
-import { formatEther } from 'viem'
+import { useQuery } from "@tanstack/react-query";
+import Image from "next/image";
+import { useCreatePost } from "../create-post/context";
+import { personasApi } from "@/lib/api/personas";
+import Link from "next/link";
+import type { Persona } from "@/lib/types/persona";
+import { useRouter } from "next/navigation";
+import { formatEther } from "viem";
 
 export default function Personas() {
   const { data } = useQuery({
-    queryKey: ['personas'],
-    queryFn: personas.getPersonas,
-  })
-  const { setPersona } = useCreatePost()
+    queryKey: ["personas"],
+    queryFn: personasApi.getPersonas,
+  });
+  const { setPersona } = useCreatePost();
 
   // const mockData = [
   //   ...(data ?? []),
@@ -28,22 +28,22 @@ export default function Personas() {
         <PersonaCard key={e.id} persona={e} setPersona={setPersona} />
       ))}
     </div>
-  )
+  );
 }
 
 function PersonaCard({
   persona,
   setPersona,
 }: {
-  persona: Persona
-  setPersona: (persona: Persona) => void
+  persona: Persona;
+  setPersona: (persona: Persona) => void;
 }) {
-  const router = useRouter()
+  const router = useRouter();
 
   const handleCardClick = (persona: Persona) => {
-    setPersona(persona)
-    router.push(`/persona/${persona.fid}`)
-  }
+    setPersona(persona);
+    router.push(`/persona/${persona.fid}`);
+  };
 
   return (
     <div
@@ -55,7 +55,7 @@ function PersonaCard({
       onClick={() => handleCardClick(persona)}
     >
       {/* Card Content */}
-      <div className="relative w-full" style={{ paddingBottom: '75%' }}>
+      <div className="relative w-full" style={{ paddingBottom: "75%" }}>
         <Image
           src={persona.image_url}
           alt="market-image"
@@ -70,37 +70,40 @@ function PersonaCard({
       <PersonaTokenRequirements persona={persona} />
       <PersonaFooterLinks persona={persona} />
     </div>
-  )
+  );
 }
 
 function PersonaTokenRequirements({ persona }: { persona: Persona }) {
   return (
     <div className="flex-1 space-y-4 w-full">
-      <h4 className="text-white font-extralight mb-3 text-xl">Required Tokens</h4>
+      <h4 className="text-white font-extralight mb-3 text-xl">
+        Required Tokens
+      </h4>
       <div className="space-y-2 text-gray-300">
         <div className="flex justify-between items-center text-[#9A9A9A]">
           <span>Post:</span>
           <span className="font-mono">
-            {formatEther(BigInt(persona.token?.post_amount ?? 0))} {persona.token?.symbol}
+            {formatEther(BigInt(persona.token?.post_amount ?? 0))}{" "}
+            {persona.token?.symbol}
           </span>
         </div>
         <div className="flex justify-between items-center text-[#9A9A9A]">
           <span>Delete:</span>
           <span className="font-mono">
-            {formatEther(BigInt(persona.token?.delete_amount ?? 0))}{' '}
+            {formatEther(BigInt(persona.token?.delete_amount ?? 0))}{" "}
             {persona.token?.symbol}
           </span>
         </div>
         <div className="flex justify-between items-center text-[#9A9A9A]">
           <span>Promote:</span>
           <span className="font-mono">
-            {formatEther(BigInt(persona.token?.promote_amount ?? 0))}{' '}
+            {formatEther(BigInt(persona.token?.promote_amount ?? 0))}{" "}
             {persona.token?.symbol}
           </span>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function PersonaFooterLinks({ persona }: { persona: Persona }) {
@@ -108,14 +111,14 @@ function PersonaFooterLinks({ persona }: { persona: Persona }) {
     <div className="w-full">
       <div className="flex flex-col gap-3">
         <Link
-          href={persona.token?.base_scan_url ?? ''}
+          href={persona.token?.base_scan_url ?? ""}
           target="_blank"
           className="flex items-center justify-center px-3 py-2 text-sm font-medium text-[#CD52D7] bg-[#2B112E] rounded-lg hover:bg-[#331537] transition-colors"
         >
           Basescan
         </Link>
         <Link
-          href={persona.token?.dex_screener_url ?? ''}
+          href={persona.token?.dex_screener_url ?? ""}
           target="_blank"
           className="flex items-center justify-center px-3 py-2 text-sm font-medium text-[#CD52D7] bg-[#2B112E] rounded-lg hover:bg-[#331537] transition-colors"
         >
@@ -123,5 +126,5 @@ function PersonaFooterLinks({ persona }: { persona: Persona }) {
         </Link>
       </div>
     </div>
-  )
+  );
 }

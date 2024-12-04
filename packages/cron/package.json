@@ -13,6 +13,7 @@
     "update-merkle-tree": "bun run src/update-merkle-tree.ts"
   },
   "dependencies": {
+    "@persona/db": "*",
     "@persona/utils": "*",
     "@farcaster/hub-nodejs": "^0.12.7",
     "ioredis": "^5.4.1"

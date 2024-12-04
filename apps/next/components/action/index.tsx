@@ -15,7 +15,7 @@ export default function ActionComponent() {
   const { createdCast, persona } = useCreatePost();
   const { address } = useAccount();
   const { data, isLoading } = useBalance(persona?.token?.address);
-  console.log(persona);
+
   const BALANCE = data ? data / BigInt(10 ** 18) : BigInt(0);
   const FARCASTER_POST =
     BigInt(persona?.token?.post_amount ?? 0) / BigInt(10 ** 18);
@@ -26,21 +26,8 @@ export default function ActionComponent() {
   const DELETE_POST =
     BigInt(persona?.token?.delete_amount ?? 0) / BigInt(10 ** 18);
 
-  console.log("BALANCE", BALANCE);
-  console.log("FARCASTER POST", FARCASTER_POST);
-  console.log("TWITTER PROMOTE", TWITTER_PROMOTE);
-  console.log("DELETE POST", DELETE_POST);
-
   return (
     <Alert className="flex flex-col gap-4 bg-zinc-900 border border-zinc-700 top-20">
-      <AlertDescription>
-        <p className="text-zinc-400">
-          Posts are made anonymous using zk proofs. Due to the complex
-          calculations required, it could take up to a few minutes. Do not post
-          porn, doxes, shills, or threats. This is not about censorship
-          resistance - it&apos;s about great anonymous posts.
-        </p>
-      </AlertDescription>
       <AlertTitle className="font-semibold text-xl">
         Post anonymously to Farcaster and X/Twitter
       </AlertTitle>
