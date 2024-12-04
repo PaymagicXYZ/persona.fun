@@ -8,6 +8,8 @@ export default function Home() {
     <div className="flex flex-col gap-8">
       <Banner />
       <Personas />
+      {/* <ActionComponent /> */}
+      {/* <PostFeed tokenAddress={ANON_ADDRESS} /> */}
     </div>
   );
 }
