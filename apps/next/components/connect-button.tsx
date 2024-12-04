@@ -2,9 +2,6 @@
 
 import { ConnectButton as RainbowConnectButton } from "@rainbow-me/rainbowkit";
 import { Button } from "./ui/button";
-import { useBalance } from "@/hooks/use-balance";
-import { formatEther } from "viem";
-import { ANON_ADDRESS } from "@persona/utils/src/config";
 
 export const ConnectButton = () => {
   return (
@@ -75,28 +72,3 @@ export const ConnectButton = () => {
     </RainbowConnectButton.Custom>
   );
 };
-
-function Balance() {
-  const { data } = useBalance(ANON_ADDRESS);
-
-  const amount = parseFloat(formatEther(data ?? BigInt(0)));
-
-  return (
-    <div className="text-md font-bold bg-white text-black pl-3 pr-2">
-      {`${formatNumber(amount)} ANON`}
-    </div>
-  );
-}
-
-function formatNumber(num: number) {
-  if (num >= 1e9) {
-    return `${(num / 1e9).toFixed(2)}B`;
-  }
-  if (num >= 1e6) {
-    return `${(num / 1e6).toFixed(2)}M`;
-  }
-  if (num >= 1e3) {
-    return `${(num / 1e3).toFixed(2)}K`;
-  }
-  return num.toFixed(2);
-}

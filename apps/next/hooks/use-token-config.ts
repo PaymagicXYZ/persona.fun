@@ -1,14 +1,10 @@
 import { api } from "@/lib/api";
-import { tokenConfig } from "@/lib/api/token-config";
+import { tokensApi } from "@/lib/api/tokens";
 import { useQuery } from "@tanstack/react-query";
 
-export default function useTokenConfig({
-  tokenAddress,
-}: {
-  tokenAddress: string;
-}) {
-  const { data } = useQuery({
-    queryKey: ["token-config", tokenAddress],
-    queryFn: () => tokenConfig.getTokenConfig({ tokenAddress }),
+export default function useToken({ tokenAddress }: { tokenAddress: string }) {
+  return useQuery({
+    queryKey: ["token", tokenAddress],
+    queryFn: () => tokensApi.getToken({ tokenAddress }),
   });
 }

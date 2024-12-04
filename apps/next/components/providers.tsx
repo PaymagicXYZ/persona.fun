@@ -7,7 +7,6 @@ import { WagmiProvider } from "wagmi";
 import { base } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
-import { ANON_ADDRESS } from "@persona/utils/src/config";
 import { CreatePostProvider } from "./create-post/context";
 
 const config = getDefaultConfig({

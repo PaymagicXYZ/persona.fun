@@ -245,11 +245,11 @@ function UploadImage() {
         throw new Error(response.error.message);
       }
 
-      if (!response.data?.data?.link) {
+      if (!response.data?.url) {
         throw new Error("Invalid response format");
       }
 
-      setImage(response.data.data.link);
+      setImage(response.data.url);
       setError(null);
 
       if (fileInputRef.current) {

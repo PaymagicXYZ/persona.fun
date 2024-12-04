@@ -80,6 +80,7 @@ export const CreatePostProvider = ({ children }: { children: ReactNode }) => {
     setState({ status: "signature" });
     try {
       const embeds = [image, embed].filter((e) => e !== null) as string[];
+
       const input = {
         text,
         embeds,
