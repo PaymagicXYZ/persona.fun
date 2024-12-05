@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "start": "node --loader ts-node/esm src/index.ts",
+    "start": "bun run build && node --loader ts-node/esm src/index.ts",
     "build": "tsup --format esm --dts",
     "dev": "bun run build && node --loader ts-node/esm src/index.ts",
     "start:service:all": "pm2 start pnpm --name=\"all\" --restart-delay=3000 --max-restarts=10 -- run start:all",
