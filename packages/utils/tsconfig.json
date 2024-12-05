@@ -4,6 +4,7 @@
 	  "module": "ESNext",
 	  "moduleResolution": "Bundler",
 	  "esModuleInterop": true,
+	  "resolveJsonModule": true,                        /* Enable importing .json files. */
 	  "strict": true,
 	  "skipLibCheck": true,
 	  "baseUrl": ".",
