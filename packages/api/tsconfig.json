@@ -8,7 +8,7 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@persona/*": ["../../packages/*/src"]
+      "@persona/*": ["../*/src"]
     }
   },
   "include": ["src"]

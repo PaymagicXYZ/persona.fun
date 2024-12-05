@@ -30,6 +30,7 @@ COPY turbo.json .
 COPY tsconfig.json .
 
 # Copy workspace packages
+COPY packages/api ./packages/api
 COPY packages/db ./packages/db
 COPY packages/circuits ./packages/circuits
 COPY packages/utils ./packages/utils
