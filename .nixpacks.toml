@@ -5,7 +5,7 @@ nixPkgs = ['bun']
 cmds = ['bun install --frozen-lockfile']
 
 [phases.build]
-cmds = ['cd apps/eliza && bun run build']
+cmds = ['bun run railway:build']
 
 [start]
 cmd = 'cd apps/eliza && bun run start'
