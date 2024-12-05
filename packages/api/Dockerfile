@@ -15,6 +15,10 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
+# Set Python environment
+ENV PYTHON=python3
+ENV NODE_GYP_FORCE_PYTHON=python3
+
 # Install bun
 RUN curl -fsSL https://bun.sh/install | bash
 ENV PATH="/root/.bun/bin:${PATH}"
@@ -26,19 +30,16 @@ COPY turbo.json .
 COPY tsconfig.json .
 
 # Copy workspace packages
-COPY packages/api ./packages/api
 COPY packages/db ./packages/db
 COPY packages/utils ./packages/utils
-COPY packages/circuits ./packages/circuits
-
-# Install dependencies
+# Install dependencies using bun (exactly as we do locally)
 RUN bun install
 
-# Build packages using root script
+# Build packages in the same order as our railway:build script
 RUN bun run railway:build:api
 
-# Set working directory to api package
-WORKDIR /app/packages/api
+# Set working directory to eliza app
+WORKDIR /app/apps/api
 
-# Start the API
-CMD ["bun", "run", "start"] 
+# Use the same start command as in package.json
+CMD ["node", "--experimental-modules", "--es-module-specifier-resolution=node", "dist/index.js"]
