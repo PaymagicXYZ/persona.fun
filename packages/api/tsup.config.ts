@@ -23,7 +23,8 @@ export default defineConfig({
       "@persona/utils/proofs": "../../packages/utils/dist/proofs",
       "@persona/utils/merkle-tree": "../../packages/utils/dist/merkle-tree",
       "@persona/utils": "../../packages/utils/dist",
-      "@persona/db": "../../packages/db/dist"
+      "@persona/db": "../../packages/db/dist",
+      "@persona/db/config": "../../packages/db/dist/config"
     }
   }
 }); 

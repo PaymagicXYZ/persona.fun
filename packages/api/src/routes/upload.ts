@@ -1,5 +1,5 @@
 import { type Elysia, t } from "elysia";
-import { supabase } from "@persona/db/src/config";
+import { supabase } from "@persona/db/config";
 
 // Define the upload model schema
 const UploadModel = t.Object({
