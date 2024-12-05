@@ -2,6 +2,12 @@ FROM node:23.3.0-slim
 
 WORKDIR /app
 
+# Install curl and other required packages
+RUN apt-get update && apt-get install -y \
+    curl \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy package files
 COPY package.json bun.lockb ./
 COPY apps/eliza/package.json ./apps/eliza/
