@@ -31,11 +31,5 @@
   "devDependencies": {
     "bun-types": "latest"
   },
-  "module": "src/index.js",
-  "peerDependencies": {
-    "@supabase/supabase-js": "^2.46.1"
-  },
-  "optionalDependencies": {
-    "@persona/circuits": "*"
-  }
+  "module": "src/index.js"
 }
