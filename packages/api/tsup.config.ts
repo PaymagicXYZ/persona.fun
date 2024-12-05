@@ -7,12 +7,15 @@ export default defineConfig({
   clean: true,
   sourcemap: true,
   minify: true,
-  bundle:true,
+  bundle: true,
   splitting: false,
   treeshake: true,
   platform: 'node',
   target: 'node23',
-  noExternal: ["@persona/*"],
+  noExternal: [
+    "@persona/*",
+    "ioredis"
+  ],
   esbuildOptions: (options) => {
     options.alias = {
       "@persona/utils/proofs": "../../packages/utils/dist/proofs",

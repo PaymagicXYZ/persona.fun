@@ -14,5 +14,6 @@ export default defineConfig({
   splitting: true,
   treeshake: true,
   platform: 'node',
-  target: 'node23'
+  target: 'node23',
+  noExternal: ["ioredis"]
 }); 
