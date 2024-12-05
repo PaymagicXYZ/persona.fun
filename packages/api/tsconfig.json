@@ -1,15 +1,16 @@
 {
-  "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": ".",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "types": ["node"]
-  },
-  "ts-node": {
-    "experimentalSpecifierResolution": "node",
-    "transpileOnly": true,
-    "esm": true
-  },
-  "include": ["src"]
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"esModuleInterop": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"noTypeCheck": true,
+		"outDir": "dist",
+		"declaration": true,
+		"allowJs": true
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist"]
 }
