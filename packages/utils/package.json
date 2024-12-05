@@ -18,7 +18,9 @@
     "@noir-lang/backend_barretenberg": "^0.17.0",
     "@noir-lang/noir_js": "^0.17.0",
     "circomlibjs": "^0.1.7",
-    "ioredis": "^5.4.1",
-    "viem": "^2.21.48"
+    "ioredis": "^5.4.1"
+  },
+  "devDependencies": {
+    "@types/circomlibjs": "^0"
   }
 }
