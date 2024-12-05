@@ -8,7 +8,16 @@ RUN apt-get update && apt-get install -y \
     curl \
     unzip \
     git \
+    python3 \
+    python3-pip \
+    make \
+    g++ \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
+
+# Set Python environment
+ENV PYTHON=python3
+ENV NODE_GYP_FORCE_PYTHON=python3
 
 # Install bun
 RUN curl -fsSL https://bun.sh/install | bash
