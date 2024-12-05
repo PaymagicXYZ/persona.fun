@@ -1,11 +1,11 @@
 {
   "name": "@persona/eliza",
   "version": "0.1.1",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "start": "node --loader ts-node/esm dist/index.js",
-    "build": "tsup --format esm --dts src/index.ts --out-dir dist",
+    "start": "node dist/index.js",
+    "build": "tsup src/index.ts --format esm --dts --out-dir dist",
     "dev": "bun run build && node --loader ts-node/esm src/index.ts",
     "start:service:all": "pm2 start pnpm --name=\"all\" --restart-delay=3000 --max-restarts=10 -- run start:all",
     "stop:service:all": "pm2 stop all",
@@ -46,7 +46,7 @@
     "yargs": "17.7.2"
   },
   "engines": {
-    "node": "23.3.0"
+    "node": ">=18.0.0"
   },
   "devDependencies": {
     "ts-node": "10.9.2",
