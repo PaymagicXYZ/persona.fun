@@ -18,7 +18,6 @@
     "@farcaster/hub-nodejs": "^0.12.7",
     "@noir-lang/backend_barretenberg": "^0.17.0",
     "@noir-lang/noir_js": "^0.17.0",
-    "@persona/circuits": "*",
     "@persona/db": "*",
     "@persona/utils": "*",
     "@supabase/supabase-js": "^2.46.1",
@@ -35,5 +34,8 @@
   "module": "src/index.js",
   "peerDependencies": {
     "@supabase/supabase-js": "^2.46.1"
+  },
+  "optionalDependencies": {
+    "@persona/circuits": "*"
   }
 }

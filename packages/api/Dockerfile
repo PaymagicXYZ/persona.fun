@@ -1,9 +1,9 @@
-# Use Node 23.3.0 as base (keeping consistent with eliza)
+# Use Node 23.3.0 as base
 FROM node:23.3.0-slim
 
 WORKDIR /app
 
-# Install required packages
+# Install required packages including curl for bun installation
 RUN apt-get update && apt-get install -y \
     curl \
     unzip \
@@ -19,34 +19,26 @@ RUN apt-get update && apt-get install -y \
 RUN curl -fsSL https://bun.sh/install | bash
 ENV PATH="/root/.bun/bin:${PATH}"
 
-# Create necessary directories
-RUN mkdir -p packages/api packages/db packages/utils packages/circuits
-
-# Copy root workspace files
-COPY ../../package.json /app/
-COPY ../../bun.lockb /app/
-COPY ../../turbo.json /app/
-COPY ../../tsconfig.json /app/
-
-# Copy required packages
-COPY . /app/packages/api/
-COPY ../db/ /app/packages/db/
-COPY ../utils/ /app/packages/utils/
-COPY ../circuits/ /app/packages/circuits/
+# Copy root workspace files first
+COPY package.json bun.lockb ./
+COPY apps/eliza/package.json ./apps/eliza/
+COPY packages/db/package.json ./packages/db/
+COPY packages/utils/package.json ./packages/utils/
 
 # Install dependencies
 RUN bun install
 
-# Build packages
-RUN cd packages/db && bun run build
-RUN cd packages/utils && bun run build
-RUN cd packages/api && bun run build
+# Now copy the source code
+COPY tsconfig.json .
+COPY apps/eliza ./apps/eliza
+COPY packages/db ./packages/db
+COPY packages/utils ./packages/utils
+
+# Build packages in the same order as our railway:build script
+RUN bun run railway:build
 
 # Set working directory to api package
 WORKDIR /app/packages/api
-
-# Expose the port your API runs on
-EXPOSE 3000
 
 # Start the API
 CMD ["bun", "run", "start"] 
