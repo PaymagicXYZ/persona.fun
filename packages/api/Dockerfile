@@ -31,6 +31,7 @@ COPY tsconfig.json .
 
 # Copy workspace packages
 COPY packages/api ./packages/api
+COPY packages/queue ./packages/queue
 COPY packages/db ./packages/db
 COPY packages/circuits ./packages/circuits
 COPY packages/utils ./packages/utils
