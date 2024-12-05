@@ -6,6 +6,9 @@
     "packages/*"
   ],
   "packageManager": "bun@1.1.39",
+  "engines": {
+    "node": "23.3.0"
+  },
   "scripts": {
     "build": "bun run --filter '**' build",
     "railway:build": "cd packages/db && bun run build && cd ../../apps/eliza && bun run build",
