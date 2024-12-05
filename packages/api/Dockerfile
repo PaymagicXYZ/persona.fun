@@ -42,7 +42,7 @@ RUN bun install
 RUN bun run railway:build:api
 
 # Set working directory to eliza app
-WORKDIR /app/apps/api
+WORKDIR /app/packages/api
 
 # Use the same start command as in package.json
 CMD ["node", "--experimental-modules", "--es-module-specifier-resolution=node", "dist/index.js"]
