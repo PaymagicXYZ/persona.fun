@@ -4,8 +4,8 @@ import {
   buildHoldersTree,
   getTree,
   setTree,
-} from "@persona/utils";
-import { ProofType } from "@persona/utils/src/proofs";
+} from "@persona/utils/merkle-tree";
+import { ProofType } from "@persona/utils/proofs";
 import { getToken, getTokens } from "@persona/db";
 
 const CRON_SECRET = process.env.CRON_SECRET;

@@ -14,8 +14,10 @@ export default defineConfig({
   noExternal: ["@persona/*"],
   esbuildOptions: (options) => {
     options.alias = {
-      "@persona/utils": "../../packages/utils/src",
-      "@persona/db": "../../packages/db/src"
+      "@persona/utils/proofs": "../../packages/utils/dist/proofs",
+      "@persona/utils/merkle-tree": "../../packages/utils/dist/merkle-tree",
+      "@persona/utils": "../../packages/utils/dist",
+      "@persona/db": "../../packages/db/dist"
     }
   }
 }); 
