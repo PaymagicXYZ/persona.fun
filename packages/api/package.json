@@ -12,7 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts",
     "start": "bun run src/index.ts",
-    "build": "cd ../db && bun run build && cd ../utils && bun run build && cd ../api && bun run build"
+    "railway:build:api": "cd ../db && bun run build && cd ../utils && bun run build && cd ../api && bun run build"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.1.1",
