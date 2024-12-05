@@ -20,22 +20,26 @@ RUN curl -fsSL https://bun.sh/install | bash
 ENV PATH="/root/.bun/bin:${PATH}"
 
 # Copy root workspace files first
-COPY package.json bun.lockb ./
-COPY apps/eliza/package.json ./apps/eliza/
-COPY packages/db/package.json ./packages/db/
-COPY packages/utils/package.json ./packages/utils/
+COPY ../../package.json /app/
+COPY ../../bun.lockb /app/
+COPY ../../tsconfig.json /app/
+
+# Copy package.json files
+COPY . /app/packages/api/
+COPY ../db/package.json /app/packages/db/
+COPY ../utils/package.json /app/packages/utils/
 
 # Install dependencies
 RUN bun install
 
-# Now copy the source code
-COPY tsconfig.json .
-COPY apps/eliza ./apps/eliza
-COPY packages/db ./packages/db
-COPY packages/utils ./packages/utils
+# Copy source code
+COPY ../db /app/packages/db/
+COPY ../utils /app/packages/utils/
 
-# Build packages in the same order as our railway:build script
-RUN bun run railway:build
+# Build packages
+RUN cd /app/packages/db && bun run build
+RUN cd /app/packages/utils && bun run build
+RUN cd /app/packages/api && bun run build
 
 # Set working directory to api package
 WORKDIR /app/packages/api
