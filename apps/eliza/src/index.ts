@@ -41,121 +41,8 @@ export const wait = (minTime = 1000, maxTime = 3000) => {
   return new Promise((resolve) => setTimeout(resolve, waitTime))
 }
 
-export function parseArguments(): {
-  character?: string
-  characters?: string
-} {
-  try {
-    return yargs(process.argv.slice(3))
-      .option('character', {
-        type: 'string',
-        description: 'Path to the character JSON file',
-      })
-      .option('characters', {
-        type: 'string',
-        description: 'Comma separated list of paths to character JSON files',
-      })
-      .parseSync()
-  } catch (error) {
-    elizaLogger.error('Error parsing arguments:', error)
-    return {}
-  }
-}
-
-function tryLoadFile(filePath: string): string | null {
-  try {
-    return fs.readFileSync(filePath, 'utf8')
-  } catch (e) {
-    return null
-  }
-}
-
 function isAllStrings(arr: unknown[]): boolean {
   return Array.isArray(arr) && arr.every((item) => typeof item === 'string')
-}
-
-export async function loadCharacters(charactersArg: string): Promise<Character[]> {
-  let characterPaths = charactersArg?.split(',').map((filePath) => filePath.trim())
-  const loadedCharacters = []
-
-  if (characterPaths?.length > 0) {
-    for (const characterPath of characterPaths) {
-      let content = null
-      let resolvedPath = ''
-
-      // Try different path resolutions in order
-      const pathsToTry = [
-        characterPath, // exact path as specified
-        path.resolve(process.cwd(), characterPath), // relative to cwd
-        path.resolve(process.cwd(), 'agent', characterPath), // Add this
-        path.resolve(__dirname, characterPath), // relative to current script
-        path.resolve(__dirname, 'characters', path.basename(characterPath)), // relative to agent/characters
-        path.resolve(__dirname, '../characters', path.basename(characterPath)), // relative to characters dir from agent
-        path.resolve(__dirname, '../../characters', path.basename(characterPath)), // relative to project root characters dir
-      ]
-
-      elizaLogger.info(
-        'Trying paths:',
-        pathsToTry.map((p) => ({
-          path: p,
-          exists: fs.existsSync(p),
-        }))
-      )
-
-      for (const tryPath of pathsToTry) {
-        content = tryLoadFile(tryPath)
-        if (content !== null) {
-          resolvedPath = tryPath
-          break
-        }
-      }
-
-      if (content === null) {
-        elizaLogger.error(
-          `Error loading character from ${characterPath}: File not found in any of the expected locations`
-        )
-        elizaLogger.error('Tried the following paths:')
-        for (const p of pathsToTry) {
-          elizaLogger.error(` - ${p}`)
-        }
-        process.exit(1)
-      }
-
-      try {
-        // const character = JSON.parse(content)
-        const characterData = await getPersonaByFid(893055)
-        const character = characterData?.eliza_character as unknown as Character
-        console.log('Character:', character)
-        // const character = elizaCharacter as Character
-        validateCharacterConfig(character)
-
-        // Handle plugins
-        if (isAllStrings(character.plugins)) {
-          elizaLogger.info('Plugins are: ', character.plugins)
-          const importedPlugins = await Promise.all(
-            character.plugins.map(async (plugin) => {
-              const importedPlugin = await import(plugin as unknown as string)
-              return importedPlugin.default
-            })
-          )
-          character.plugins = importedPlugins
-        }
-
-        loadedCharacters.push(character)
-        elizaLogger.info(`Successfully loaded character from: ${resolvedPath}`)
-      } catch (e) {
-        elizaLogger.error(`Error parsing character from ${resolvedPath}: ${e}`)
-        process.exit(1)
-      }
-    }
-  }
-
-  if (loadedCharacters.length === 0) {
-    elizaLogger.info('No characters found, using default character')
-    loadedCharacters.push(defaultCharacter)
-  }
-
-  return loadedCharacters
 }
 
 export function getTokenForProvider(provider: ModelProviderName, character: Character) {
@@ -384,15 +271,12 @@ async function startAgent(character: Character, directClient) {
 
 const startAgents = async () => {
   const directClient = await DirectClientInterface.start()
-  const args = parseArguments()
 
-  let charactersArg = args.characters || args.character
-
-  let characters = [defaultCharacter]
-
-  if (charactersArg) {
-    characters = await loadCharacters(charactersArg)
-  }
+  // Directly load characters from Supabase
+  const characterData = await getPersonaByFid(893055)
+  const character = characterData?.eliza_character as unknown as Character
+  console.log('Character:', character)
+  const characters = [character ?? defaultCharacter] // Replace with Supabase loading logic
 
   try {
     for (const character of characters) {
