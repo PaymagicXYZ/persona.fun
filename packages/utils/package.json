@@ -10,6 +10,7 @@
     "dist"
   ],
   "scripts": {
+    "start": "node --experimental-modules --es-module-specifier-resolution=node dist/index.js",
     "update-merkle-tree": "bun run src/update-merkle-tree.ts",
     "build": "tsup src/index.ts --format esm --dts --out-dir dist"
   },
