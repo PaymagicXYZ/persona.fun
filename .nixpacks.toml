@@ -1,6 +1,9 @@
 [phases.setup]
-nixPkgs = ['bun', 'nodejs_23']
-nodeVersion = "23.3.0"
+nixPkgs = ['bun', 'nodejs']
+env = [
+  { key = "NODE_VERSION", value = "23.3.0" },
+  { key = "USE_NODE_VERSION", value = "23.3.0" }
+]
 
 [phases.install]
 cmds = ['bun install --frozen-lockfile']
