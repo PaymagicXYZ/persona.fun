@@ -58,7 +58,7 @@ export async function getPersonas(): Promise<any> {
   return data || [];
 }
 
-export async function getPersonaByFid(fid: number): Promise<Persona | null> {
+export async function getPersonaByFid(fid: number): Promise<any | null> {
   const { data, error } = await supabase
     .from("personas")
     .select(personaSelect)
