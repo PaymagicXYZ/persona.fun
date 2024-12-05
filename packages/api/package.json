@@ -32,5 +32,8 @@
   "devDependencies": {
     "bun-types": "latest"
   },
-  "module": "src/index.js"
+  "module": "src/index.js",
+  "peerDependencies": {
+    "@supabase/supabase-js": "^2.46.1"
+  }
 }

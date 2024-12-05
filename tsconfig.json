@@ -5,6 +5,15 @@
     "moduleResolution": "Bundler",
     "esModuleInterop": true,
     "strict": true,
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@persona/*": ["packages/*/src"]
+    }
+  },
+  "references": [
+    { "path": "packages/db" },
+    { "path": "packages/utils" },
+    { "path": "packages/api" }
+  ]
 }

@@ -1,0 +1,12 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "packages/api/Dockerfile"
+
+[deploy]
+restartPolicyType = "on_failure"
+healthcheckPath = "/"
+healthcheckTimeout = 100
+
+# If you need to specify the port
+[deploy.env]
+PORT = "3000" 

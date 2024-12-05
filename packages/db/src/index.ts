@@ -273,3 +273,5 @@ export async function getPostReveals(castHashes: string[]) {
 }
 
 // export type { Persona };
+
+export * from './config'
