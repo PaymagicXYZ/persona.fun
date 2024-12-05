@@ -1,6 +1,5 @@
 import { createElysia } from "../utils";
 import { t } from "elysia";
-import { ProofType } from "@persona/utils/src/proofs";
 import { verifyMessage, zeroAddress } from "viem";
 import { CreatePostParams, SubmitHashParams } from "../services/types";
 import { neynar } from "../services/neynar";
@@ -14,9 +13,9 @@ import {
 } from "@persona/db";
 import { getQueue, QueueName } from "@persona/queue/src/utils";
 import { Noir } from "@noir-lang/noir_js";
-import { getValidRoots } from "@persona/utils/src/merkle-tree";
 import { augmentCasts } from "./feed";
 import { gpt } from "../services/gpt-service";
+import { getValidRoots, ProofType } from "@persona/utils";
 
 export function getPostRoutes(
   createPostBackend: Noir,
