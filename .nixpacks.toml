@@ -2,10 +2,13 @@
 nixPkgs = ['bun']
 
 [phases.install]
-cmds = ['cd apps/eliza && bun install']
+cmds = ['bun install']
 
 [phases.build]
-cmds = ['cd apps/eliza && bun run build']
+cmds = [
+  'bun run build',
+  'cd apps/eliza && bun run build'
+]
 
 [start]
-cmd = 'cd apps/eliza && bun run dev' 
+cmd = 'cd apps/eliza && bun run start' 

@@ -1,9 +1,9 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd apps/eliza && bun install && bun run build"
+buildCommand = "bun install && bun run build && cd apps/eliza && bun run build"
 
 [deploy]
-startCommand = "cd apps/eliza && bun run dev"
+startCommand = "cd apps/eliza && bun run start"
 healthcheckPath = "/"
 healthcheckTimeout = 100
 restartPolicyType = "on_failure" 
