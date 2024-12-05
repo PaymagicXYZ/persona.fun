@@ -32,7 +32,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import yargs from 'yargs'
 import { character as defaultCharacter } from './character'
-import { getPersonaByFid, type Persona } from '@persona/db'
+import { getPersonaByFid } from '@persona/db'
 const __filename = fileURLToPath(import.meta.url) // get the resolved path to the file
 const __dirname = path.dirname(__filename) // get the name of the directory
 

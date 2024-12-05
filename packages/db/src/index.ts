@@ -1,29 +1,29 @@
 import "dotenv/config";
 
 import { supabase } from "./config";
-import type { Database } from "./supabase-types";
+import type { Database, Tables } from "./supabase-types";
 import { getAddress } from "viem";
 
-interface Persona {
-  id: string;
-  name: string;
-  fid: number;
-  eliza_character: unknown;
-  image_url: string;
-  token?: {
-    id: string;
-    address: string;
-    name: string;
-    symbol: string;
-    supply: string;
-    image_url: string;
-    post_amount: number;
-    delete_amount: number;
-    promote_amount: number;
-    base_scan_url: string;
-    dex_screener_url: string;
-  } | null;
-}
+// interface Persona {
+//   id: string;
+//   name: string;
+//   fid: number;
+//   eliza_character: unknown;
+//   image_url: string;
+//   token?: {
+//     id: string;
+//     address: string;
+//     name: string;
+//     symbol: string;
+//     supply: string;
+//     image_url: string;
+//     post_amount: number;
+//     delete_amount: number;
+//     promote_amount: number;
+//     base_scan_url: string;
+//     dex_screener_url: string;
+//   } | null;
+// }
 
 const personaSelect = `
       id, 
@@ -46,7 +46,7 @@ const personaSelect = `
       )
     `;
 
-export async function getPersonas(): Promise<Persona[]> {
+export async function getPersonas(): Promise<any> {
   const { data, error } = await supabase
     .from("personas")
     .select(personaSelect);
@@ -272,4 +272,4 @@ export async function getPostReveals(castHashes: string[]) {
   return data;
 }
 
-export type { Persona };
+// export type { Persona };
