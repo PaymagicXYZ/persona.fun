@@ -27,7 +27,7 @@ COPY packages/utils ./packages/utils
 COPY packages/circuits ./packages/circuits
 
 # Install dependencies using bun (exactly as we do locally)
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # Build packages in the same order as our railway:build script
 RUN bun run railway:build
