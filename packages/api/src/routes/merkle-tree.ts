@@ -4,7 +4,7 @@ import {
   buildHoldersTree,
   getTree,
   setTree,
-} from "@persona/utils/src/merkle-tree";
+} from "@persona/utils";
 import { ProofType } from "@persona/utils/src/proofs";
 import { getToken, getTokens } from "@persona/db";
 

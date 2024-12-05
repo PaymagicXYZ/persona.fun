@@ -11,4 +11,11 @@ export default defineConfig({
   treeshake: true,
   platform: 'node',
   target: 'node23',
+  noExternal: ["@persona/*"],
+  esbuildOptions: (options) => {
+    options.alias = {
+      "@persona/utils": "../../packages/utils/src",
+      "@persona/db": "../../packages/db/src"
+    }
+  }
 }); 

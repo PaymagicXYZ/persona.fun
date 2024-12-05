@@ -1,4 +1,5 @@
-import type { ProofType, Tree } from "@persona/utils/src/proofs";
+// import type { ProofType, Tree } from "@persona/utils/src/proofs";
+import { ProofType, Tree } from "@persona/utils";
 import type {
   Cast,
   Channel,
