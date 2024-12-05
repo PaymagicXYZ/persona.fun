@@ -3,11 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "types": "./src",
-  "main": "src/index.ts",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
   "files": ["types", "dist"],
   "scripts": {
-    "build": "tsc",
+    "build": "tsup src/index.ts --format esm --dts --out-dir dist",
     "push": "drizzle-kit push",
     "generate": "supabase gen types typescript --project-id 'vaepovydothqawempmsn' --schema public > src/supabase-types.ts"
   },
@@ -20,6 +20,8 @@
   "devDependencies": {
     "@types/pg": "^8.11.10",
     "drizzle-kit": "^0.27.1",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
     "tsx": "^4.19.2"
   }
 }
