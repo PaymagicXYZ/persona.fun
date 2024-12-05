@@ -20,16 +20,16 @@ RUN curl -fsSL https://bun.sh/install | bash
 ENV PATH="/root/.bun/bin:${PATH}"
 
 # Copy root workspace files
-COPY package.json .
-COPY bun.lockb .
-COPY turbo.json .
-COPY tsconfig.json .
+COPY ../../package.json .
+COPY ../../bun.lockb .
+COPY ../../turbo.json .
+COPY ../../tsconfig.json .
 
 # Copy required packages
-COPY packages/api ./packages/api
-COPY packages/db ./packages/db
-COPY packages/utils ./packages/utils
-COPY packages/circuits ./packages/circuits
+COPY . ./packages/api
+COPY ../db ./packages/db
+COPY ../utils ./packages/utils
+COPY ../circuits ./packages/circuits
 
 # Install dependencies
 RUN bun install
