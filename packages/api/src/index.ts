@@ -5,10 +5,11 @@ import { merkleTreeRoutes } from "./routes/merkle-tree";
 import { getPostRoutes } from "./routes/post";
 import { uploadRoutes } from "./routes/upload";
 import { neynar } from "./services/neynar";
-import { getProvingBackend, ProofType } from "@persona/utils/src/proofs";
+// import { getProvingBackend, ProofType } from "@persona/utils/src/proofs";
 import { personaRoutes } from "./routes/personas";
 import { clankerWebhookRoutes } from "./routes/clanker-webhook";
 import { tokensRoutes } from "./routes/tokens";
+import { getProvingBackend, ProofType } from "@persona/utils";
 (async () => {
   const [createPostBackend, submitHashBackend] = await Promise.all([
     getProvingBackend(ProofType.CREATE_POST),
