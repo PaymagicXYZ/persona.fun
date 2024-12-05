@@ -29,6 +29,7 @@ COPY tsconfig.json .
 COPY packages/api ./packages/api
 COPY packages/db ./packages/db
 COPY packages/utils ./packages/utils
+COPY packages/circuits ./packages/circuits
 
 # Install dependencies
 RUN bun install
