@@ -31,6 +31,7 @@ COPY tsconfig.json .
 
 # Copy workspace packages
 COPY packages/db ./packages/db
+COPY packages/circuits ./packages/circuits
 COPY packages/utils ./packages/utils
 # Install dependencies using bun (exactly as we do locally)
 RUN bun install
