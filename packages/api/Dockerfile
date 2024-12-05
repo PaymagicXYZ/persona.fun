@@ -19,17 +19,20 @@ RUN apt-get update && apt-get install -y \
 RUN curl -fsSL https://bun.sh/install | bash
 ENV PATH="/root/.bun/bin:${PATH}"
 
+# Create necessary directories
+RUN mkdir -p packages/api packages/db packages/utils packages/circuits
+
 # Copy root workspace files
-COPY ../../package.json .
-COPY ../../bun.lockb .
-COPY ../../turbo.json .
-COPY ../../tsconfig.json .
+COPY ../../package.json /app/
+COPY ../../bun.lockb /app/
+COPY ../../turbo.json /app/
+COPY ../../tsconfig.json /app/
 
 # Copy required packages
-COPY . ./packages/api
-COPY ../db ./packages/db
-COPY ../utils ./packages/utils
-COPY ../circuits ./packages/circuits
+COPY . /app/packages/api/
+COPY ../db/ /app/packages/db/
+COPY ../utils/ /app/packages/utils/
+COPY ../circuits/ /app/packages/circuits/
 
 # Install dependencies
 RUN bun install
