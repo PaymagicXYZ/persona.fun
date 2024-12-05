@@ -4,6 +4,4 @@ buildCommand = "bun install && bun run railway:build"
 
 [deploy]
 startCommand = "cd apps/eliza && bun run start"
-healthcheckPath = "/"
-healthcheckTimeout = 100
 restartPolicyType = "on_failure" 
