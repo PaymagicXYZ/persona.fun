@@ -14,7 +14,9 @@ export default defineConfig({
   target: 'node23',
   noExternal: [
     "@persona/*",
-    "ioredis"
+    "ioredis",
+    "@supabase/supabase-js",
+    "dotenv"
   ],
   esbuildOptions: (options) => {
     options.alias = {

@@ -3,11 +3,19 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "types": "./src/index.ts",
+  "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
-  "files": ["types", "dist"],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --out-dir dist",
+    "build": "tsup",
     "push": "drizzle-kit push",
     "generate": "supabase gen types typescript --project-id 'vaepovydothqawempmsn' --schema public > src/supabase-types.ts"
   },
