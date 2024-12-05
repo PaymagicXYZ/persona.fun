@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ['bun']
+
+[phases.install]
+cmds = ['cd apps/eliza && bun install']
+
+[phases.build]
+cmds = ['cd apps/eliza && bun run build']
+
+[start]
+cmd = 'cd apps/eliza && bun run dev' 
