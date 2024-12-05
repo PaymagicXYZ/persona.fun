@@ -1,6 +1,6 @@
 import type { ProofData } from "@noir-lang/types";
-import createPostCircuit from "@persona/circuits/create-post/target/main.json"
-import submitHashCircuit from "@persona/circuits/submit-hash/target/main.json"
+import createPostCircuit from "@persona/circuits/create-post/target/main.json" with { type: 'json' };
+import submitHashCircuit from "@persona/circuits/submit-hash/target/main.json" with { type: 'json' };
 import { recoverPublicKey } from "viem";
 import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";  
 import { Noir } from "@noir-lang/noir_js";
