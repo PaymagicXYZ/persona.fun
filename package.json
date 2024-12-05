@@ -12,6 +12,7 @@
   "scripts": {
     "build": "bun run --filter '**' build",
     "railway:build": "cd packages/db && bun run build && cd ../../apps/eliza && bun run build",
+    "railway:build:api": "cd packages/db && bun run build && cd ../utils && bun run build && cd ../api && bun run build",
     "gen-types": "bun run --filter @persona/db generate",
     "next:dev": "bun run --filter @persona/next dev",
     "eliza:dev": "bun run --filter @persona/eliza dev",
