@@ -9,7 +9,6 @@
     "dist"
   ],
   "scripts": {
-    "update-trending": "bun run src/update-trending.ts",
     "update-merkle-tree": "bun run src/update-merkle-tree.ts"
   },
   "dependencies": {
@@ -20,6 +19,5 @@
   },
   "devDependencies": {
     "bun-types": "latest"
-  },
-  "module": "src/index.js"
+  }
 }

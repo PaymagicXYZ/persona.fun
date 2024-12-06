@@ -1,0 +1,10 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+restartPolicyType = "on_failure"
+startCommand = "bun run update-merkle-tree"
+
+[deploy.env]
+NODE_ENV = "production" 
