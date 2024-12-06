@@ -2,6 +2,7 @@
   "name": "@persona/cron",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "types": "./src",
   "main": "src/update-merkle-tree.ts",
   "files": ["types", "dist"],
