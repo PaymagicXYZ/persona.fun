@@ -11,7 +11,8 @@
     "baseUrl": ".",
     "types": ["node"],
     "paths": {
-      "@persona/*": ["../../packages/*/src"]
+      "@persona/*": ["../../packages/*/src"],
+      "@persona/db": ["../../packages/db/src/index.ts"]
     }
   },
   "ts-node": {
