@@ -12,5 +12,8 @@ export default defineConfig({
   platform: 'node',
   target: 'node23',
   shims: true,
-  external: ['@persona/db']
+  external: ['@persona/db'],
+  esbuildOptions(options) {
+    options.tsconfig = './tsconfig.json'
+  }
 })
