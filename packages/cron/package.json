@@ -2,14 +2,13 @@
   "name": "@persona/cron",
   "version": "0.0.1",
   "private": true,
-  "type": "module",
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index.js",
+  "types": "./src",
+  "main": "src/index.ts",
   "files": ["types", "dist"],
   "scripts": {
     "update-merkle-tree": "bun run src/update-merkle-tree.ts",
     "build": "tsup",
-    "railway:build": "bun run build",
+    "railway:build": "tsup src/index.ts --format esm --dts --out-dir dist",
     "start": "bun run update-merkle-tree"
   },
   "dependencies": {
