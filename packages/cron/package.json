@@ -8,7 +8,7 @@
   "scripts": {
     "update-merkle-tree": "bun run src/update-merkle-tree.ts",
     "start": "bun run update-merkle-tree",
-    "railway:build": "tsup src/index.ts --format esm --dts --out-dir dist"
+    "railway:build": "tsup src/update-merkle-tree.ts --format esm --dts --out-dir dist"
   },
   "dependencies": {
     "@persona/db": "*",
