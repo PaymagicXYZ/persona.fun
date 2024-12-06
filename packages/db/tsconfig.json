@@ -1,8 +1,15 @@
 {
-	"extends": "../../tsconfig.base",
-	"include": ["**/*.ts", "**/*.tsx"],
 	"compilerOptions": {
-		"composite": true
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"esModuleInterop": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"outDir": "dist",
+		"declaration": true,
+		"allowJs": true
 	},
-	"references": []
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist"]
 }

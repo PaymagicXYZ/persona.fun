@@ -33,7 +33,6 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import Confetti from "confetti-react";
 import { Checkbox } from "../ui/checkbox";
-import { Persona } from "@/lib/types/persona";
 
 const MAX_EMBEDS = 2;
 

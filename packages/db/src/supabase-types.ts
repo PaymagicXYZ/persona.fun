@@ -12,6 +12,7 @@ export type Database = {
       personas: {
         Row: {
           created_at: string
+          eliza_character: Json | null
           fc_profile: Json | null
           fid: number
           id: number
@@ -24,6 +25,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          eliza_character?: Json | null
           fc_profile?: Json | null
           fid: number
           id?: number
@@ -36,6 +38,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          eliza_character?: Json | null
           fc_profile?: Json | null
           fid?: number
           id?: number
@@ -118,7 +121,7 @@ export type Database = {
           name: string
           post_amount: string
           promote_amount: string
-          supply: number
+          supply: string
           symbol: string
         }
         Insert: {
@@ -134,7 +137,7 @@ export type Database = {
           name: string
           post_amount?: string
           promote_amount?: string
-          supply?: number
+          supply: string
           symbol: string
         }
         Update: {
@@ -150,7 +153,7 @@ export type Database = {
           name?: string
           post_amount?: string
           promote_amount?: string
-          supply?: number
+          supply?: string
           symbol?: string
         }
         Relationships: []

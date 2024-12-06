@@ -1,12 +1,35 @@
 import "dotenv/config";
 
 import { supabase } from "./config";
+import type { Database, Tables } from "./supabase-types";
 import { getAddress } from "viem";
+
+// interface Persona {
+//   id: string;
+//   name: string;
+//   fid: number;
+//   eliza_character: unknown;
+//   image_url: string;
+//   token?: {
+//     id: string;
+//     address: string;
+//     name: string;
+//     symbol: string;
+//     supply: string;
+//     image_url: string;
+//     post_amount: number;
+//     delete_amount: number;
+//     promote_amount: number;
+//     base_scan_url: string;
+//     dex_screener_url: string;
+//   } | null;
+// }
 
 const personaSelect = `
       id, 
       name, 
-      fid, 
+      fid,
+      eliza_character,
       image_url, 
       token:token_id (
         id,
@@ -23,16 +46,19 @@ const personaSelect = `
       )
     `;
 
-export async function getPersonas() {
-  const { data, error } = await supabase.from("personas").select(personaSelect);
-  console.log("error", error);
+export async function getPersonas(): Promise<any> {
+  const { data, error } = await supabase
+    .from("personas")
+    .select(personaSelect);
+
   if (error) {
     throw error;
   }
-  return data;
+
+  return data || [];
 }
 
-export async function getPersonaByFid(fid: number) {
+export async function getPersonaByFid(fid: number): Promise<any | null> {
   const { data, error } = await supabase
     .from("personas")
     .select(personaSelect)
@@ -245,3 +271,7 @@ export async function getPostReveals(castHashes: string[]) {
 
   return data;
 }
+
+// export type { Persona };
+
+export * from './config'
