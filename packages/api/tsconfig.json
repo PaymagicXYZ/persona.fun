@@ -5,11 +5,19 @@
     "moduleResolution": "Bundler",
     "esModuleInterop": true,
     "strict": true,
+    "outDir": "dist",
+    "rootDir": ".",
     "skipLibCheck": true,
     "baseUrl": ".",
+    "types": ["node"],
     "paths": {
       "@persona/*": ["../../packages/*/src"]
     }
+  },
+  "ts-node": {
+    "experimentalSpecifierResolution": "node",
+    "transpileOnly": true,
+    "esm": true
   },
   "include": ["src"]
 }

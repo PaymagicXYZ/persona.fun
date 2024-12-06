@@ -1,9 +1,9 @@
-# Use Node 23.3.0 as base (keeping consistent with eliza)
+# Use Node 23.3.0 as base
 FROM node:23.3.0-slim
 
 WORKDIR /app
 
-# Install required packages
+# Install required packages including curl for bun installation
 RUN apt-get update && apt-get install -y \
     curl \
     unzip \
@@ -25,25 +25,21 @@ COPY bun.lockb .
 COPY turbo.json .
 COPY tsconfig.json .
 
-# Copy required packages
+# Copy workspace packages
 COPY packages/api ./packages/api
+COPY packages/queue ./packages/queue
 COPY packages/db ./packages/db
-COPY packages/utils ./packages/utils
 COPY packages/circuits ./packages/circuits
+COPY packages/utils ./packages/utils
 
 # Install dependencies
 RUN bun install
 
-# Build packages
-RUN cd packages/db && bun run build
-RUN cd packages/utils && bun run build
-RUN cd packages/api && bun run build
+# Build packages using root script
+RUN bun run railway:build:api
 
 # Set working directory to api package
 WORKDIR /app/packages/api
-
-# Expose the port your API runs on
-EXPOSE 3000
 
 # Start the API
 CMD ["bun", "run", "start"] 

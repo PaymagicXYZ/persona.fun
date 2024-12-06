@@ -12,8 +12,9 @@
     }
   },
   "references": [
-    { "path": "packages/db" },
-    { "path": "packages/utils" },
-    { "path": "packages/api" }
+    { "path": "packages/db", "composite": true },
+    { "path": "packages/utils", "composite": true },
+    { "path": "packages/api", "composite": true },
+    { "path": "packages/circuits", "composite": true }
   ]
 }
