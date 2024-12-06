@@ -14,10 +14,5 @@
       "@persona/*": ["../../packages/*/src"],
       "@persona/db": ["../../packages/db/src/index.ts"]
     }
-  },
-  "ts-node": {
-    "experimentalSpecifierResolution": "node",
-    "transpileOnly": true,
-    "esm": true
   }
 }

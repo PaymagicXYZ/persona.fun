@@ -1,6 +1,6 @@
 import { buildHoldersTree, setTree } from "@persona/utils/src/merkle-tree";
 import { ProofType } from "@persona/utils/src/proofs";
-import { getTokens } from "@persona/db";
+import { getTokens } from "@persona/db/src/index";
 
 const BATCH_SIZE = 5;
 const BATCH_DELAY = 1000; // 1 second delay between batches
