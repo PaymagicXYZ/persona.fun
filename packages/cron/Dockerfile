@@ -34,6 +34,9 @@ COPY packages/circuits ./packages/circuits
 # Install dependencies
 RUN bun install
 
+# Build packages using root script
+RUN bun run railway:build:cron
+
 # Set working directory to cron package
 WORKDIR /app/packages/cron
 

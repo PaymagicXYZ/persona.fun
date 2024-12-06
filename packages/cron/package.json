@@ -9,7 +9,9 @@
     "dist"
   ],
   "scripts": {
-    "update-merkle-tree": "bun run src/update-merkle-tree.ts"
+    "update-merkle-tree": "bun run src/update-merkle-tree.ts",
+    "build": "tsup",
+    "railway:build": "bun run build"
   },
   "dependencies": {
     "@persona/db": "*",
@@ -18,6 +20,8 @@
     "ioredis": "^5.4.1"
   },
   "devDependencies": {
-    "bun-types": "latest"
+    "bun-types": "latest",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
   }
 }
