@@ -2,8 +2,9 @@
   "name": "@persona/cron",
   "version": "0.0.1",
   "private": true,
-  "types": "./src",
-  "main": "src/index.ts",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
   "files": ["types", "dist"],
   "scripts": {
     "update-merkle-tree": "bun run src/update-merkle-tree.ts",

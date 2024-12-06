@@ -34,11 +34,11 @@ COPY packages/circuits ./packages/circuits
 # Install dependencies
 RUN bun install
 
-# Build packages using root script
+# Build packages in correct order
 RUN bun run railway:build:cron
 
 # Set working directory to cron package
 WORKDIR /app/packages/cron
 
-# Run the update-merkle-tree script
-CMD ["bun", "run", "update-merkle-tree"] 
+# Run the update-merkle-tree script using the built version
+CMD ["node", "--experimental-modules", "--es-module-specifier-resolution=node", "dist/update-merkle-tree.js"] 

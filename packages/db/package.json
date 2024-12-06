@@ -7,7 +7,7 @@
   "main": "./dist/index.js",
   "files": ["types", "dist"],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --out-dir dist",
+    "build": "tsup",
     "push": "drizzle-kit push",
     "generate": "supabase gen types typescript --project-id 'vaepovydothqawempmsn' --schema public > src/supabase-types.ts"
   },
@@ -21,7 +21,6 @@
     "@types/pg": "^8.11.10",
     "drizzle-kit": "^0.27.1",
     "tsup": "^8.0.0",
-    "typescript": "^5.0.0",
-    "tsx": "^4.19.2"
+    "typescript": "^5.0.0"
   }
 }
