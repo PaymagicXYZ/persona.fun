@@ -19,6 +19,5 @@
     "experimentalSpecifierResolution": "node",
     "transpileOnly": true,
     "esm": true
-  },
-  "include": ["src"]
+  }
 }
