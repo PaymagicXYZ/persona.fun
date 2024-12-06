@@ -9,7 +9,8 @@
   "scripts": {
     "update-merkle-tree": "bun run src/update-merkle-tree.ts",
     "build": "tsup",
-    "railway:build": "bun run build"
+    "railway:build": "bun run build",
+    "start": "bun run update-merkle-tree"
   },
   "dependencies": {
     "@persona/db": "*",

@@ -41,4 +41,4 @@ RUN bun run railway:build:cron
 WORKDIR /app/packages/cron
 
 # Run the update-merkle-tree script using the built version
-CMD ["node", "--experimental-modules", "--es-module-specifier-resolution=node", "dist/update-merkle-tree.js"] 
+CMD ["bun", "run", "start"] 
