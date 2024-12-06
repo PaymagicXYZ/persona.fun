@@ -3,13 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "types": "./src",
-  "main": "src/index.ts",
+  "main": "src/update-merkle-tree.ts",
   "files": ["types", "dist"],
   "scripts": {
     "update-merkle-tree": "bun run src/update-merkle-tree.ts",
-    "build": "tsup",
-    "railway:build": "tsup src/index.ts --format esm --dts --out-dir dist",
-    "start": "bun run update-merkle-tree"
+    "start": "bun run update-merkle-tree",
+    "railway:build": "tsup src/index.ts --format esm --dts --out-dir dist"
   },
   "dependencies": {
     "@persona/db": "*",
