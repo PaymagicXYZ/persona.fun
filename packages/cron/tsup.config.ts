@@ -11,9 +11,5 @@ export default defineConfig({
   treeshake: true,
   platform: 'node',
   target: 'node23',
-  shims: true,
-  external: ['@persona/db'],
-  esbuildOptions(options) {
-    options.tsconfig = './tsconfig.json'
-  }
+  shims: true
 })
