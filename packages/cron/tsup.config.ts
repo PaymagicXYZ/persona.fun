@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup'
 
 export default defineConfig({
-  entry: ['src/update-merkle-tree.ts'],
+  entry: ['src/index.ts'],
   format: ['esm'],
   dts: true,
   clean: true,
