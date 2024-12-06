@@ -60,7 +60,7 @@ export const generateNeynarSignature = async (
   };
 };
 
-export const createFCAccount = async (body: { name: string }) => {
+export const createFCAccount = async (body: { fname: string }) => {
   const { fid } = await neynar.getFid();
   console.log("FID", fid);
   // Generate deadline (1 day from now)
@@ -68,7 +68,7 @@ export const createFCAccount = async (body: { name: string }) => {
   console.log("DEADLINE", deadline);
   // Generate signature using name and fid
   const { signature, custodyAddress, privateKey } =
-    await generateNeynarSignature(body.name, fid, deadline);
+    await generateNeynarSignature(body.fname, fid, deadline);
 
   // Prepare registration data
   const registrationData = {
@@ -76,7 +76,7 @@ export const createFCAccount = async (body: { name: string }) => {
     fid,
     requested_user_custody_address: custodyAddress,
     deadline,
-    fname: generateRandomId(),
+    fname: body.fname,
   };
 
   const response = await neynar.registerUser(registrationData);

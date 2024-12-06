@@ -1,7 +1,10 @@
 {
   "name": "persona",
   "private": true,
-  "workspaces": ["packages/*", "apps/*"],
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "packageManager": "bun@1.1.39",
   "scripts": {
     "build": "bun run --filter '**' build",

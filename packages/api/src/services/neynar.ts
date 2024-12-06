@@ -318,7 +318,7 @@ class NeynarService {
   async updateUser(params: {
     signer_uuid: string;
     display_name: string;
-    image_url: string;
+    image_url?: string;
   }) {
     return this.makeRequest("/farcaster/user", {
       method: "PATCH",
