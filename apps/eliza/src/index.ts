@@ -98,15 +98,15 @@ export function getTokenForProvider(provider: ModelProviderName, character: Char
 function initializeDatabase(dataDir: string) {
   if (
     process.env.SUPABASE_URL &&
-    process.env.SUPABASE_ANON_KEY &&
+    process.env.SUPABASE_SERVICE_ROLE_KEY &&
     process.env.RAILWAY_ENVIRONMENT_NAME === 'production'
   ) {
     elizaLogger.info('Initializing Supabase connection...')
     const db = new SupabaseDatabaseAdapter(
       process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
-
+    console.log('db', db)
     // Test the connection
     db.init()
       .then(() => {
