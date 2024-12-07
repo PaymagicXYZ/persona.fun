@@ -5,7 +5,7 @@ import { DirectClientInterface } from '@ai16z/client-direct'
 import { DiscordClientInterface } from '@ai16z/client-discord'
 import { TelegramClientInterface } from '@ai16z/client-telegram'
 import { TwitterClientInterface } from '@ai16z/client-twitter'
-import { FarcasterAgentClient } from "@ai16z/client-farcaster";
+import { FarcasterAgentClient } from '@ai16z/client-farcaster'
 import {
   AgentRuntime,
   CacheManager,
@@ -34,6 +34,7 @@ import { fileURLToPath } from 'node:url'
 import yargs from 'yargs'
 import { character as defaultCharacter } from './character'
 import { getPersonaByFid } from '@persona/db'
+import { SupabaseDatabaseAdapter } from '@ai16z/adapter-supabase'
 const __filename = fileURLToPath(import.meta.url) // get the resolved path to the file
 const __dirname = path.dirname(__filename) // get the name of the directory
 
@@ -95,12 +96,16 @@ export function getTokenForProvider(provider: ModelProviderName, character: Char
 }
 
 function initializeDatabase(dataDir: string) {
-  if (process.env.POSTGRES_URL) {
-    elizaLogger.info('Initializing PostgreSQL connection...')
-    const db = new PostgresDatabaseAdapter({
-      connectionString: process.env.POSTGRES_URL,
-      parseInputs: true,
-    })
+  if (
+    process.env.SUPABASE_URL &&
+    process.env.SUPABASE_ANON_KEY &&
+    process.env.NODE_ENV === 'production'
+  ) {
+    elizaLogger.info('Initializing Supabase connection...')
+    const db = new SupabaseDatabaseAdapter(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_ANON_KEY!
+    )
 
     // Test the connection
     db.init()
@@ -138,12 +143,12 @@ export async function initializeClients(character: Character, runtime: IAgentRun
     if (telegramClient) clients.push(telegramClient)
   }
 
-  if (clientTypes.includes("farcaster")) {
+  if (clientTypes.includes('farcaster')) {
     console.log('Starting Farcaster client')
-    const farcasterClients = new FarcasterAgentClient(runtime);
-    farcasterClients.start();
-    clients.push(farcasterClients);
-}
+    const farcasterClients = new FarcasterAgentClient(runtime)
+    farcasterClients.start()
+    clients.push(farcasterClients)
+  }
 
   if (clientTypes.includes('twitter')) {
     console.log('Starting Twitter client')
