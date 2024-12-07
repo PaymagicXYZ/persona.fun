@@ -1,2 +1,2 @@
-import './eliza'
-import './SupabaseAdapterV2'
+import './eliza.ts'
+import './SupabaseAdapterV2.ts'
