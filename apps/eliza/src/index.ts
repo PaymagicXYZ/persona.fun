@@ -35,6 +35,7 @@ import yargs from 'yargs'
 import { character as defaultCharacter } from './character'
 import { getPersonaByFid } from '@persona/db'
 import { SupabaseDatabaseAdapter } from '@ai16z/adapter-supabase'
+import { SupabaseAdapterV2 } from './SupabaseAdapterV2'
 const __filename = fileURLToPath(import.meta.url) // get the resolved path to the file
 const __dirname = path.dirname(__filename) // get the name of the directory
 
@@ -102,11 +103,11 @@ function initializeDatabase(dataDir: string) {
     process.env.RAILWAY_ENVIRONMENT_NAME === 'production'
   ) {
     elizaLogger.info('Initializing Supabase connection...')
-    const db = new SupabaseDatabaseAdapter(
+    const db = new SupabaseAdapterV2(
       process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
-    console.log('db', db)
+    // console.log('db', db)
     // Test the connection
     db.init()
       .then(() => {
