@@ -19,6 +19,7 @@
   "dependencies": {
     "@ai16z/adapter-postgres": "latest",
     "@ai16z/adapter-sqlite": "latest",
+    "@ai16z/adapter-supabase": "^0.1.5-alpha.5",
     "@ai16z/client-auto": "latest",
     "@ai16z/client-direct": "latest",
     "@ai16z/client-discord": "latest",
