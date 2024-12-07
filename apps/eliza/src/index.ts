@@ -5,6 +5,7 @@ import { DirectClientInterface } from '@ai16z/client-direct'
 import { DiscordClientInterface } from '@ai16z/client-discord'
 import { TelegramClientInterface } from '@ai16z/client-telegram'
 import { TwitterClientInterface } from '@ai16z/client-twitter'
+import { FarcasterAgentClient } from "@ai16z/client-farcaster";
 import {
   AgentRuntime,
   CacheManager,
@@ -136,6 +137,13 @@ export async function initializeClients(character: Character, runtime: IAgentRun
     const telegramClient = await TelegramClientInterface.start(runtime)
     if (telegramClient) clients.push(telegramClient)
   }
+
+  if (clientTypes.includes("farcaster")) {
+    console.log('Starting Farcaster client')
+    const farcasterClients = new FarcasterAgentClient(runtime);
+    farcasterClients.start();
+    clients.push(farcasterClients);
+}
 
   if (clientTypes.includes('twitter')) {
     console.log('Starting Twitter client')
