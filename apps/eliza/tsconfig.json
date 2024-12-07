@@ -11,5 +11,5 @@
     "transpileOnly": true,
     "esm": true
   },
-  "include": ["src"]
+  "include": ["src", "src/SupabaseAdapterV2.ts"]
 }
