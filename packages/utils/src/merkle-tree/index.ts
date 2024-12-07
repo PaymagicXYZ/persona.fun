@@ -58,6 +58,9 @@ async function fetchHolders(args: BuildTreeArgs) {
       "X-API-KEY": process.env.SIMPLEHASH_API_KEY ?? "",
     };
 
+    console.log("fetching holders URL: ", url);
+    console.log("fetching holders headers: ", headers);
+
     let retries = 5;
     let response;
 
@@ -66,6 +69,7 @@ async function fetchHolders(args: BuildTreeArgs) {
         response = await fetch(url, { headers });
 
         if (response.ok) break;
+        console.log("fetchHolders response: ", response);
         throw new Error(`HTTP error! status: ${response.status}`);
       } catch (error) {
         console.log("error in fetchHolders", error);
