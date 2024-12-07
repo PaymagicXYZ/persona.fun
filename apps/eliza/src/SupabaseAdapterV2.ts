@@ -44,4 +44,16 @@ export class SupabaseAdapterV2 extends SupabaseDatabaseAdapter {
 
     return data[0].id as UUID
   }
+
+  async addParticipant(userId: UUID, roomId: UUID): Promise<boolean> {
+    const { error } = await this.supabase
+        .from("participants")
+        .insert({ id: uuid(), userId: userId, roomId: roomId });
+
+    if (error) {
+        console.error(`Error adding participant: ${error.message}`);
+        return false;
+    }
+    return true;
+}
 }
