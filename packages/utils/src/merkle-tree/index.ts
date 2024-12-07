@@ -61,9 +61,6 @@ async function fetchHolders(args: BuildTreeArgs) {
     previousCursor = cursor
     const url = `${baseUrl}?fungible_id=base.${args.tokenAddress}${cursor ? `&cursor=${cursor}` : ''}`
 
-    console.log('fetching holders URL: ', url)
-    console.log('fetching holders headers: ', headers)
-
     let retries = 5
     let response
 
@@ -72,13 +69,11 @@ async function fetchHolders(args: BuildTreeArgs) {
         response = await fetch(url, { headers })
 
         if (response.ok) break
-        console.log('fetchHolders response: ', response)
         throw new Error(`HTTP error! status: ${response.status}`)
       } catch (error) {
-        console.log('error in fetchHolders', error)
         retries--
         if (retries === 0) throw error
-        const delay = parseInt(response?.headers.get('Retry-After') ?? '5')
+        const delay = Number.parseInt(response?.headers.get('Retry-After') ?? '5')
         console.log(`Retrying in ${delay} seconds...`)
         await new Promise((resolve) => setTimeout(resolve, delay * 1000))
       }
@@ -99,7 +94,6 @@ async function fetchHolders(args: BuildTreeArgs) {
       }
     }
 
-    console.log('res.next_cursor: ', res.next_cursor)
     cursor = res.next_cursor
 
     // If no more results or we've hit our minimum amount threshold
