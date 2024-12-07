@@ -3,6 +3,10 @@ import type { UUID } from '@ai16z/eliza'
 import { v4 as uuid } from 'uuid'
 
 export class SupabaseAdapterV2 extends SupabaseDatabaseAdapter {
+  constructor(url: string, key: string) {
+    super(url, key)
+  }
+
   async getRoom(roomId: UUID): Promise<UUID | null> {
     if (!roomId) {
       return null
