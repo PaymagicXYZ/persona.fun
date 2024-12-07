@@ -68,6 +68,7 @@ async function fetchHolders(args: BuildTreeArgs) {
         if (response.ok) break;
         throw new Error(`HTTP error! status: ${response.status}`);
       } catch (error) {
+        console.log("error in fetchHolders", error);
         retries--;
         if (retries === 0) throw error;
         const delay = parseInt(response?.headers.get("Retry-After") ?? "5");
