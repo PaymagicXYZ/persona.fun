@@ -12,4 +12,8 @@ export default defineConfig({
   platform: 'node',
   target: 'node23',
   shims: true,
+  external: [
+    'uuid',
+    // Add other modules you want to externalize
+  ],
 })
