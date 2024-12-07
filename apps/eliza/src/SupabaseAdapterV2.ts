@@ -1,5 +1,5 @@
 import { SupabaseDatabaseAdapter } from '@ai16z/adapter-supabase'
-import type { UUID } from '@ai16z/eliza'
+import type { Goal, UUID } from '@ai16z/eliza'
 import { v4 as uuid } from 'uuid'
 
 export class SupabaseAdapterV2 extends SupabaseDatabaseAdapter {
@@ -47,13 +47,35 @@ export class SupabaseAdapterV2 extends SupabaseDatabaseAdapter {
 
   async addParticipant(userId: UUID, roomId: UUID): Promise<boolean> {
     const { error } = await this.supabase
-        .from("participants")
-        .insert({ id: uuid(), userId: userId, roomId: roomId });
+      .from('participants')
+      .insert({ id: uuid(), userId: userId, roomId: roomId })
 
     if (error) {
-        console.error(`Error adding participant: ${error.message}`);
-        return false;
+      console.error(`Error adding participant: ${error.message}`)
+      return false
     }
-    return true;
-}
+    return true
+  }
+
+  async getGoals(params: {
+    roomId: UUID
+    userId?: UUID | null
+    onlyInProgress?: boolean
+    count?: number
+  }): Promise<Goal[]> {
+    const opts = {
+      query_room_id: params.roomId,
+      query_user_id: params.userId,
+      only_in_progress: params.onlyInProgress,
+      row_count: params.count,
+    }
+
+    const { data: goals, error } = await this.supabase.rpc('get_goals', opts)
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    return goals
+  }
 }
