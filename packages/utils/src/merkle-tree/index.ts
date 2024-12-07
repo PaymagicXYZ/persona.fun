@@ -59,7 +59,7 @@ async function fetchHolders(args: BuildTreeArgs) {
 
   while (currentPage < MAX_PAGES) {
     currentPage++
-    const url = `${baseUrl}?fungible_id=base.${args.tokenAddress}&limit=50${cursor ? `&cursor=${cursor}` : ""}`;
+    const url = `${baseUrl}?fungible_id=base.${args.tokenAddress}${cursor ? `&cursor=${cursor}` : ""}`;
 
     console.log("fetching holders URL: ", url);
     console.log("fetching holders headers: ", headers);
@@ -98,7 +98,7 @@ async function fetchHolders(args: BuildTreeArgs) {
         break;
       }
     }
-
+    console.log("res.next_cursor: ", res.next_cursor);
     cursor = res.next_cursor;
     if (!cursor || cursor === "" || shouldBreak) return owners
   }
