@@ -27,11 +27,11 @@ export class SupabaseAdapterV2 extends SupabaseDatabaseAdapter {
   }
 
   async createRoom(roomId?: UUID): Promise<UUID> {
-    roomId = roomId ?? (uuid() as UUID)
+    roomId = roomId || (uuid() as UUID)
     console.log('Creating room', roomId)
-    console.log('supabase instance', this.supabase)
+    console.log('supabase instance', this.supabase.schema('public'))
     const { data, error } = await this.supabase.rpc('create_room', {
-      roomId,
+      room_id: roomId,
     })
 
     if (error) {
