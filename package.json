@@ -30,6 +30,6 @@
     "queue:process-failed:promote-post": "bun run --filter @persona/queue process-failed:promote-post"
   },
   "devDependencies": {
-    "turbo": "^2.1.3"
+    "turbo": "^2.3.3"
   }
 }
