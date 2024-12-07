@@ -46,17 +46,20 @@ export async function buildHoldersTree(args: BuildTreeArgs) {
 }
 
 async function fetchHolders(args: BuildTreeArgs) {
-  const owners: Array<{ address: string; balance: string }> = [];
+  const owners: Array<{ address: string; balance: string }> = []
+  const baseUrl = `https://api.simplehash.com/api/v0/fungibles/top_wallets`
+  const headers = {
+    Accept: "application/json",
+    "X-API-KEY": process.env.SIMPLEHASH_API_KEY ?? ""
+  }
 
-  let cursor = "";
-  while (true) {
-    const url = `https://api.simplehash.com/api/v0/fungibles/top_wallets?fungible_id=base.${
-      args.tokenAddress
-    }&limit=50${cursor ? `&cursor=${cursor}` : ""}`;
-    const headers = {
-      Accept: "application/json",
-      "X-API-KEY": process.env.SIMPLEHASH_API_KEY ?? "",
-    };
+  const MAX_PAGES = 100 // Prevent infinite loops
+  let currentPage = 0
+  let cursor = ""
+
+  while (currentPage < MAX_PAGES) {
+    currentPage++
+    const url = `${baseUrl}?fungible_id=base.${args.tokenAddress}&limit=50${cursor ? `&cursor=${cursor}` : ""}`;
 
     console.log("fetching holders URL: ", url);
     console.log("fetching holders headers: ", headers);
@@ -97,12 +100,11 @@ async function fetchHolders(args: BuildTreeArgs) {
     }
 
     cursor = res.next_cursor;
-    if (!cursor || cursor === "" || shouldBreak) {
-      break;
-    }
+    if (!cursor || cursor === "" || shouldBreak) return owners
   }
 
-  return owners;
+  console.warn(`Reached maximum page limit (${MAX_PAGES}) while fetching holders`)
+  return owners
 }
 
 export async function getTree(
