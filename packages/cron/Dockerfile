@@ -28,6 +28,7 @@ COPY tsconfig.json .
 # Copy only the necessary packages
 COPY packages/cron ./packages/cron
 COPY packages/db ./packages/db
+COPY packages/queue ./packages/queue
 COPY packages/api ./packages/api
 COPY packages/utils ./packages/utils
 COPY packages/circuits ./packages/circuits
