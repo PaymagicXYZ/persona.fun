@@ -99,7 +99,7 @@ function initializeDatabase(dataDir: string) {
   if (
     process.env.SUPABASE_URL &&
     process.env.SUPABASE_ANON_KEY &&
-    process.env.NODE_ENV === 'production'
+    process.env.RAILWAY_ENVIRONMENT_NAME === 'production'
   ) {
     elizaLogger.info('Initializing Supabase connection...')
     const db = new SupabaseDatabaseAdapter(
