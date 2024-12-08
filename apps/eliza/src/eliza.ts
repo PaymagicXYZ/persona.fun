@@ -263,8 +263,9 @@ async function startAgent(character: Character, directClient) {
 
     await db.init()
 
-    const cache = intializeDbCache(character, db)
-    const runtime = createAgent(character, db, cache, token)
+    // TODO: Add cache
+    // const cache = intializeDbCache(character, db)
+    const runtime = createAgent(character, db, null, token)
 
     await runtime.initialize()
 
