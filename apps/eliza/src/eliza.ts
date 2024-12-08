@@ -101,17 +101,31 @@ function initializeDatabase(dataDir: string) {
     // biome-ignore lint/correctness/noConstantCondition: <explanation>
     process.env.SUPABASE_URL &&
     process.env.SUPABASE_SERVICE_ROLE_KEY &&
-    process.env.RAILWAY_ENVIRONMENT_NAME === 'production' &&
+    process.env.RAILWAY_ENVIRONMENT_NAME === 'production'
     // TODO: Remove this once we have a production database (postgres || supabase adapter)
-    false
+    // false
   ) {
     elizaLogger.info('Initializing Supabase connection...')
-    const db = new SupabaseAdapterV2(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
+    const db = new PostgresDatabaseAdapter({
+      connectionString: process.env.DATABASE_URL,
+      max: 20, // Connection pool size
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000,
+    })
+    // const db = new SupabaseAdapterV2(
+    //   process.env.SUPABASE_URL!,
+    //   process.env.SUPABASE_SERVICE_ROLE_KEY!
+    // )
     // console.log('db', db)
     // Test the connection
+    // Test connection
+    db.testConnection()
+      .then(() => {
+        elizaLogger.success('Successfully tested connection to PostgreSQL database')
+      })
+      .catch((error) => {
+        elizaLogger.error('Failed to connect to PostgreSQL:', error)
+      })
     db.init()
       .then(() => {
         elizaLogger.success('Successfully connected to PostgreSQL database')
