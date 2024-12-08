@@ -1,5 +1,5 @@
 import { SupabaseDatabaseAdapter } from '@ai16z/adapter-supabase'
-import type { Goal, UUID } from '@ai16z/eliza'
+import { elizaLogger, type Goal, type UUID } from '@ai16z/eliza'
 import { v4 as uuid } from 'uuid'
 
 export class SupabaseAdapterV2 extends SupabaseDatabaseAdapter {
@@ -77,5 +77,108 @@ export class SupabaseAdapterV2 extends SupabaseDatabaseAdapter {
     }
 
     return goals
+  }
+
+  async setCache(params: {
+    key: string;
+    agentId: UUID;
+    value: string;
+  }): Promise<boolean> {
+    try {
+      const { error } = await this.supabase
+        .from('cache')
+        .upsert(
+          {
+            key: params.key,
+            agentId: params.agentId,
+            value: params.value,
+            createdAt: new Date().toISOString()
+          },
+          {
+            onConflict: 'key,agentId'
+          }
+        );
+
+      if (error) {
+        elizaLogger.error("Error setting cache", {
+          error: error.message,
+          key: params.key,
+          agentId: params.agentId,
+        });
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      elizaLogger.error("Supabase error in setCache", {
+        error: error instanceof Error ? error.message : String(error),
+        key: params.key,
+        agentId: params.agentId,
+      });
+      return false;
+    }
+  }
+
+  async getCache(params: {
+    key: string;
+    agentId: UUID;
+  }): Promise<string | undefined> {
+    try {
+      const { data, error } = await this.supabase
+        .from('cache')
+        .select('value')
+        .eq('key', params.key)
+        .eq('agentId', params.agentId)
+        .maybeSingle();
+
+      if (error) {
+        elizaLogger.error("Error fetching cache", {
+          error: error.message,
+          key: params.key,
+          agentId: params.agentId,
+        });
+        return undefined;
+      }
+
+      return data?.value ?? undefined;
+    } catch (error) {
+      elizaLogger.error("Supabase error in getCache", {
+        error: error instanceof Error ? error.message : String(error),
+        key: params.key,
+        agentId: params.agentId,
+      });
+      return undefined;
+    }
+  }
+
+  async deleteCache(params: {
+    key: string;
+    agentId: UUID;
+  }): Promise<boolean> {
+    try {
+      const { error } = await this.supabase
+        .from('cache')
+        .delete()
+        .eq('key', params.key)
+        .eq('agentId', params.agentId);
+
+      if (error) {
+        elizaLogger.error("Error deleting cache", {
+          error: error.message,
+          key: params.key,
+          agentId: params.agentId,
+        });
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      elizaLogger.error("Supabase error in deleteCache", {
+        error: error instanceof Error ? error.message : String(error),
+        key: params.key,
+        agentId: params.agentId,
+      });
+      return false;
+    }
   }
 }
