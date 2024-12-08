@@ -98,9 +98,12 @@ export function getTokenForProvider(provider: ModelProviderName, character: Char
 
 function initializeDatabase(dataDir: string) {
   if (
+    // biome-ignore lint/correctness/noConstantCondition: <explanation>
     process.env.SUPABASE_URL &&
     process.env.SUPABASE_SERVICE_ROLE_KEY &&
-    process.env.RAILWAY_ENVIRONMENT_NAME === 'production'
+    process.env.RAILWAY_ENVIRONMENT_NAME === 'production' &&
+    // TODO: Remove this once we have a production database (postgres || supabase adapter)
+    false
   ) {
     elizaLogger.info('Initializing Supabase connection...')
     const db = new SupabaseAdapterV2(
