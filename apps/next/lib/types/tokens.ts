@@ -10,6 +10,7 @@ export interface TokenResponse {
   base_scan_url: string;
   dex_screener_url: string;
   uniswap_url: string;
+  pair_address: string;
 }
 
 export interface TokenDexScreenerResponse {
@@ -47,7 +48,7 @@ export interface ProcessedTokenData {
   symbol: string;
   marketCap: number;
   priceChangeDay: number;
-  tvl: number;
+  liquidity: number;
   volumeDay: number;
   pairCount: number;
   priceUsd: number;

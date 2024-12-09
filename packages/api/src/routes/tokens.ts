@@ -18,6 +18,8 @@ export const tokensRoutes = createElysia({ prefix: "/tokens" })
           ? query.tokenAddresses.split(",")
           : query.tokenAddresses;
 
+      console.log("tokenAddr", tokenAddresses);
+
       const cleanedAddresses = tokenAddresses
         .map((addr) => addr.trim())
         .filter(Boolean)
@@ -31,6 +33,8 @@ export const tokensRoutes = createElysia({ prefix: "/tokens" })
         "X-API-KEY": process.env.SIMPLEHASH_API_KEY ?? "",
       };
 
+      console.log(baseUrl);
+
       try {
         const response = await fetch(baseUrl, { headers });
         if (!response.ok) {
@@ -39,8 +43,14 @@ export const tokensRoutes = createElysia({ prefix: "/tokens" })
 
         const rawData = await response.json();
 
+        const data = rawData?.fungibles
+          ? rawData.fungibles
+          : rawData
+          ? [rawData]
+          : [];
+
         // Transform the response into a mapped object
-        const mappedResponse = rawData.fungibles.reduce(
+        const mappedResponse = data.reduce(
           (acc: { [key: string]: number }, token: any) => {
             const address = token.fungible_id.replace("base.", "");
             acc[address] = token.holder_count;

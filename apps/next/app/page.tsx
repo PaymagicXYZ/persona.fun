@@ -1,15 +1,16 @@
 "use client";
 
 import Banner from "@/components/banner";
+import TradingView from "@/components/dextools-chart-view";
 import Personas from "@/components/personas";
-import TradingView from "@/components/trading-view";
 
 export default function Home() {
   return (
     <div className="flex flex-col gap-8">
-      <TradingView />
-      {/*<Banner />
-      <Personas /> */}
+      {/* <TradingView /> */}
+
+      <Banner />
+      <Personas />
 
       {/* <ActionComponent /> */}
       {/* <PostFeed tokenAddress={ANON_ADDRESS} /> */}

@@ -25,11 +25,14 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { TokenResponse } from "@/lib/types/tokens";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useTokensOnChainData } from "@/hooks/use-tokens-on-chain-data";
+import { useTokenHolders } from "@/hooks/use-token-holders";
 
 type ProcessedTokenData = {
   marketCap?: number;
   priceChangeDay?: number;
-  tvl?: number;
+  liquidity?: number;
 };
 
 // Define the exact type that matches tableData
@@ -48,31 +51,32 @@ type TableDataType = {
 
 export default function Personas() {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const router = useRouter();
+
+  const handleRowClick = (fid: string) => {
+    router.push(`/persona/${fid}`);
+  };
+
+  const handleLinkClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
 
   const { data: personas } = useQuery({
     queryKey: ["personas"],
     queryFn: personasApi.getPersonas,
   });
 
-  const { data: tokenData } = useQuery({
-    queryKey: ["tokens"],
-    queryFn: () =>
-      tokensApi.getTokenDexScreenerData({
-        tokenAddresses:
-          personas?.map((persona) => persona.token?.address!) ?? [],
-      }),
-    enabled: !!personas,
+  const tokenData = useTokensOnChainData({
+    tokenAddresses:
+      personas?.map((persona) => persona.token?.address.toLowerCase()!) ?? [],
   });
 
-  const { data: tokenHoldersData } = useQuery({
-    queryKey: ["tokenHolders"],
-    queryFn: () =>
-      tokensApi.getTokenHolders({
-        tokenAddresses:
-          personas?.map((persona) => persona.token?.address!) ?? [],
-      }),
-    enabled: !!personas,
+  const tokenHoldersData = useTokenHolders({
+    tokenAddresses:
+      personas?.map((persona) => persona.token?.address.toLowerCase()!) ?? [],
   });
+
+  console.log(tokenHoldersData);
 
   const tableData = useMemo(() => {
     if (!personas) return [];
@@ -195,7 +199,7 @@ export default function Personas() {
       sortingFn: "basic",
     },
     {
-      id: "tvl",
+      id: "liquidity",
       header: ({ column }) => (
         <div
           className="flex items-center gap-1 cursor-pointer"
@@ -213,7 +217,7 @@ export default function Personas() {
           )}
         </div>
       ),
-      accessorFn: (row) => row.tokenData?.tvl ?? "-",
+      accessorFn: (row) => row.tokenData?.liquidity ?? "-",
       cell: ({ getValue }) => {
         const value = getValue();
         if (value === "-") return "-";
@@ -293,11 +297,12 @@ export default function Personas() {
       accessorFn: (row) => row.tokenHolders ?? "-",
       cell: ({ row }) => {
         return (
-          <div className="flex items-center space-x-4 h-[30px]">
+          <div className="flex items-center space-x-4">
             <Link
               href={row.original.fc_url ?? ""}
               target="_blank"
               className="flex items-center"
+              onClick={handleLinkClick}
             >
               <div className="w-[30px] h-[30px] relative">
                 <Image
@@ -313,6 +318,7 @@ export default function Personas() {
               href={row.original.token?.dex_screener_url ?? ""}
               target="_blank"
               className="flex items-center"
+              onClick={handleLinkClick}
             >
               <div className="w-[30px] h-[30px] relative">
                 <Image
@@ -328,6 +334,7 @@ export default function Personas() {
               href={row.original.token?.uniswap_url ?? ""}
               target="_blank"
               className="flex items-center"
+              onClick={handleLinkClick}
             >
               <div className="w-[30px] h-[30px] relative">
                 <Image
@@ -392,7 +399,8 @@ export default function Personas() {
         {table.getRowModel().rows.map((row) => (
           <TableRow
             key={row.id}
-            className="border-b border-[#232325] bg-[#131314]"
+            className="border-b border-[#232325] bg-[#131314] cursor-pointer"
+            onClick={() => handleRowClick(row.original.fid)}
           >
             {row.getVisibleCells().map((cell) => (
               <TableCell key={cell.id} className="p-4">
