@@ -1,4 +1,4 @@
-import { getSignerForAddress } from "@persona/db";
+import { getSignerForAddress, supabase } from "@persona/db";
 import crypto from "crypto";
 import { Redis } from "ioredis";
 import {
@@ -203,6 +203,13 @@ class NeynarService {
         success: false,
       };
     }
+
+    await supabase.from("posts").insert({
+      social_post_id: response.cast.hash,
+      persona_id: persona.persona_id,
+      platform: "farcaster",
+      post: response.cast,
+    });
 
     await redis.set(`post:hash:${hash}`, "true", "EX", 60 * 5);
 

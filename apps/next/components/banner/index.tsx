@@ -1,7 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import * as d3 from "d3";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { useAccount, useSignTypedData } from "wagmi";
+import { waitlistApi } from "@/lib/api/waitlist";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useMutation } from "@tanstack/react-query";
+import { useDebounce } from "use-debounce";
+import Image from "next/image";
 
 interface FloatingElement {
   id: string;
@@ -177,14 +192,185 @@ const Banner = () => {
           <p className="text-[#9a9a9a] text-2xl lg:text-[34px] leading-[45px] max-w-[600px]">
             You need 10M $ANON to create <br /> a new avatar
           </p>
-          <Button className="bg-[#C83FD3] w-[114px] h-[57px] hover:bg-[#C83FD3]/90 text-white text-2xl font-bold rounded-xl">
-            Create
-          </Button>
+          <WaitListModal />
         </div>
         <svg ref={svgRef} className="absolute inset-0 w-full h-full" />
       </div>
     </div>
   );
 };
+
+enum WaitlistView {
+  SignUp,
+  Success,
+}
+
+function WaitListModal() {
+  const [email, setEmail] = useState("");
+  const [view, setView] = useState<WaitlistView>(WaitlistView.SignUp);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) {
+      setView(WaitlistView.SignUp);
+      setEmail("");
+    }
+  }, [open]);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger className="bg-[#C83FD3] w-[114px] h-[57px] hover:bg-[#C83FD3]/90 text-white text-2xl font-bold rounded-xl">
+        Create
+      </DialogTrigger>
+      <DialogContent className="bg-[#141414] w-full">
+        <DialogHeader>
+          <DialogTitle className="font-bold text-3xl leading-9">
+            {view === WaitlistView.SignUp
+              ? "Create an intern"
+              : "Successfully signed up!"}
+          </DialogTitle>
+          <DialogDescription className="text-base font-medium leading-8">
+            {view === WaitlistView.SignUp
+              ? "Creating an intern is not opened up to all yet. Please sign up for the waitlist below"
+              : "You've successfully signed up for the waitlist. We'll notify you when the waitlist is open."}
+          </DialogDescription>
+        </DialogHeader>
+        {view === WaitlistView.SignUp && (
+          <SignUpView setView={setView} email={email} setEmail={setEmail} />
+        )}
+        {view === WaitlistView.Success && (
+          <SuccessView close={() => setOpen(false)} />
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+const types = {
+  WaitlistEntry: [{ name: "email", type: "string" }],
+} as const;
+
+const domain = {
+  name: "Interns.fun Waitlist",
+  version: "1",
+} as const;
+
+function SignUpView({
+  setView,
+  email,
+  setEmail,
+}: {
+  setView: (view: WaitlistView) => void;
+  email: string;
+  setEmail: (email: string) => void;
+}) {
+  const { address } = useAccount();
+  const [debouncedEmail] = useDebounce(email, 500);
+  const { signTypedDataAsync } = useSignTypedData();
+  const [emailError, setEmailError] = useState<string | null>(null);
+
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: (data: { signature: string; message: { email: string } }) =>
+      waitlistApi.addToWaitlist(data.signature, data.message),
+  });
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  useEffect(() => {
+    if (!debouncedEmail) {
+      setEmailError(null);
+      return;
+    }
+
+    setEmailError(
+      !validateEmail(debouncedEmail)
+        ? "Please enter a valid email address"
+        : null
+    );
+  }, [debouncedEmail]);
+
+  const handleSignup = async () => {
+    if (emailError) return;
+
+    try {
+      const message = {
+        email,
+      };
+
+      const signature = await signTypedDataAsync({
+        domain,
+        types,
+        primaryType: "WaitlistEntry",
+        message,
+      });
+
+      await mutateAsync({ signature, message: { email } });
+      setView(WaitlistView.Success);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  return (
+    <>
+      <div className="mt-6 space-y-1 relative">
+        <Label
+          htmlFor="email"
+          className="text-zinc-600 font-medium leading-tight"
+        >
+          Email
+        </Label>
+        <Input
+          id="email"
+          placeholder="Email"
+          className="py-6"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        {emailError && (
+          <Label className="text-red-500 text-sm mt-1 absolute">
+            {emailError}
+          </Label>
+        )}
+      </div>
+      {address ? (
+        <Button
+          disabled={isPending || Boolean(emailError) || !email}
+          onClick={handleSignup}
+          className="bg-[#C83FD3] mt-4 w-full hover:bg-[#C83FD3]/90 text-white text-base font-bold rounded-md py-6"
+        >
+          Sign up
+        </Button>
+      ) : (
+        <ConnectButton />
+      )}
+    </>
+  );
+}
+
+function SuccessView({ close }: { close: () => void }) {
+  return (
+    <div className="flex flex-col gap-10 items-center mt-6">
+      <div className="rounded-full bg-[#231f20] w-[286px] h-[286px] relative flex justify-center items-center overflow-hidden">
+        <Image
+          className="absolute bottom-[-10px]"
+          src="/xl-logo.svg"
+          alt="xl-logo"
+          width={210}
+          height={210}
+        />
+      </div>
+      <Button
+        onClick={close}
+        className="bg-[#C83FD3] w-full hover:bg-[#C83FD3]/90 text-white text-base font-bold rounded-md py-6"
+      >
+        Close
+      </Button>
+    </div>
+  );
+}
 
 export default Banner;

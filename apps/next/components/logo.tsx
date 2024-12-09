@@ -21,7 +21,7 @@ export function Logo() {
         height={39}
       />
       <Label className="text-[33.94px] leading-[33.94px] font-semibold cursor-pointer">
-        Persona.fun
+        Interns.fun
       </Label>
     </div>
   );

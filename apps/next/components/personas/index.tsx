@@ -1,130 +1,407 @@
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { useCreatePost } from "../create-post/context";
 import { personasApi } from "@/lib/api/personas";
-import Link from "next/link";
 import type { Persona } from "@/lib/types/persona";
-import { useRouter } from "next/navigation";
-import { formatEther } from "viem";
+import {
+  useReactTable,
+  ColumnDef,
+  getCoreRowModel,
+  flexRender,
+  getSortedRowModel,
+  SortingState,
+} from "@tanstack/react-table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Label } from "../ui/label";
+import { tokensApi } from "@/lib/api/tokens";
+import { formatNumber } from "@/lib/utils";
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { TokenResponse } from "@/lib/types/tokens";
+import { ChevronDown, ChevronUp } from "lucide-react";
+
+type ProcessedTokenData = {
+  marketCap?: number;
+  priceChangeDay?: number;
+  tvl?: number;
+};
+
+// Define the exact type that matches tableData
+type TableDataType = {
+  tokenData: ProcessedTokenData | undefined;
+  tokenHolders: any;
+  id: number;
+  name: string;
+  fid: string;
+  image_url: string;
+  token?: TokenResponse;
+  fc_url: string;
+  x_url: string;
+  post_count: number;
+};
 
 export default function Personas() {
-  const { data } = useQuery({
+  const [sorting, setSorting] = useState<SortingState>([]);
+
+  const { data: personas } = useQuery({
     queryKey: ["personas"],
     queryFn: personasApi.getPersonas,
   });
-  const { setPersona } = useCreatePost();
 
-  // const mockData = [
-  //   ...(data ?? []),
-  //   ...(data ?? []),
-  //   ...(data ?? []),
-  //   ...(data ?? []),
-  //   ...(data ?? []),
-  // ]
+  const { data: tokenData } = useQuery({
+    queryKey: ["tokens"],
+    queryFn: () =>
+      tokensApi.getTokenDexScreenerData({
+        tokenAddresses:
+          personas?.map((persona) => persona.token?.address!) ?? [],
+      }),
+    enabled: !!personas,
+  });
 
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-6 w-full max-w-[1920px] mx-auto cursor-pointer">
-      {data?.map((e) => (
-        <PersonaCard key={e.id} persona={e} setPersona={setPersona} />
-      ))}
-    </div>
-  );
-}
+  const { data: tokenHoldersData } = useQuery({
+    queryKey: ["tokenHolders"],
+    queryFn: () =>
+      tokensApi.getTokenHolders({
+        tokenAddresses:
+          personas?.map((persona) => persona.token?.address!) ?? [],
+      }),
+    enabled: !!personas,
+  });
 
-function PersonaCard({
-  persona,
-  setPersona,
-}: {
-  persona: Persona;
-  setPersona: (persona: Persona) => void;
-}) {
-  const router = useRouter();
+  const tableData = useMemo(() => {
+    if (!personas) return [];
 
-  const handleCardClick = (persona: Persona) => {
-    setPersona(persona);
-    router.push(`/persona/${persona.fid}`);
-  };
+    return personas.map((persona) => ({
+      ...persona,
+      tokenData: tokenData?.tokens?.[persona.token?.address?.toLowerCase()!],
+      tokenHolders: tokenHoldersData?.[persona.token?.address?.toLowerCase()!],
+    }));
+  }, [personas, tokenData, tokenHoldersData]);
 
-  return (
-    <div
-      key={persona.id}
-      className={`
-        relative flex flex-col items-center justify-center rounded-lg overflow-hidden
-        bg-[#1a1a1a] border border-[#333] h-fit p-4 gap-4
-      `}
-      onClick={() => handleCardClick(persona)}
-    >
-      {/* Card Content */}
-      <div className="relative w-full" style={{ paddingBottom: "75%" }}>
-        <Image
-          src={persona.image_url}
-          alt="market-image"
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover rounded-lg"
-        />
-      </div>
-      <h3 className="p-0 text-2xl font-semibold text-white left-0 text-left justify-self-start mr-auto">
-        {persona.name}
-      </h3>
-      <PersonaTokenRequirements persona={persona} />
-      <PersonaFooterLinks persona={persona} />
-    </div>
-  );
-}
+  console.log("tableData", tableData);
 
-function PersonaTokenRequirements({ persona }: { persona: Persona }) {
-  return (
-    <div className="flex-1 space-y-4 w-full">
-      <h4 className="text-white font-extralight mb-3 text-xl">
-        Required Tokens
-      </h4>
-      <div className="space-y-2 text-gray-300">
-        <div className="flex justify-between items-center text-[#9A9A9A]">
-          <span>Post:</span>
-          <span className="font-mono">
-            {formatEther(BigInt(persona.token?.post_amount ?? 0))}{" "}
-            {persona.token?.symbol}
-          </span>
+  const columns: ColumnDef<TableDataType>[] = [
+    {
+      header: "Intern Agent",
+      accessorKey: "name",
+      cell: ({ row }) => (
+        <div className="flex items-center space-x-2">
+          <div className="w-14 h-14 flex-shrink-0">
+            <Image
+              src={row.original.image_url}
+              alt={row.original.name}
+              width={59}
+              height={59}
+              className="rounded-full object-cover w-full h-full"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label className="text-gray-50 leading-snug text-lg font-medium uppercase">
+              {row.original.name}
+            </Label>
+            {/* <Label className="text-[#76787a] leading-snug text-sm">
+              ${row.original.token?.symbol}
+            </Label> */}
+          </div>
         </div>
-        <div className="flex justify-between items-center text-[#9A9A9A]">
-          <span>Delete:</span>
-          <span className="font-mono">
-            {formatEther(BigInt(persona.token?.delete_amount ?? 0))}{" "}
-            {persona.token?.symbol}
-          </span>
-        </div>
-        <div className="flex justify-between items-center text-[#9A9A9A]">
-          <span>Promote:</span>
-          <span className="font-mono">
-            {formatEther(BigInt(persona.token?.promote_amount ?? 0))}{" "}
-            {persona.token?.symbol}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
+      ),
+    },
+    {
+      header: "Ticker",
+      accessorFn: (row) => row.token?.symbol ?? "-",
+      cell: ({ getValue }) => {
+        const value = getValue();
+        if (value === "-") return "-";
 
-function PersonaFooterLinks({ persona }: { persona: Persona }) {
-  return (
-    <div className="w-full">
-      <div className="flex flex-col gap-3">
-        <Link
-          href={persona.token?.base_scan_url ?? ""}
-          target="_blank"
-          className="flex items-center justify-center px-3 py-2 text-sm font-medium text-[#CD52D7] bg-[#2B112E] rounded-lg hover:bg-[#331537] transition-colors"
+        return (
+          <Label className="text-gray-50 leading-snug text-lg font-medium uppercase">
+            {value as string}
+          </Label>
+        );
+      },
+    },
+    {
+      id: "market_cap",
+      header: ({ column }) => (
+        <div
+          className="flex items-center gap-1 cursor-pointer"
+          onClick={() =>
+            column.getIsSorted() === "asc"
+              ? column.toggleSorting(true)
+              : column.toggleSorting(false)
+          }
         >
-          Basescan
-        </Link>
-        <Link
-          href={persona.token?.dex_screener_url ?? ""}
-          target="_blank"
-          className="flex items-center justify-center px-3 py-2 text-sm font-medium text-[#CD52D7] bg-[#2B112E] rounded-lg hover:bg-[#331537] transition-colors"
+          Market Cap
+          {column.getIsSorted() === "asc" ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )}
+        </div>
+      ),
+      accessorFn: (row) => row.tokenData?.marketCap ?? "-",
+      cell: ({ getValue }) => {
+        const value = getValue();
+        if (value === "-") return "-";
+
+        return (
+          <Label className="text-gray-500 leading-snug text-lg font-medium uppercase">
+            ${formatNumber(value as number)}
+          </Label>
+        );
+      },
+      sortingFn: "basic",
+    },
+    {
+      id: "one_day_change",
+      header: ({ column }) => (
+        <div
+          className="flex items-center gap-1 cursor-pointer"
+          onClick={() =>
+            column.getIsSorted() === "asc"
+              ? column.toggleSorting(true)
+              : column.toggleSorting(false)
+          }
         >
-          Dexscreener
-        </Link>
-      </div>
-    </div>
+          1 Day Change
+          {column.getIsSorted() === "asc" ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )}
+        </div>
+      ),
+      accessorFn: (row) => row.tokenData?.priceChangeDay ?? "-",
+      cell: ({ getValue }) => {
+        const value = getValue();
+        if (value === "-") return "-";
+        const isPositive = (value as number) > 0;
+        return (
+          <Label
+            className={`text-gray-500 leading-snug text-lg font-medium uppercase ${
+              isPositive ? "text-green-500" : "text-red-500"
+            }`}
+          >
+            {(value as number).toFixed(2)}%
+          </Label>
+        );
+      },
+      sortingFn: "basic",
+    },
+    {
+      id: "tvl",
+      header: ({ column }) => (
+        <div
+          className="flex items-center gap-1 cursor-pointer"
+          onClick={() =>
+            column.getIsSorted() === "asc"
+              ? column.toggleSorting(true)
+              : column.toggleSorting(false)
+          }
+        >
+          Liquidity
+          {column.getIsSorted() === "asc" ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )}
+        </div>
+      ),
+      accessorFn: (row) => row.tokenData?.tvl ?? "-",
+      cell: ({ getValue }) => {
+        const value = getValue();
+        if (value === "-") return "-";
+        return (
+          <Label className="text-gray-500 leading-snug text-lg font-medium uppercase">
+            ${formatNumber(value as number)}
+          </Label>
+        );
+      },
+    },
+    {
+      id: "holder_count",
+      header: ({ column }) => (
+        <div
+          className="flex items-center gap-1 cursor-pointer"
+          onClick={() =>
+            column.getIsSorted() === "asc"
+              ? column.toggleSorting(true)
+              : column.toggleSorting(false)
+          }
+        >
+          Holders
+          {column.getIsSorted() === "asc" ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )}
+        </div>
+      ),
+      accessorFn: (row) => row.tokenHolders ?? "-",
+      cell: ({ getValue }) => {
+        const value = getValue() as number;
+        return value ? (
+          <Label className="text-gray-500 leading-snug text-lg font-medium uppercase">
+            {formatNumber(value)}
+          </Label>
+        ) : (
+          "-"
+        );
+      },
+      sortingFn: "basic",
+    },
+    {
+      id: "post_count",
+      header: ({ column }) => (
+        <div
+          className="flex items-center gap-1 cursor-pointer"
+          onClick={() =>
+            column.getIsSorted() === "asc"
+              ? column.toggleSorting(true)
+              : column.toggleSorting(false)
+          }
+        >
+          Posts
+          {column.getIsSorted() === "asc" ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )}
+        </div>
+      ),
+      accessorFn: (row) => row.post_count ?? "-",
+      cell: ({ getValue }) => {
+        const value = getValue() as number;
+        return value ? (
+          <Label className="text-gray-500 leading-snug text-lg font-medium uppercase">
+            {formatNumber(value)}
+          </Label>
+        ) : (
+          "-"
+        );
+      },
+      sortingFn: "basic",
+    },
+    {
+      header: "View",
+      accessorFn: (row) => row.tokenHolders ?? "-",
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center space-x-4 h-[30px]">
+            <Link
+              href={row.original.fc_url ?? ""}
+              target="_blank"
+              className="flex items-center"
+            >
+              <div className="w-[30px] h-[30px] relative">
+                <Image
+                  src="/farcaster.svg"
+                  alt="View"
+                  fill
+                  className="object-contain"
+                  sizes="30px"
+                />
+              </div>
+            </Link>
+            <Link
+              href={row.original.token?.dex_screener_url ?? ""}
+              target="_blank"
+              className="flex items-center"
+            >
+              <div className="w-[30px] h-[30px] relative">
+                <Image
+                  src="/dex-screener.svg"
+                  alt="View"
+                  fill
+                  className="object-contain"
+                  sizes="30px"
+                />
+              </div>
+            </Link>
+            <Link
+              href={row.original.token?.uniswap_url ?? ""}
+              target="_blank"
+              className="flex items-center"
+            >
+              <div className="w-[30px] h-[30px] relative">
+                <Image
+                  src="/uniswap.svg"
+                  alt="View"
+                  fill
+                  className="object-contain"
+                  sizes="30px"
+                />
+              </div>
+            </Link>
+          </div>
+        );
+      },
+    },
+    // {
+    //   header: "Lifetime Inferences",
+    //   accessorFn: (row) => row.token?.lifetime_inferences,
+    //   cell: ({ getValue }) => {
+    //     const value = getValue() as number;
+    //     return value ? formatNumber(value) : "-";
+    //   },
+    // },
+    // {
+    //   header: "Intelligence",
+    //   accessorFn: (row) => row.token?.intelligence,
+    // },
+  ];
+
+  const table = useReactTable({
+    data: tableData,
+    columns,
+    state: {
+      sorting,
+    },
+    getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    enableSorting: true,
+  });
+
+  return (
+    <Table className="min-w-full text-white rounded-lg overflow-hidden">
+      <TableHeader className="bg-[#222224]">
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow key={headerGroup.id}>
+            {headerGroup.headers.map((column) => (
+              <TableHead
+                key={column.id}
+                className="p-4 text-[#909499] font-semibold uppercase leading-[27px] text-base"
+              >
+                {flexRender(
+                  column.column.columnDef.header,
+                  column.getContext()
+                )}
+              </TableHead>
+            ))}
+          </TableRow>
+        ))}
+      </TableHeader>
+      <TableBody>
+        {table.getRowModel().rows.map((row) => (
+          <TableRow
+            key={row.id}
+            className="border-b border-[#232325] bg-[#131314]"
+          >
+            {row.getVisibleCells().map((cell) => (
+              <TableCell key={cell.id} className="p-4">
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }

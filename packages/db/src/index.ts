@@ -1,36 +1,16 @@
 import "dotenv/config";
 
 import { supabase } from "./config";
-import type { Database, Tables } from "./supabase-types";
 import { getAddress } from "viem";
-
-// interface Persona {
-//   id: string;
-//   name: string;
-//   fid: number;
-//   eliza_character: unknown;
-//   image_url: string;
-//   token?: {
-//     id: string;
-//     address: string;
-//     name: string;
-//     symbol: string;
-//     supply: string;
-//     image_url: string;
-//     post_amount: number;
-//     delete_amount: number;
-//     promote_amount: number;
-//     base_scan_url: string;
-//     dex_screener_url: string;
-//   } | null;
-// }
 
 const personaSelect = `
       id, 
       name, 
       fid,
       eliza_character,
-      image_url, 
+      image_url,
+      fc_url,
+      x_url,
       token:token_id (
         id,
         address,
@@ -42,20 +22,31 @@ const personaSelect = `
         delete_amount,
         promote_amount,
         base_scan_url,
-        dex_screener_url
+        dex_screener_url,
+        uniswap_url
       )
     `;
 
 export async function getPersonas(): Promise<any> {
-  const { data, error } = await supabase
+  const { data: personas, error: personasError } = await supabase
     .from("personas")
     .select(personaSelect);
 
-  if (error) {
-    throw error;
-  }
+  if (personasError) throw personasError;
 
-  return data || [];
+  // TODO: Build this as a rpc function...
+  // Get post counts for all personas
+  const postCounts = await Promise.all(
+    personas.map(async (persona) => {
+      const { data, error } = await supabase.rpc("get_persona_post_count", {
+        persona_id: persona.id,
+      });
+      if (error) throw error;
+      return { ...persona, post_count: data };
+    })
+  );
+
+  return postCounts || [];
 }
 
 export async function getPersonaByFid(fid: number): Promise<any | null> {
@@ -274,4 +265,4 @@ export async function getPostReveals(castHashes: string[]) {
 
 // export type { Persona };
 
-export * from './config'
+export * from "./config";
