@@ -23,7 +23,8 @@ const personaSelect = `
         promote_amount,
         base_scan_url,
         dex_screener_url,
-        uniswap_url
+        uniswap_url,
+        pair_address
       )
     `;
 
@@ -72,8 +73,6 @@ export async function getSignerForAddress(address: string) {
     .limit(1)
     .single();
 
-  console.log("data", data);
-  console.log("error", error);
   if (error) {
     throw error;
   }

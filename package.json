@@ -1,14 +1,13 @@
 {
   "name": "persona",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "packageManager": "bun@1.1.39",
+  "devDependencies": {
+    "turbo": "^2.3.3"
+  },
   "engines": {
     "node": "23.3.0"
   },
+  "packageManager": "bun@1.1.39",
+  "private": true,
   "scripts": {
     "build": "bun run --filter '**' build",
     "railway:build": "cd packages/db && bun run build && cd ../../apps/eliza && bun run build",
@@ -29,7 +28,8 @@
     "queue:process-failed": "bun run --filter @persona/queue process-failed",
     "queue:process-failed:promote-post": "bun run --filter @persona/queue process-failed:promote-post"
   },
-  "devDependencies": {
-    "turbo": "^2.3.3"
-  }
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }

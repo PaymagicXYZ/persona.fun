@@ -28,7 +28,7 @@ export function processTokenData(
         symbol: pair.baseToken.symbol,
         marketCap: 0,
         priceChangeDay: 0,
-        tvl: 0,
+        liquidity: 0,
         volumeDay: 0,
         pairCount: 0,
         priceUsd: parseFloat(pair.priceUsd) || 0,
@@ -37,13 +37,6 @@ export function processTokenData(
 
     const token = tokenData[tokenAddress];
     token.pairCount++;
-
-    if (
-      tokenAddress.toLowerCase() ===
-      "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
-    ) {
-      console.log(token, pair);
-    }
 
     token.marketCap = pair.marketCap;
 
@@ -60,7 +53,7 @@ export function processTokenData(
     token.priceChangeDay += pair.priceChange.h24 * liquidityWeight || 0;
 
     // Sum up TVL (liquidity) from all pairs
-    token.tvl += pair.liquidity.usd || 0;
+    token.liquidity += pair.liquidity.usd || 0;
 
     // Sum up 24h volume from all pairs
     token.volumeDay += pair.volume.h24 || 0;
@@ -71,7 +64,7 @@ export function processTokenData(
     const token = tokenData[address];
     token.marketCap = parseFloat(token.marketCap.toFixed(2));
     token.priceChangeDay = parseFloat(token.priceChangeDay.toFixed(2));
-    token.tvl = parseFloat(token.tvl.toFixed(2));
+    token.liquidity = parseFloat(token.liquidity.toFixed(2));
     token.volumeDay = parseFloat(token.volumeDay.toFixed(2));
   });
 

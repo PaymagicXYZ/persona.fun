@@ -47,6 +47,7 @@ export const tokensApi = {
     const url = `/tokens/token-holders?tokenAddresses=${encodedAddresses}`;
 
     const response = await apiClient.request<{ [key: string]: number }>(url);
+    console.log(response.data);
     return response.data;
   },
 };
