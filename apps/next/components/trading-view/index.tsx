@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Card } from "../ui/card";
-import { AdvancedRealTimeChart } from "react-ts-tradingview-widgets";
 
 export default function TradingView() {
   const [iframeVisible, setIframeVisible] = useState(true); // does not work on local host
