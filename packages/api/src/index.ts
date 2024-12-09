@@ -9,6 +9,7 @@ import { getProvingBackend, ProofType } from "@persona/utils/src/proofs";
 import { personaRoutes } from "./routes/personas";
 import { clankerWebhookRoutes } from "./routes/clanker-webhook";
 import { tokensRoutes } from "./routes/tokens";
+import { waitlistRoutes } from "./routes/waitlist";
 (async () => {
   const [createPostBackend, submitHashBackend] = await Promise.all([
     getProvingBackend(ProofType.CREATE_POST),
@@ -24,6 +25,7 @@ import { tokensRoutes } from "./routes/tokens";
     .use(personaRoutes)
     // .use(clankerWebhookRoutes)
     .use(tokensRoutes)
+    .use(waitlistRoutes)
     .get(
       "/get-cast",
       async ({ query }) => {

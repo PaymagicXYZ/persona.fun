@@ -43,6 +43,7 @@ type TableDataType = {
   token?: TokenResponse;
   fc_url: string;
   x_url: string;
+  post_count: number;
 };
 
 export default function Personas() {
@@ -234,7 +235,7 @@ export default function Personas() {
               : column.toggleSorting(false)
           }
         >
-          Holder Count
+          Holders
           {column.getIsSorted() === "asc" ? (
             <ChevronUp className="w-4 h-4" />
           ) : (
@@ -256,30 +257,87 @@ export default function Personas() {
       sortingFn: "basic",
     },
     {
+      id: "post_count",
+      header: ({ column }) => (
+        <div
+          className="flex items-center gap-1 cursor-pointer"
+          onClick={() =>
+            column.getIsSorted() === "asc"
+              ? column.toggleSorting(true)
+              : column.toggleSorting(false)
+          }
+        >
+          Posts
+          {column.getIsSorted() === "asc" ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )}
+        </div>
+      ),
+      accessorFn: (row) => row.post_count ?? "-",
+      cell: ({ getValue }) => {
+        const value = getValue() as number;
+        return value ? (
+          <Label className="text-gray-500 leading-snug text-lg font-medium uppercase">
+            {formatNumber(value)}
+          </Label>
+        ) : (
+          "-"
+        );
+      },
+      sortingFn: "basic",
+    },
+    {
       header: "View",
       accessorFn: (row) => row.tokenHolders ?? "-",
       cell: ({ row }) => {
         return (
-          <div className="flex items-center space-x-4">
-            {/* <Link href={row.original.token?.dex_screener_url ?? ""} target="_blank">
-              <Image src="/x.svg" alt="View" width={30} height={30} />
-            </Link> */}
-            <Link href={row.original.fc_url ?? ""} target="_blank">
-              <Image src="/farcaster.svg" alt="View" width={30} height={30} />
+          <div className="flex items-center space-x-4 h-[30px]">
+            <Link
+              href={row.original.fc_url ?? ""}
+              target="_blank"
+              className="flex items-center"
+            >
+              <div className="w-[30px] h-[30px] relative">
+                <Image
+                  src="/farcaster.svg"
+                  alt="View"
+                  fill
+                  className="object-contain"
+                  sizes="30px"
+                />
+              </div>
             </Link>
             <Link
               href={row.original.token?.dex_screener_url ?? ""}
               target="_blank"
+              className="flex items-center"
             >
-              <Image
-                src="/dex-screener.svg"
-                alt="View"
-                width={30}
-                height={30}
-              />
+              <div className="w-[30px] h-[30px] relative">
+                <Image
+                  src="/dex-screener.svg"
+                  alt="View"
+                  fill
+                  className="object-contain"
+                  sizes="30px"
+                />
+              </div>
             </Link>
-            <Link href={row.original.token?.uniswap_url ?? ""} target="_blank">
-              <Image src="/uniswap.svg" alt="View" width={30} height={30} />
+            <Link
+              href={row.original.token?.uniswap_url ?? ""}
+              target="_blank"
+              className="flex items-center"
+            >
+              <div className="w-[30px] h-[30px] relative">
+                <Image
+                  src="/uniswap.svg"
+                  alt="View"
+                  fill
+                  className="object-contain"
+                  sizes="30px"
+                />
+              </div>
             </Link>
           </div>
         );

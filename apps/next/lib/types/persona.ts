@@ -8,4 +8,5 @@ export type Persona = {
   fc_url: string;
   x_url: string;
   token?: TokenResponse;
+  post_count: number;
 };

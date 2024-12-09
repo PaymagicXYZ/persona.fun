@@ -603,7 +603,15 @@ export type Database = {
           post?: Json | null
           social_post_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "posts_persona_id_fkey"
+            columns: ["persona_id"]
+            isOneToOne: false
+            referencedRelation: "personas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       relationships: {
         Row: {
@@ -744,6 +752,27 @@ export type Database = {
         }
         Relationships: []
       }
+      waitlist: {
+        Row: {
+          address: string
+          created_at: string
+          email: string
+          id: number
+        }
+        Insert: {
+          address: string
+          created_at?: string
+          email: string
+          id?: number
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          email?: string
+          id?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       memories: {
@@ -878,6 +907,12 @@ export type Database = {
           token_dex_screener_url: string
           token_uniswap_url: string
         }[]
+      }
+      get_persona_post_count: {
+        Args: {
+          persona_id: number
+        }
+        Returns: number
       }
       get_relationship: {
         Args: {
