@@ -141,6 +141,7 @@ export async function generateProof(
       : [`0x${BigInt(0).toString(16)}`, `0x${BigInt(0).toString(16)}`];
   }
 
+  console.log("input", input);
   // @ts-ignore
   return await noir.generateFinalProof(input);
 }

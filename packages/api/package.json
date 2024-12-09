@@ -15,6 +15,7 @@
     "railway:build": "tsup src/index.ts --format esm --dts --out-dir dist"
   },
   "dependencies": {
+    "@anonworld/zk": "^0.0.1",
     "@elysiajs/cors": "^1.1.1",
     "@farcaster/hub-nodejs": "^0.12.7",
     "@noir-lang/backend_barretenberg": "^0.17.0",
@@ -23,6 +24,7 @@
     "@persona/db": "*",
     "@persona/utils": "*",
     "@supabase/supabase-js": "^2.46.1",
+    "@zk-kit/lean-imt": "^2.2.2",
     "elysia": "^1.1.25",
     "ioredis": "^5.4.1",
     "logestic": "^1.2.4",

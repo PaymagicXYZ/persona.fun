@@ -12,10 +12,10 @@ const instrumentSans = Instrument_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Persona.fun",
+  title: "Interns.fun",
   description: "Post anonymously to Farcaster.",
   openGraph: {
-    title: "Persona.fun",
+    title: "Interns.fun",
     description: "Post anonymously to Farcaster.",
     images: ["/logo.svg"],
   },

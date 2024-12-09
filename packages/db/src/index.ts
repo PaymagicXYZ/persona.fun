@@ -30,7 +30,9 @@ const personaSelect = `
       name, 
       fid,
       eliza_character,
-      image_url, 
+      image_url,
+      fc_url,
+      x_url,
       token:token_id (
         id,
         address,
@@ -42,14 +44,13 @@ const personaSelect = `
         delete_amount,
         promote_amount,
         base_scan_url,
-        dex_screener_url
+        dex_screener_url,
+        uniswap_url
       )
     `;
 
 export async function getPersonas(): Promise<any> {
-  const { data, error } = await supabase
-    .from("personas")
-    .select(personaSelect);
+  const { data, error } = await supabase.from("personas").select(personaSelect);
 
   if (error) {
     throw error;
@@ -274,4 +275,4 @@ export async function getPostReveals(castHashes: string[]) {
 
 // export type { Persona };
 
-export * from './config'
+export * from "./config";
