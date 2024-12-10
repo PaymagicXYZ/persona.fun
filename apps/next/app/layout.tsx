@@ -12,11 +12,11 @@ const instrumentSans = Instrument_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Interns.fun",
-  description: "Post anonymously to Farcaster.",
+  title: "Create an Intern agent+token",
+  description: "Automate your social media 24/7 and tip your biggest fans",
   openGraph: {
-    title: "Interns.fun",
-    description: "Post anonymously to Farcaster.",
+    title: "Create an Intern agent+token",
+    description: "Automate your social media 24/7 and tip your biggest fans",
     siteName: "Interns.fun",
     type: "website",
     locale: "en_US",

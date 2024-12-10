@@ -63,6 +63,54 @@ export type Database = {
         }
         Relationships: []
       }
+      chat: {
+        Row: {
+          background_gradient: string
+          created_at: string
+          display_name: string
+          id: number
+          message: string
+          persona_fid: number
+          pfp_url: string | null
+          user_id: number
+        }
+        Insert: {
+          background_gradient?: string
+          created_at?: string
+          display_name?: string
+          id?: number
+          message: string
+          persona_fid: number
+          pfp_url?: string | null
+          user_id: number
+        }
+        Update: {
+          background_gradient?: string
+          created_at?: string
+          display_name?: string
+          id?: number
+          message?: string
+          persona_fid?: number
+          pfp_url?: string | null
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_persona_id_fkey"
+            columns: ["persona_fid"]
+            isOneToOne: false
+            referencedRelation: "personas"
+            referencedColumns: ["fid"]
+          },
+          {
+            foreignKeyName: "chat_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       goals: {
         Row: {
           createdAt: string | null
@@ -710,6 +758,7 @@ export type Database = {
           id: number
           image_url: string | null
           name: string
+          pair_address: string | null
           post_amount: string
           promote_amount: string
           supply: string
@@ -727,6 +776,7 @@ export type Database = {
           id?: number
           image_url?: string | null
           name: string
+          pair_address?: string | null
           post_amount?: string
           promote_amount?: string
           supply: string
@@ -744,6 +794,7 @@ export type Database = {
           id?: number
           image_url?: string | null
           name?: string
+          pair_address?: string | null
           post_amount?: string
           promote_amount?: string
           supply?: string
@@ -752,21 +803,45 @@ export type Database = {
         }
         Relationships: []
       }
-      waitlist: {
+      users: {
         Row: {
           address: string
+          background_gradient: string
+          created_at: string
+          display_name: string
+          id: number
+          pfp_url: string | null
+        }
+        Insert: {
+          address: string
+          background_gradient?: string
+          created_at?: string
+          display_name: string
+          id?: number
+          pfp_url?: string | null
+        }
+        Update: {
+          address?: string
+          background_gradient?: string
+          created_at?: string
+          display_name?: string
+          id?: number
+          pfp_url?: string | null
+        }
+        Relationships: []
+      }
+      waitlist: {
+        Row: {
           created_at: string
           email: string
           id: number
         }
         Insert: {
-          address: string
           created_at?: string
           email: string
           id?: number
         }
         Update: {
-          address?: string
           created_at?: string
           email?: string
           id?: number

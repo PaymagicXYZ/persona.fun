@@ -60,7 +60,7 @@ export const generateNeynarSignature = async (
   };
 };
 
-export const createFCAccount = async (body: { name: string }) => {
+export const createFCAccount = async (body: { fname: string }) => {
   const { fid } = await neynar.getFid();
   console.log("FID", fid);
   // Generate deadline (1 day from now)
@@ -68,7 +68,7 @@ export const createFCAccount = async (body: { name: string }) => {
   console.log("DEADLINE", deadline);
   // Generate signature using name and fid
   const { signature, custodyAddress, privateKey } =
-    await generateNeynarSignature(body.name, fid, deadline);
+    await generateNeynarSignature(body.fname, fid, deadline);
 
   // Prepare registration data
   const registrationData = {
@@ -76,7 +76,7 @@ export const createFCAccount = async (body: { name: string }) => {
     fid,
     requested_user_custody_address: custodyAddress,
     deadline,
-    fname: generateRandomId(),
+    fname: body.fname,
   };
 
   const response = await neynar.registerUser(registrationData);
@@ -94,4 +94,21 @@ function generateRandomId(): string {
   const randomNum = Math.floor(Math.random() * 999999) + 1;
 
   return `p${randomNum}`;
+}
+
+export function generateRandomGradient() {
+  // Helper function to generate pastel colors (more pleasing for profiles)
+  const randomPastelColor = () => {
+    const hue = Math.floor(Math.random() * 360);
+    const saturation = Math.floor(30 + Math.random() * 40); // 30-70%
+    const lightness = Math.floor(65 + Math.random() * 15); // 65-80%
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  };
+
+  const angle = Math.floor(Math.random() * 360);
+  const color1 = randomPastelColor();
+  const color2 = randomPastelColor();
+
+  // Return just the CSS string for storage
+  return `linear-gradient(${angle}deg, ${color1}, ${color2})`;
 }

@@ -100,8 +100,8 @@ export function CreatePost() {
       <Textarea
         value={text ?? ""}
         onChange={handleSetText}
-        className="h-32 p-3 resize-none font-medium !text-base placeholder:text-zinc-400 bg-zinc-950 border border-zinc-700"
-        placeholder="What's happening, anon?"
+        className="h-32 p-3 resize-none font-medium !text-base placeholder:text-zinc-400 bg-inherit"
+        placeholder="What's happening?"
       />
       <RevealPhrase />
       <RemoveableImage />
@@ -135,7 +135,7 @@ export function CreatePost() {
                 <p>Awaiting signature</p>
               </div>
             ) : (
-              "Post anonymously"
+              "Post"
             )}
           </Button>
         </div>
@@ -685,13 +685,13 @@ function RevealPhrase() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div
+      {/* <div
         className="flex flex-row items-center gap-2 cursor-pointer"
         onClick={() => setEnabled(!enabled)}
       >
         <Checkbox checked={enabled} />
         <p className="text-sm">Reveal yourself at a later date</p>
-      </div>
+      </div> */}
       {enabled && (
         <div className="flex flex-col gap-4">
           <p className="text-gray-400">

@@ -14,11 +14,11 @@ export default function TokenDetails({ fid }: { fid: number }) {
   const persona = usePersona(fid);
 
   const tokenHoldersData = useTokenHolders({
-    tokenAddresses: [persona?.token?.address!],
+    tokenAddresses: persona?.token?.address ? [persona?.token?.address] : [],
   });
 
   const tokenData = useTokensOnChainData({
-    tokenAddresses: [persona?.token?.address!],
+    tokenAddresses: persona?.token?.address ? [persona?.token?.address] : [],
   });
 
   return (
@@ -31,6 +31,7 @@ export default function TokenDetails({ fid }: { fid: number }) {
           tokenHoldersData={tokenHoldersData}
         />
       )}
+      <TokenDetailsFooter />
     </Card>
   );
 }
@@ -39,14 +40,23 @@ function TokenDetailsHeader({ persona }: { persona: Persona }) {
   return (
     <div className="flex justify-between">
       <div className="flex items-center justify-between gap-4">
-        <Image
-          src={persona.image_url}
-          alt={persona?.name}
-          width={76}
-          height={76}
-          className="object-cover rounded-md"
-        />
-        <div className="flex flex-col">
+        <div className="relative flex">
+          <Image
+            src="/xl-logo.svg"
+            alt="logo"
+            width={76}
+            height={76}
+            className="rounded-md"
+          />
+          <Image
+            src={persona.image_url}
+            alt={persona?.name}
+            width={76}
+            height={76}
+            className="object-cover rounded-full absolute left-16"
+          />
+        </div>
+        <div className="flex flex-col ml-16 gap-2">
           <Label className="text-gray-100 leading-8 text-xl">
             {persona.name}
           </Label>
@@ -116,6 +126,7 @@ function TokenDetailsBody({
   tokenHoldersData?: { [key: string]: number };
 }) {
   const token = tokenData?.[tokenAddr.toLowerCase()];
+  const isPositive = (token?.priceChangeDay as number) > 0;
 
   return (
     <div className="flex justify-between">
@@ -123,45 +134,66 @@ function TokenDetailsBody({
         <Label className="text-gray-400 leading-snug text-xl font-medium">
           Market cap
         </Label>
-        {token && (
-          <Label className="text-white leading-8 text-2xl font-semibold">
-            {formatNumber(token.marketCap)}
-          </Label>
-        )}
+
+        <Label className="text-white leading-8 text-2xl font-semibold">
+          {token?.marketCap ? formatNumber(token.marketCap) : "N/A"}
+        </Label>
       </div>
 
       <div className="flex flex-col gap-2">
         <Label className="text-gray-400 leading-snug text-xl font-medium">
           Liquidity
         </Label>
-        {token && (
-          <Label className="text-white leading-8 text-2xl font-semibold">
-            {formatNumber(token.liquidity)}
-          </Label>
-        )}
+
+        <Label className="text-white leading-8 text-2xl font-semibold">
+          {token?.liquidity ? formatNumber(token.liquidity) : "N/A"}
+        </Label>
       </div>
 
       <div className="flex flex-col gap-2">
         <Label className="text-gray-400 leading-snug text-xl font-medium">
           1D Change
         </Label>
-        {token && (
-          <Label className="text-white leading-8 text-2xl font-semibold">
-            {formatNumber(token.priceChangeDay)}
-          </Label>
-        )}
+
+        <Label
+          className={`text-white leading-8 text-2xl font-semibold ${
+            isPositive ? "text-green-500" : "text-red-500"
+          }`}
+        >
+          {token?.priceChangeDay
+            ? (token.priceChangeDay as number).toFixed(2) + "%"
+            : "N/A"}
+        </Label>
       </div>
 
       <div className="flex flex-col gap-2">
         <Label className="text-gray-400 leading-snug text-xl font-medium">
           Holders
         </Label>
-        {tokenHoldersData && (
-          <Label className="text-white leading-8 text-2xl font-semibold">
-            {formatNumber(tokenHoldersData[tokenAddr.toLowerCase()])}
-          </Label>
-        )}
+
+        <Label className="text-white leading-8 text-2xl font-semibold">
+          {tokenHoldersData
+            ? formatNumber(tokenHoldersData[tokenAddr.toLowerCase()])
+            : "N/A"}
+        </Label>
       </div>
+    </div>
+  );
+}
+
+function TokenDetailsFooter() {
+  return (
+    <div className="flex flex-col gap-1">
+      <Label className="text-gray-500 leading-8 text-xl font-medium">
+        Description
+      </Label>
+      <Label className="text-gray-500 leading-8 text-xl font-medium">
+        The intern is always online. The intern monitors discussions of your
+        project and chimes in to help, promote, or fight on your behalf. The
+        intern tips its token to encourage discourse and attention on your
+        project. Once you have enough tokens, you too can speak through the
+        intern&apos;s voice and even adjust how they react. Have fun.
+      </Label>
     </div>
   );
 }

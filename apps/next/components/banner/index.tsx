@@ -187,10 +187,10 @@ const Banner = () => {
       <div className="flex flex-col lg:flex-row w-full h-full p-10">
         <div className="flex flex-col gap-7 lg:w-[45%] justify-center z-10">
           <h1 className="text-white text-4xl lg:text-[46px] font-bold leading-[46px]">
-            Create an Persona
+            Create an Intern agent+token
           </h1>
           <p className="text-[#9a9a9a] text-2xl lg:text-[34px] leading-[45px] max-w-[600px]">
-            You need 10M $ANON to create <br /> a new avatar
+            Automate your social media 24/7 and tip your biggest fans
           </p>
           <WaitListModal />
         </div>
@@ -231,7 +231,7 @@ function WaitListModal() {
           </DialogTitle>
           <DialogDescription className="text-base font-medium leading-8">
             {view === WaitlistView.SignUp
-              ? "Creating an intern is not opened up to all yet. Please sign up for the waitlist below"
+              ? "Creating an intern is not opened up to all yet. Please sign up for the waitlist below."
               : "You've successfully signed up for the waitlist. We'll notify you when the waitlist is open."}
           </DialogDescription>
         </DialogHeader>
@@ -246,15 +246,6 @@ function WaitListModal() {
   );
 }
 
-const types = {
-  WaitlistEntry: [{ name: "email", type: "string" }],
-} as const;
-
-const domain = {
-  name: "Interns.fun Waitlist",
-  version: "1",
-} as const;
-
 function SignUpView({
   setView,
   email,
@@ -264,14 +255,12 @@ function SignUpView({
   email: string;
   setEmail: (email: string) => void;
 }) {
-  const { address } = useAccount();
   const [debouncedEmail] = useDebounce(email, 500);
-  const { signTypedDataAsync } = useSignTypedData();
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
 
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: (data: { signature: string; message: { email: string } }) =>
-      waitlistApi.addToWaitlist(data.signature, data.message),
+    mutationFn: (email: string) => waitlistApi.addToWaitlist(email),
   });
 
   const validateEmail = (email: string) => {
@@ -280,34 +269,31 @@ function SignUpView({
   };
 
   useEffect(() => {
-    if (!debouncedEmail) {
+    if (!email) {
       setEmailError(null);
+      setIsValidating(false);
       return;
     }
 
-    setEmailError(
-      !validateEmail(debouncedEmail)
-        ? "Please enter a valid email address"
-        : null
-    );
-  }, [debouncedEmail]);
+    // Set validating state when email changes
+    setIsValidating(true);
+
+    // Reset validation state when debounced validation completes
+    if (debouncedEmail) {
+      setEmailError(
+        !validateEmail(debouncedEmail)
+          ? "Please enter a valid email address"
+          : null
+      );
+      setIsValidating(false);
+    }
+  }, [debouncedEmail, email]);
 
   const handleSignup = async () => {
     if (emailError) return;
 
     try {
-      const message = {
-        email,
-      };
-
-      const signature = await signTypedDataAsync({
-        domain,
-        types,
-        primaryType: "WaitlistEntry",
-        message,
-      });
-
-      await mutateAsync({ signature, message: { email } });
+      await mutateAsync(email);
       setView(WaitlistView.Success);
     } catch (error) {
       console.error("Error:", error);
@@ -336,17 +322,13 @@ function SignUpView({
           </Label>
         )}
       </div>
-      {address ? (
-        <Button
-          disabled={isPending || Boolean(emailError) || !email}
-          onClick={handleSignup}
-          className="bg-[#C83FD3] mt-4 w-full hover:bg-[#C83FD3]/90 text-white text-base font-bold rounded-md py-6"
-        >
-          Sign up
-        </Button>
-      ) : (
-        <ConnectButton />
-      )}
+      <Button
+        disabled={isPending || Boolean(emailError) || !email || isValidating}
+        onClick={handleSignup}
+        className="bg-[#C83FD3] mt-4 w-full hover:bg-[#C83FD3]/90 text-white text-base font-bold rounded-md py-6"
+      >
+        Sign up
+      </Button>
     </>
   );
 }

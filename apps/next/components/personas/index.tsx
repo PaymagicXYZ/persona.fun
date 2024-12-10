@@ -68,15 +68,25 @@ export default function Personas() {
 
   const tokenData = useTokensOnChainData({
     tokenAddresses:
-      personas?.map((persona) => persona.token?.address.toLowerCase()!) ?? [],
+      personas?.reduce(
+        (addresses: string[], persona) =>
+          persona?.token?.address
+            ? [...addresses, persona.token.address.toLowerCase()]
+            : addresses,
+        []
+      ) ?? [],
   });
 
   const tokenHoldersData = useTokenHolders({
     tokenAddresses:
-      personas?.map((persona) => persona.token?.address.toLowerCase()!) ?? [],
+      personas?.reduce(
+        (addresses: string[], persona) =>
+          persona?.token?.address
+            ? [...addresses, persona.token.address.toLowerCase()]
+            : addresses,
+        []
+      ) ?? [],
   });
-
-  console.log(tokenHoldersData);
 
   const tableData = useMemo(() => {
     if (!personas) return [];
@@ -87,8 +97,6 @@ export default function Personas() {
       tokenHolders: tokenHoldersData?.[persona.token?.address?.toLowerCase()!],
     }));
   }, [personas, tokenData, tokenHoldersData]);
-
-  console.log("tableData", tableData);
 
   const columns: ColumnDef<TableDataType>[] = [
     {
@@ -249,10 +257,13 @@ export default function Personas() {
       ),
       accessorFn: (row) => row.tokenHolders ?? "-",
       cell: ({ getValue }) => {
-        const value = getValue() as number;
+        const value = getValue();
+
+        if (!value || value === "-") return "-";
+
         return value ? (
           <Label className="text-gray-500 leading-snug text-lg font-medium uppercase cursor-pointer">
-            {formatNumber(value)}
+            {formatNumber(value as number)}
           </Label>
         ) : (
           "-"
