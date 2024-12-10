@@ -106,7 +106,7 @@ export default function Personas() {
             />
           </div>
           <div className="flex flex-col gap-1">
-            <Label className="text-gray-50 leading-snug text-lg font-medium uppercase">
+            <Label className="text-gray-50 leading-snug text-lg font-medium uppercase cursor-pointer">
               {row.original.name}
             </Label>
             {/* <Label className="text-[#76787a] leading-snug text-sm">
@@ -124,7 +124,7 @@ export default function Personas() {
         if (value === "-") return "-";
 
         return (
-          <Label className="text-gray-50 leading-snug text-lg font-medium uppercase">
+          <Label className="text-gray-50 leading-snug text-lg font-medium uppercase cursor-pointer">
             {value as string}
           </Label>
         );
@@ -155,7 +155,7 @@ export default function Personas() {
         if (value === "-") return "-";
 
         return (
-          <Label className="text-gray-500 leading-snug text-lg font-medium uppercase">
+          <Label className="text-gray-500 leading-snug text-lg font-medium uppercase cursor-pointer">
             ${formatNumber(value as number)}
           </Label>
         );
@@ -188,7 +188,7 @@ export default function Personas() {
         const isPositive = (value as number) > 0;
         return (
           <Label
-            className={`text-gray-500 leading-snug text-lg font-medium uppercase ${
+            className={`text-gray-500 leading-snug text-lg font-medium uppercase cursor-pointer ${
               isPositive ? "text-green-500" : "text-red-500"
             }`}
           >
@@ -222,7 +222,7 @@ export default function Personas() {
         const value = getValue();
         if (value === "-") return "-";
         return (
-          <Label className="text-gray-500 leading-snug text-lg font-medium uppercase">
+          <Label className="text-gray-500 leading-snug text-lg font-medium uppercase cursor-pointer">
             ${formatNumber(value as number)}
           </Label>
         );
@@ -251,7 +251,7 @@ export default function Personas() {
       cell: ({ getValue }) => {
         const value = getValue() as number;
         return value ? (
-          <Label className="text-gray-500 leading-snug text-lg font-medium uppercase">
+          <Label className="text-gray-500 leading-snug text-lg font-medium uppercase cursor-pointer">
             {formatNumber(value)}
           </Label>
         ) : (
@@ -283,7 +283,7 @@ export default function Personas() {
       cell: ({ getValue }) => {
         const value = getValue() as number;
         return value ? (
-          <Label className="text-gray-500 leading-snug text-lg font-medium uppercase">
+          <Label className="text-gray-500 leading-snug text-lg font-medium uppercase cursor-pointer">
             {formatNumber(value)}
           </Label>
         ) : (

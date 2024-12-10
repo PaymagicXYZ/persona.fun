@@ -15,7 +15,7 @@ export default function Page({ params }: { params: { fid: string } }) {
 
   return (
     <div className="flex flex-col gap-8 max-w-screen-lg mx-auto">
-      {/* <ActionComponent /> */}
+      <ActionComponent />
       <TokenDetails fid={fid} />
       <DexToolsChartView fid={fid} />
 
