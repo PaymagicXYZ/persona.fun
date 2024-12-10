@@ -33,7 +33,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import yargs from 'yargs'
 import { character as defaultCharacter } from './character'
-import { getPersonaByFid } from '@persona/db'
+import { getPersonaByFid, getPersonasByFids } from '@persona/db'
 import { SupabaseDatabaseAdapter } from '@ai16z/adapter-supabase'
 import { SupabaseAdapterV2 } from './SupabaseAdapterV2'
 const __filename = fileURLToPath(import.meta.url) // get the resolved path to the file
@@ -291,10 +291,14 @@ export const startAgents = async () => {
   const directClient = await DirectClientInterface.start()
 
   // Directly load characters from Supabase
-  const characterData = await getPersonaByFid(893055)
-  const character = characterData?.eliza_character as unknown as Character
-  console.log('Character:', character)
-  const characters = [character ?? defaultCharacter] // Replace with Supabase loading logic
+  // const characterData = await getPersonaByFid(893055)
+  const charactersData = await getPersonasByFids([893055, 894207])
+  const characters = charactersData?.map((char) => char.eliza_character) ?? [
+    defaultCharacter,
+  ]
+  // const character = characterData?.eliza_character as unknown as Character
+  // console.log('Character:', character)
+  // const characters = [character ?? defaultCharacter] // Replace with Supabase loading logic
 
   try {
     for (const character of characters) {
