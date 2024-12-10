@@ -292,7 +292,7 @@ export const startAgents = async () => {
 
   // Directly load characters from Supabase
   // const characterData = await getPersonaByFid(893055)
-  const charactersData = await getPersonasByFids([897311, 897281])
+  const charactersData = await getPersonasByFids([897311, 897281, 897284])
   const characters = charactersData?.map((char) => char.eliza_character) ?? [
     defaultCharacter,
   ]
