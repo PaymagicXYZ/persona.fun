@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "../../../../components/ui/card";
 import usePersona from "@/hooks/use-persona";
 
@@ -41,9 +41,11 @@ const DexToolsChartView = ({
   chartInUsd = true,
 }: DexToolsChartViewProps) => {
   const persona = usePersona(fid);
-  const [iframeVisible, setIframeVisible] = useState(true);
+  const [widgetUrl, setWidgetUrl] = useState<string | null>(null);
 
-  const buildWidgetUrl = () => {
+  useEffect(() => {
+    if (!persona) return;
+
     const baseUrl = "https://www.dextools.io/widget-chart";
     const params = new URLSearchParams({
       theme,
@@ -56,28 +58,27 @@ const DexToolsChartView = ({
       chartInUsd: chartInUsd.toString(),
     });
 
-    return `${baseUrl}/en/${chainId}/pe-light/${
-      persona?.token?.pair_address
-    }?${params.toString()}`;
-  };
-
-  console.log(buildWidgetUrl());
+    setWidgetUrl(
+      `${baseUrl}/en/${chainId}/pe-light/${
+        persona.token?.pair_address
+      }?${params.toString()}`
+    );
+  }, [persona]);
 
   return (
     <div className="flex flex-col w-full">
       {/* Chart container */}
       <Card className="w-full h-[600px] bg-gray-900 overflow-hidden">
-        {iframeVisible ? (
+        {widgetUrl ? (
           <iframe
             id="dextools-widget"
             title="DEXTools Trading Chart"
             width="100%"
             height="100%"
-            src={buildWidgetUrl()}
+            src={widgetUrl}
             allowFullScreen
             onError={() => {
               console.log("Error loading DEXTools widget");
-              setIframeVisible(false);
             }}
             className="border-0"
           />

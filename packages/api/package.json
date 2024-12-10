@@ -17,6 +17,7 @@
   "dependencies": {
     "@anonworld/zk": "^0.0.1",
     "@elysiajs/cors": "^1.1.1",
+    "@elysiajs/jwt": "^1.1.1",
     "@farcaster/hub-nodejs": "^0.12.7",
     "@noir-lang/backend_barretenberg": "^0.17.0",
     "@noir-lang/noir_js": "^0.17.0",

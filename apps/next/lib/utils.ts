@@ -72,12 +72,44 @@ export function processTokenData(
 }
 
 export function formatNumber(num: number): string {
+  const absNum = Math.abs(num);
+
+  // For billions
+  if (absNum >= 1_000_000_000) {
+    const rounded = (num / 1_000_000_000).toFixed(1).replace(".0", "");
+    return `${rounded}b`;
+  }
+
   // For millions
-  if (num >= 1_000_000) {
-    // Remove any trailing .0
+  if (absNum >= 1_000_000) {
     const rounded = (num / 1_000_000).toFixed(1).replace(".0", "");
     return `${rounded}m`;
   }
-  // For numbers less than a million, add commas with no decimals
+
+  // For thousands
+  if (absNum >= 1_000) {
+    const rounded = (num / 1_000).toFixed(1).replace(".0", "");
+    return `${rounded}k`;
+  }
+
+  // For numbers less than a thousand, add commas with no decimals
   return Math.round(num).toLocaleString();
 }
+
+export const REGISTER_TYPES = {
+  Register: [{ name: "display_name", type: "string" }],
+} as const;
+
+export const REGISTER_DOMAIN = {
+  name: "Interns.fun Register",
+  version: "1",
+} as const;
+
+export const VERIFY_TYPES = {
+  Verify: [{ name: "message", type: "string" }],
+} as const;
+
+export const VERIFY_DOMAIN = {
+  name: "Interns.fun Verify",
+  version: "1",
+} as const;

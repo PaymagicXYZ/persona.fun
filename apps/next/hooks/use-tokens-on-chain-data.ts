@@ -6,7 +6,6 @@ export const useTokensOnChainData = ({
 }: {
   tokenAddresses: string[];
 }) => {
-  console.log("length,", tokenAddresses.length);
   const { data: tokenData } = useQuery({
     queryKey: ["tokens", tokenAddresses.join(",")],
     queryFn: () =>

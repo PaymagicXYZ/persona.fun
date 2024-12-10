@@ -602,3 +602,14 @@ export interface UploadImageResponse {
   url: string;
   error?: string;
 }
+
+export interface ChatMessage {
+  id: string;
+  created_at: string;
+  message: string;
+  user_id: string;
+  persona_fid: number;
+  display_name: string;
+  pfp_url: string;
+  background_gradient: string;
+}

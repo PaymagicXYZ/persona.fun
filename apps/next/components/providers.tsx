@@ -8,6 +8,7 @@ import { base } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { CreatePostProvider } from "./create-post/context";
+// import { UserProvider } from "@/context/user";
 
 const config = getDefaultConfig({
   appName: "My RainbowKit App",

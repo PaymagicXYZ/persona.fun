@@ -10,6 +10,8 @@ import { personaRoutes } from "./routes/personas";
 import { clankerWebhookRoutes } from "./routes/clanker-webhook";
 import { tokensRoutes } from "./routes/tokens";
 import { waitlistRoutes } from "./routes/waitlist";
+// import { usersRoutes } from "./routes/users";
+// import { chatRoutes } from "./routes/chat";
 (async () => {
   const [createPostBackend, submitHashBackend] = await Promise.all([
     getProvingBackend(ProofType.CREATE_POST),
@@ -26,6 +28,8 @@ import { waitlistRoutes } from "./routes/waitlist";
     // .use(clankerWebhookRoutes)
     .use(tokensRoutes)
     .use(waitlistRoutes)
+    // .use(usersRoutes)
+    // .use(chatRoutes)
     .get(
       "/get-cast",
       async ({ query }) => {

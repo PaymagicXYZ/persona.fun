@@ -329,7 +329,10 @@ class NeynarService {
   }) {
     return this.makeRequest("/farcaster/user", {
       method: "PATCH",
-      body: JSON.stringify(params),
+      body: JSON.stringify({
+        ...params,
+        pfp_url: params.image_url,
+      }),
     });
   }
 

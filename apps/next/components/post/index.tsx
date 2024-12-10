@@ -27,6 +27,7 @@ import { hashMessage } from "viem";
 import { Input } from "../ui/input";
 import { useQuery } from "@tanstack/react-query";
 import usePersona from "@/hooks/use-persona";
+import { Card } from "../ui/card";
 
 function formatNumber(num: number): string {
   if (num < 1000) return num.toString();
@@ -91,7 +92,7 @@ export function Post({ cast, fid }: { cast: Cast; fid: number }) {
   const sanitizedText = cleanText(cast.text);
 
   return (
-    <div className="relative [overflow-wrap:anywhere] bg-zinc-900 border border-zinc-700 rounded-lg overflow-hidden">
+    <Card className="relative [overflow-wrap:anywhere] border bg-[#121212] rounded-lg overflow-hidden">
       <div className="flex flex-row gap-4  p-4 sm:p-6  ">
         <div className="flex flex-col gap-2 w-full">
           <div className="flex flex-col gap-4 sm:flex-row justify-between">
@@ -124,11 +125,7 @@ export function Post({ cast, fid }: { cast: Cast; fid: number }) {
                 target="_blank"
                 rel="noreferrer"
               >
-                <img
-                  src="/farcaster.svg"
-                  alt="Warpcast"
-                  className="w-4 h-4 invert"
-                />
+                <img src="/farcaster.svg" alt="Warpcast" className="w-4 h-4" />
               </a>
               {cast.tweetId && (
                 <a
@@ -136,7 +133,7 @@ export function Post({ cast, fid }: { cast: Cast; fid: number }) {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <img src="/x.svg" alt="Warpcast" className="w-4 h-4 invert" />
+                  <img src="/x.svg" alt="Warpcast" className="w-4 h-4" />
                 </a>
               )}
             </div>
@@ -273,7 +270,7 @@ export function Post({ cast, fid }: { cast: Cast; fid: number }) {
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 
