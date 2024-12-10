@@ -5,7 +5,7 @@ import DexToolsChartView from "./components/DexToolsChartView";
 import PostFeed from "@/components/post-feed";
 import usePersona from "@/hooks/use-persona";
 import TokenDetails from "./components/TokenDetails";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,16 +18,10 @@ type TabValue = "no-coiner" | "token-holders";
 export default function Page({ params }: { params: { fid: string } }) {
   const fid = parseInt(params.fid);
   const persona = usePersona(fid);
-
   const { data, isLoading } = useBalance(persona?.token?.address);
 
-  const BALANCE = data ? data / BigInt(10 ** 18) : BigInt(0);
-  const FARCASTER_POST =
-    BigInt(persona?.token?.post_amount ?? 0) / BigInt(10 ** 18);
+  // Show loading state while initial data is being fetched
 
-  const hasEnoughTokens = BALANCE >= FARCASTER_POST;
-
-  // Show loading state until data is ready
   if (!persona || isLoading) {
     return (
       <div className="flex flex-col gap-8 max-w-screen-lg mx-auto justify-center items-center">
@@ -36,7 +30,10 @@ export default function Page({ params }: { params: { fid: string } }) {
     );
   }
 
-  console.log(hasEnoughTokens);
+  const BALANCE = data ? data / BigInt(10 ** 18) : BigInt(0);
+  const FARCASTER_POST =
+    BigInt(persona?.token?.post_amount ?? 0) / BigInt(10 ** 18);
+  const hasEnoughTokens = BALANCE >= FARCASTER_POST;
 
   return (
     <div className="flex flex-col gap-8 max-w-screen-lg mx-auto justify-center items-center">
@@ -44,38 +41,6 @@ export default function Page({ params }: { params: { fid: string } }) {
         fid={fid}
         initialTab={hasEnoughTokens ? "token-holders" : "no-coiner"}
       />
-    </div>
-  );
-}
-
-function LoadingView() {
-  return (
-    <div className="w-full">
-      <div className="flex justify-center mb-6">
-        <div className="h-[67px] px-2 bg-[#121212] flex gap-2">
-          <Skeleton className="h-[57px] w-[180px]" />
-          <Skeleton className="h-[57px] w-[180px]" />
-        </div>
-      </div>
-      <div className="space-y-6 max-w-screen-sm mx-auto">
-        <SkeletonPost />
-        <SkeletonPost />
-        <SkeletonPost />
-      </div>
-    </div>
-  );
-}
-
-function SkeletonPost() {
-  return (
-    <div className="relative [overflow-wrap:anywhere] bg-[#111111] rounded-xl overflow-hidden">
-      <div className="flex flex-col gap-4 border p-4 sm:p-6 rounded-xl">
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-[250px]" />
-          <Skeleton className="h-4 w-[200px]" />
-        </div>
-        <Skeleton className="h-4 w-[100px]" />
-      </div>
     </div>
   );
 }
@@ -98,6 +63,7 @@ function TokenDetailsTabs({
       className="w-full"
       value={activeTab}
       onValueChange={handleValueChange}
+      defaultValue={initialTab}
     >
       <div className="flex justify-center">
         <TabsList className="h-[67px] px-2 bg-[#121212] mb-6">
@@ -140,6 +106,38 @@ function TokenDetailsTabs({
         <TokenHoldersView fid={fid} />
       </TabsContent>
     </Tabs>
+  );
+}
+
+function LoadingView() {
+  return (
+    <div className="w-full">
+      <div className="flex justify-center mb-6">
+        <div className="h-[67px] px-2 bg-[#121212] flex gap-2">
+          <Skeleton className="h-[57px] w-[180px]" />
+          <Skeleton className="h-[57px] w-[180px]" />
+        </div>
+      </div>
+      <div className="space-y-6 max-w-screen-sm mx-auto">
+        <SkeletonPost />
+        <SkeletonPost />
+        <SkeletonPost />
+      </div>
+    </div>
+  );
+}
+
+function SkeletonPost() {
+  return (
+    <div className="relative [overflow-wrap:anywhere] bg-[#111111] rounded-xl overflow-hidden">
+      <div className="flex flex-col gap-4 border p-4 sm:p-6 rounded-xl">
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-[250px]" />
+          <Skeleton className="h-4 w-[200px]" />
+        </div>
+        <Skeleton className="h-4 w-[100px]" />
+      </div>
+    </div>
   );
 }
 

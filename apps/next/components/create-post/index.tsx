@@ -100,7 +100,7 @@ export function CreatePost() {
       <Textarea
         value={text ?? ""}
         onChange={handleSetText}
-        className="h-32 p-3 resize-none font-medium !text-base placeholder:text-zinc-400 bg-inherit"
+        className="h-32 p-3 resize-none font-medium !text-base placeholder:text-zinc-400 bg-zinc-950 border border-zinc-700"
         placeholder="What's happening?"
       />
       <RevealPhrase />

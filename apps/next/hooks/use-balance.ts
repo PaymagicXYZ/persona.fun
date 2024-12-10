@@ -9,7 +9,7 @@ export function useBalance(tokenAddress?: string) {
     functionName: "balanceOf",
     args: address ? [address as `0x${string}`] : undefined,
     query: {
-      enabled: !!tokenAddress,
+      enabled: !!tokenAddress && !!address,
     },
   });
 }
