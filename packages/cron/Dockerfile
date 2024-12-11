@@ -25,6 +25,9 @@ COPY bun.lockb .
 COPY turbo.json .
 COPY tsconfig.json .
 
+# Copy patches directory
+COPY patches ./patches
+
 # Copy only the necessary packages
 COPY packages/cron ./packages/cron
 COPY packages/db ./packages/db
