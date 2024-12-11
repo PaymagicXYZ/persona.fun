@@ -219,7 +219,7 @@ function WaitListModal() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="bg-[#C83FD3] w-[114px] h-[57px] hover:bg-[#C83FD3]/90 text-white text-2xl font-bold rounded-xl">
+      <DialogTrigger className="w-[114px] h-[57px] bg-[#C83FD3] hover:bg-[#C83FD3]/90 text-white text-2xl font-bold rounded-xl">
         Create
       </DialogTrigger>
       <DialogContent className="bg-[#141414] w-full">

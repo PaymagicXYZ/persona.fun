@@ -3,12 +3,12 @@ import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { useCreatePost } from "./context";
 import {
-  Image,
   Link,
   Loader2,
   Quote,
   Reply,
   SquareSlash,
+  Image as ImageIcon,
   X,
 } from "lucide-react";
 import {
@@ -33,6 +33,8 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import Confetti from "confetti-react";
 import { Checkbox } from "../ui/checkbox";
+import Image from "next/image";
+import { Label } from "../ui/label";
 
 const MAX_EMBEDS = 2;
 
@@ -95,12 +97,33 @@ export function CreatePost() {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 relative p-4">
+      <Image
+        src="/text-area-logo.svg"
+        alt="text-area-logo"
+        width={133}
+        height={133}
+        className="absolute right-0 top-0"
+      />
       <RemoveableParent />
+      <div className="flex gap-2 items-center">
+        {persona?.image_url && (
+          <Image
+            src={persona.image_url}
+            width={62}
+            height={62}
+            alt="persona-image"
+            className="rounded-full"
+          />
+        )}
+        <Label className="text-gray-100 font-semibold text-xl">
+          {persona?.name}
+        </Label>
+      </div>
       <Textarea
         value={text ?? ""}
         onChange={handleSetText}
-        className="h-32 p-3 resize-none font-medium !text-base placeholder:text-zinc-400 bg-zinc-950 border border-zinc-700"
+        className="h-24 p-0 resize-none border-none font-medium !text-base placeholder:text-zinc-400 bg-[#121212]"
         placeholder="What's happening?"
       />
       <RevealPhrase />
@@ -119,7 +142,7 @@ export function CreatePost() {
           <p className="font-medium text-zinc-400">{`${length} / 320`}</p>
           <Button
             onClick={createPost}
-            className="font-bold text-md rounded-md hover:scale-105 transition-all duration-300"
+            className="text-md rounded-xl hover:scale-105 transition-all duration-300 bg-[#C83FD3] hover:bg-[#C83FD3]/90 text-white text-lg font-bold"
             disabled={
               !["idle", "success", "error"].includes(state.status) || !persona
             }
@@ -279,7 +302,7 @@ function UploadImage() {
           onChange={handleImageSelect}
         />
         {loading && <Loader2 className="animate-spin" />}
-        {!loading && <Image />}
+        {!loading && <ImageIcon />}
       </TooltipButton>
 
       {error && (

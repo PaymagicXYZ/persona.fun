@@ -83,9 +83,10 @@ const DexToolsChartView = ({
             className="border-0"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400">
-            Error loading chart. Please try again later.
-          </div>
+          // <div className="w-full h-full flex items-center justify-center text-gray-400">
+          //   Error loading chart. Please try again later.
+          // </div>
+          <></>
         )}
       </Card>
     </div>

@@ -36,7 +36,7 @@ export default function PostFeed({
   });
 
   return (
-    <div className="flex flex-col gap-4 mt-20">
+    <div className="flex flex-col gap-4 mt-12">
       <Tabs
         defaultValue={defaultTab}
         className="w-full"
