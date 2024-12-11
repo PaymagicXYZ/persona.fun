@@ -45,6 +45,7 @@ export async function augmentCasts(casts: Cast[]) {
     })
     .map((cast) => {
       const mapping = mappings.find((m) => m.cast_hash === cast.hash);
+
       if (mapping) {
         return { ...cast, tweet_id: mapping.tweet_id };
       }
