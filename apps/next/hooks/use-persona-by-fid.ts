@@ -2,7 +2,7 @@ import { useCreatePost } from "@/components/create-post/context";
 import { personasApi } from "@/lib/api/personas";
 import { useQuery } from "@tanstack/react-query";
 
-export default function usePersona(fid: number) {
+export default function usePersonaByFid(fid: number) {
   const { setPersona } = useCreatePost();
 
   const { data: persona } = useQuery({

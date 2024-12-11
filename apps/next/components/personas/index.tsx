@@ -41,7 +41,7 @@ type TableDataType = {
   tokenHolders: any;
   id: number;
   name: string;
-  fid: string;
+  fid: number;
   image_url: string;
   token?: TokenResponse;
   fc_url: string;
@@ -54,7 +54,7 @@ export default function Personas() {
   const router = useRouter();
 
   const handleRowClick = (fid: string) => {
-    router.push(`/persona/${fid}`);
+    router.push(`/${fid}`);
   };
 
   const handleLinkClick = (e: React.MouseEvent) => {
@@ -411,7 +411,7 @@ export default function Personas() {
           <TableRow
             key={row.id}
             className="border-b border-[#232325] bg-[#131314] cursor-pointer"
-            onClick={() => handleRowClick(row.original.fid)}
+            onClick={() => handleRowClick(row.original.token?.symbol as string)}
           >
             {row.getVisibleCells().map((cell) => (
               <TableCell key={cell.id} className="p-4">

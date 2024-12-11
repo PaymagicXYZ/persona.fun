@@ -12,4 +12,10 @@ export const personasApi = {
     const response = await apiClient.request<Persona>(`/personas/fid/${fid}`);
     return response.data;
   },
+  getPersonaByTokenId: async (tokenId: number) => {
+    const response = await apiClient.request<Persona>(
+      `/personas/tokenId/${tokenId}`
+    );
+    return response.data;
+  },
 };
