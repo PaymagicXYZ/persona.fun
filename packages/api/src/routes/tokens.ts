@@ -1,4 +1,4 @@
-import { getToken, getTokens } from "@persona/db";
+import { getToken, getTokenBySymbol, getTokens } from "@persona/db";
 import { createElysia } from "../utils";
 import { t } from "elysia";
 
@@ -68,6 +68,15 @@ export const tokensRoutes = createElysia({ prefix: "/tokens" })
     {
       query: t.Object({
         tokenAddresses: t.Union([t.String(), t.Array(t.String())]),
+      }),
+    }
+  )
+  .get(
+    "/symbol/:symbol",
+    async ({ params }) => getTokenBySymbol(params.symbol),
+    {
+      params: t.Object({
+        symbol: t.String(),
       }),
     }
   );

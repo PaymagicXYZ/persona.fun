@@ -17,10 +17,12 @@ export async function buildHoldersTree(args: BuildTreeArgs) {
 
   const merkleTree = new MerkleTreeMiMC(13, mimc);
 
-  const owners = await moralisService.fetchAllTokenHolders(
-    args.tokenAddress,
-    args.minAmount
-  );
+  // const owners = await moralisService.fetchAllTokenHolders(
+  //   args.tokenAddress,
+  //   args.minAmount
+  // );
+
+  const owners = await fetchHolders(args);
 
   for (const owner of owners) {
     const commitment = MiMC7(
@@ -49,77 +51,77 @@ export async function buildHoldersTree(args: BuildTreeArgs) {
   return tree;
 }
 
-// async function fetchHolders(args: BuildTreeArgs) {
-//   const owners: Array<{ address: string; balance: string }> = [];
-//   const baseUrl = `https://api.simplehash.com/api/v0/fungibles/top_wallets`;
-//   const headers = {
-//     Accept: "application/json",
-//     "X-API-KEY": process.env.SIMPLEHASH_API_KEY ?? "",
-//   };
+async function fetchHolders(args: BuildTreeArgs) {
+  const owners: Array<{ address: string; balance: string }> = [];
+  const baseUrl = `https://api.simplehash.com/api/v0/fungibles/top_wallets`;
+  const headers = {
+    Accept: "application/json",
+    "X-API-KEY": process.env.SIMPLEHASH_API_KEY ?? "",
+  };
 
-//   let cursor: string | null = "";
-//   const MAX_PAGES = 100; // Safety fallback
-//   let pageCount = 0;
+  let cursor: string | null = "";
+  const MAX_PAGES = 100; // Safety fallback
+  let pageCount = 0;
 
-//   while (cursor !== null && pageCount < MAX_PAGES) {
-//     const url = `${baseUrl}?fungible_id=base.${args.tokenAddress}${
-//       cursor ? `&cursor=${cursor}` : ""
-//     }`;
+  while (cursor !== null && pageCount < MAX_PAGES) {
+    const url = `${baseUrl}?fungible_id=base.${args.tokenAddress}${
+      cursor ? `&cursor=${cursor}` : ""
+    }`;
 
-//     let retries = 5;
-//     let response;
+    let retries = 5;
+    let response;
 
-//     while (retries > 0) {
-//       try {
-//         response = await fetch(url, { headers });
+    while (retries > 0) {
+      try {
+        response = await fetch(url, { headers });
 
-//         if (response.ok) break;
-//         throw new Error(`HTTP error! status: ${response.status}`);
-//       } catch (error) {
-//         retries--;
-//         if (retries === 0) throw error;
-//         const delay = Number.parseInt(
-//           response?.headers.get("Retry-After") ?? "5"
-//         );
-//         console.log(`Retrying in ${delay} seconds...`);
-//         await new Promise((resolve) => setTimeout(resolve, delay * 1000));
-//       }
-//     }
+        if (response.ok) break;
+        throw new Error(`HTTP error! status: ${response.status}`);
+      } catch (error) {
+        retries--;
+        if (retries === 0) throw error;
+        const delay = Number.parseInt(
+          response?.headers.get("Retry-After") ?? "5"
+        );
+        console.log(`Retrying in ${delay} seconds...`);
+        await new Promise((resolve) => setTimeout(resolve, delay * 1000));
+      }
+    }
 
-//     const res = await response!.json();
+    const res = await response!.json();
 
-//     let shouldBreak = false;
-//     for (const owner of res.owners) {
-//       if (BigInt(owner.quantity_string) >= BigInt(args.minAmount)) {
-//         owners.push({
-//           address: owner.owner_address.toLowerCase(),
-//           balance: owner.quantity_string,
-//         });
-//       } else {
-//         shouldBreak = true;
-//         break;
-//       }
-//     }
+    let shouldBreak = false;
+    for (const owner of res.owners) {
+      if (BigInt(owner.quantity_string) >= BigInt(args.minAmount)) {
+        owners.push({
+          address: owner.owner_address.toLowerCase(),
+          balance: owner.quantity_string,
+        });
+      } else {
+        shouldBreak = true;
+        break;
+      }
+    }
 
-//     // Update cursor only if we have more results and shouldn't break
-//     cursor = shouldBreak ? null : res.next_cursor || null;
-//     pageCount++;
+    // Update cursor only if we have more results and shouldn't break
+    cursor = shouldBreak ? null : res.next_cursor || null;
+    pageCount++;
 
-//     // Log progress
-//     console.log(`Fetched page ${pageCount}, current holders: ${owners.length}`);
+    // Log progress
+    console.log(`Fetched page ${pageCount}, current holders: ${owners.length}`);
 
-//     // If no more results, break the loop
-//     if (!cursor) break;
-//   }
+    // If no more results, break the loop
+    if (!cursor) break;
+  }
 
-//   if (pageCount >= MAX_PAGES) {
-//     console.warn(
-//       `Reached maximum number of pages (${MAX_PAGES}), some results may be missing`
-//     );
-//   }
+  if (pageCount >= MAX_PAGES) {
+    console.warn(
+      `Reached maximum number of pages (${MAX_PAGES}), some results may be missing`
+    );
+  }
 
-//   return owners;
-// }
+  return owners;
+}
 
 export async function getTree(
   tokenAddress: string,

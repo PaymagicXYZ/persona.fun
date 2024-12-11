@@ -1,5 +1,10 @@
 import { t } from "elysia";
-import { insertPersona, getPersonas, getPersonaByFid } from "@persona/db";
+import {
+  insertPersona,
+  getPersonas,
+  getPersonaByFid,
+  getPersonaByTokenId,
+} from "@persona/db";
 import {
   createElysia,
   generateNeynarSignature,
@@ -26,6 +31,15 @@ export const personaRoutes = createElysia({ prefix: "/personas" })
       fid: t.Number(),
     }),
   })
+  .get(
+    "/tokenId/:tokenId",
+    async ({ params }) => getPersonaByTokenId(params.tokenId),
+    {
+      params: t.Object({
+        tokenId: t.Number(),
+      }),
+    }
+  )
   .post(
     "/",
     async ({ body }) => {
