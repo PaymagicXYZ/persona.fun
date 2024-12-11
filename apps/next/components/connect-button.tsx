@@ -57,7 +57,7 @@ export const ConnectButton = () => {
                 <button
                   type="button"
                   onClick={openAccountModal}
-                  className="bg-[#C83FD3] w-[114px] hover:bg-[#C83FD3]/90 text-white text-lg font-bold rounded-xl"
+                  className="bg-[#C83FD3] w-[120px] hover:bg-[#C83FD3]/90 text-white text-lg font-bold rounded-xl"
                 >
                   {/* <Balance /> */}
                   <div className="text-base font-bold bg-[#C83FD3 rounded-md py-1.5 px-3 m-0.5">

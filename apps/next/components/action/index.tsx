@@ -30,7 +30,7 @@ export default function ActionComponent() {
 
   return (
     <div className="flex flex-col gap-4">
-      <Card className="flex flex-col gap-4 bg-[#121212] border  top-20 p-4 rounded-md">
+      <Card className="flex flex-col gap-4 bg-[#121212] border top-20 p-4 rounded-md">
         <div className="text-gray-100 font-bold text-2xl leading-8">
           Post anonymously as the intern
         </div>
@@ -95,7 +95,7 @@ export default function ActionComponent() {
           <SuccessCastLink castUrl={generateWarpcastUrl(createdCast)} />
         )}
       </Card>
-      <Card className="flex flex-col gap-4 bg-[#121212] border  top-20 p-4 rounded-md">
+      <Card className="flex flex-col gap-4 bg-[#121212] border top-20 rounded-md">
         <CreatePost />
       </Card>
     </div>
