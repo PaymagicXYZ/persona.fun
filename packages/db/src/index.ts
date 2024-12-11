@@ -186,12 +186,12 @@ export const insertPersona = async (persona: {
 export async function createPostMapping(
   castHash: string,
   tweetId?: string,
-  bestOfHash?: string
+  best_of_hash?: string
 ) {
   const { data, error } = await supabase
     .from("post_mapping")
     .upsert(
-      { cast_hash: castHash, tweet_id: tweetId, best_of_hash: bestOfHash },
+      { cast_hash: castHash, tweet_id: tweetId, best_of_hash },
       { onConflict: "cast_hash" }
     );
 
@@ -208,7 +208,7 @@ export async function getPostMapping(castHash: string) {
     .select()
     .eq("cast_hash", castHash)
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (error) {
     throw error;

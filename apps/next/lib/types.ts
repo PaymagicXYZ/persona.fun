@@ -429,7 +429,7 @@ export type Cast = {
     role: string;
   };
   reveal?: Reveal;
-  tweetId?: string;
+  tweet_id?: string;
 };
 
 export interface Reveal {

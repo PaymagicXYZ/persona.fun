@@ -4,7 +4,6 @@ import { ProofType } from "@persona/utils/src/proofs";
 import { verifyMessage, zeroAddress } from "viem";
 import { CreatePostParams, SubmitHashParams } from "../services/types";
 import { neynar } from "../services/neynar";
-// import { promoteToTwitter, twitterClient } from '../services/twitter'
 import {
   createPostMapping,
   createPostReveal,
@@ -17,10 +16,8 @@ import { Noir } from "@noir-lang/noir_js";
 import { getValidRoots } from "@persona/utils/src/merkle-tree";
 import { augmentCasts } from "./feed";
 import { gpt } from "../services/gpt-service";
-<<<<<<< Updated upstream
-=======
+
 import { getTwitterClient, promoteToTwitter } from "src/services/twitter";
->>>>>>> Stashed changes
 
 export function getPostRoutes(
   createPostBackend: Noir,
@@ -111,15 +108,11 @@ export function getPostRoutes(
         const postMapping = await getPostMapping(params.hash);
         if (postMapping) {
           if (postMapping.tweet_id) {
-<<<<<<< Updated upstream
-            // await twitterClient.v2.deleteTweet(postMapping.tweetId)
-=======
             const cast = await neynar.getCast(postMapping.cast_hash);
             const twitterClient = await getTwitterClient({
               fid: cast.cast.author.fid,
             });
             await twitterClient.v2.deleteTweet(postMapping.tweet_id);
->>>>>>> Stashed changes
           }
           if (postMapping.best_of_hash) {
             await neynar.delete({
@@ -179,25 +172,29 @@ export function getPostRoutes(
           ? await getPostMapping(cast.cast.parent_hash)
           : undefined;
 
-        // const bestOfTweetId = await promoteToTwitter(
-        //   cast.cast,
-        //   parentMapping?.tweetId || undefined,
-        //   body.args?.asReply
-        // )
+        const bestOfTweetId = await promoteToTwitter(
+          cast.cast,
+          parentMapping?.tweet_id || undefined,
+          body.args?.asReply
+        );
 
-        // const bestOfResponse = await neynar.postAsQuote({
-        //   tokenAddress: params.tokenAddress,
-        //   quoteFid: cast.cast.author.fid,
-        //   quoteHash: cast.cast.hash,
-        // })
+        const bestOfResponse = await neynar.postAsQuote({
+          tokenAddress: params.tokenAddress,
+          quoteFid: cast.cast.author.fid,
+          quoteHash: cast.cast.hash,
+        });
 
-        // await createPostMapping(params.hash, bestOfTweetId, bestOfResponse.hash)
+        await createPostMapping(
+          params.hash,
+          bestOfTweetId,
+          bestOfResponse.hash
+        );
 
-        // return {
-        //   success: true,
-        //   tweetId: bestOfTweetId,
-        //   bestOfHash: bestOfResponse.hash,
-        // }
+        return {
+          success: true,
+          tweet_id: bestOfTweetId,
+          best_of_hash: bestOfResponse.hash,
+        };
       },
       {
         body: t.Object({
