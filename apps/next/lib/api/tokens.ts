@@ -50,4 +50,11 @@ export const tokensApi = {
 
     return response.data;
   },
+  getTokenBySymbol: async ({ symbol }: { symbol: string }) => {
+    const response = await apiClient.request<TokenResponse>(
+      `/tokens/symbol/${symbol}`
+    );
+
+    return response.data;
+  },
 };

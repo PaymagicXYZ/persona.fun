@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Card } from "../../../../components/ui/card";
-import usePersona from "@/hooks/use-persona";
+import { Card } from "../../../components/ui/card";
+import usePersonaByFid from "@/hooks/use-persona-by-fid";
 
 interface DexToolsChartViewProps {
   fid: number;
@@ -40,7 +40,7 @@ const DexToolsChartView = ({
   tvPaneColor = "161A1E",
   chartInUsd = true,
 }: DexToolsChartViewProps) => {
-  const persona = usePersona(fid);
+  const persona = usePersonaByFid(fid);
   const [widgetUrl, setWidgetUrl] = useState<string | null>(null);
 
   useEffect(() => {

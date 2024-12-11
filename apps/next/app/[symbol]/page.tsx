@@ -1,23 +1,25 @@
 "use client";
 
 import ActionComponent from "@/components/action";
-import DexToolsChartView from "./components/DexToolsChartView";
 import PostFeed from "@/components/post-feed";
-import usePersona from "@/hooks/use-persona";
-import TokenDetails from "./components/TokenDetails";
+import usePersona from "@/hooks/use-persona-by-fid";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
-import { useAccount } from "wagmi";
 import { useBalance } from "@/hooks/use-balance";
+import TokenDetails from "./components/TokenDetails";
+import DexToolsChartView from "./components/DexToolsChartView";
+import useTokenBySymbol from "@/hooks/use-token-by-symbol";
+import usePersonaByAddress from "@/hooks/use-persona-by-address";
 
 type TabValue = "no-coiner" | "token-holders";
 
-export default function Page({ params }: { params: { fid: string } }) {
-  const fid = parseInt(params.fid);
-  const persona = usePersona(fid);
+export default function Page({ params }: { params: { symbol: string } }) {
+  const symbol = params.symbol;
+  const token = useTokenBySymbol(symbol);
+  const persona = usePersonaByAddress(token?.id);
   const { data, isLoading } = useBalance(persona?.token?.address);
 
   // Show loading state while initial data is being fetched
@@ -38,7 +40,7 @@ export default function Page({ params }: { params: { fid: string } }) {
   return (
     <div className="flex flex-col gap-8 max-w-screen-lg mx-auto justify-center items-center">
       <TokenDetailsTabs
-        fid={fid}
+        fid={persona.fid}
         initialTab={hasEnoughTokens ? "token-holders" : "no-coiner"}
       />
     </div>

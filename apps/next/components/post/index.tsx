@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation";
 import { hashMessage } from "viem";
 import { Input } from "../ui/input";
 import { useQuery } from "@tanstack/react-query";
-import usePersona from "@/hooks/use-persona";
+import usePersonaByFid from "@/hooks/use-persona-by-fid";
 import { Card } from "../ui/card";
 
 function formatNumber(num: number): string {
@@ -42,7 +42,7 @@ export function Post({ cast, fid }: { cast: Cast; fid: number }) {
   const { address } = useAccount();
 
   const [reveal, setReveal] = useState(cast.reveal);
-  const persona = usePersona(fid);
+  const persona = usePersonaByFid(fid);
   const tokenAddress = persona?.token?.address;
   const { data: balance } = useBalance(tokenAddress);
 

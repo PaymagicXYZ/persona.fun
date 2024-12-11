@@ -1,7 +1,7 @@
 import { useTokensOnChainData } from "@/hooks/use-tokens-on-chain-data";
 
 import { useTokenHolders } from "@/hooks/use-token-holders";
-import usePersona from "@/hooks/use-persona";
+import usePersonaByFid from "@/hooks/use-persona-by-fid";
 import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
@@ -11,7 +11,7 @@ import { ProcessedTokensMap } from "@/lib/types/tokens";
 import { formatNumber } from "@/lib/utils";
 
 export default function TokenDetails({ fid }: { fid: number }) {
-  const persona = usePersona(fid);
+  const persona = usePersonaByFid(fid);
 
   const tokenHoldersData = useTokenHolders({
     tokenAddresses: persona?.token?.address ? [persona?.token?.address] : [],
