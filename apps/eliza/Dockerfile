@@ -29,6 +29,9 @@ COPY bun.lockb .
 COPY turbo.json .
 COPY tsconfig.json .
 
+# Copy patches directory
+COPY patches ./patches
+
 # Copy workspace packages
 COPY apps/eliza ./apps/eliza
 COPY packages/db ./packages/db
