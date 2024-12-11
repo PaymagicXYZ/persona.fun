@@ -7,6 +7,7 @@ import { TelegramClientInterface } from '@ai16z/client-telegram'
 import { TwitterClientInterface } from '@ai16z/client-twitter'
 import { FarcasterAgentClient } from '@ai16z/client-farcaster'
 import {
+  Action,
   AgentRuntime,
   CacheManager,
   type Character,
@@ -16,6 +17,7 @@ import {
   type ICacheManager,
   type IDatabaseAdapter,
   type IDatabaseCacheAdapter,
+  Memory,
   ModelProviderName,
   elizaLogger,
   settings,
@@ -36,6 +38,7 @@ import { character as defaultCharacter } from './character'
 import { getPersonaByFid, getPersonasByFids } from '@persona/db'
 import { SupabaseDatabaseAdapter } from '@ai16z/adapter-supabase'
 import { SupabaseAdapterV2 } from './SupabaseAdapterV2'
+import { validate } from 'uuid'
 const __filename = fileURLToPath(import.meta.url) // get the resolved path to the file
 const __dirname = path.dirname(__filename) // get the name of the directory
 
@@ -230,7 +233,7 @@ export function createAgent(
       // getSecret(character, "ALCHEMY_API_KEY") ? goatPlugin : null,
     ].filter(Boolean),
     providers: [],
-    actions: [],
+    actions: [tipUserAction],
     services: [],
     managers: [],
     cacheManager: cache,
@@ -313,3 +316,56 @@ startAgents().catch((error) => {
   elizaLogger.error('Unhandled error in startAgents:', error)
   process.exit(1)
 })
+
+export const tipUserAction: Action = {
+  name: 'TIP_USER',
+  similes: ['GIVE_TIP', 'REWARD_USER'],
+  description: 'Tips users based on the positivity of their messages.',
+
+  validate: async (runtime: IAgentRuntime, message: Memory) => {
+    // Simple positivity check (replace with actual sentiment analysis)
+    const positiveWords = ['great', 'awesome', 'fantastic', 'good']
+    const messageText = (message.content as any).text.toLowerCase()
+    return positiveWords.some((word) => messageText.includes(word))
+  },
+
+  handler: async (runtime: IAgentRuntime, message: Memory) => {
+    runtime.messageManager.createMemory({
+      content: {
+        text: "Thank you for your positive message! You've been tipped $5.00.",
+      },
+      userId: message.userId,
+      agentId: message.agentId,
+      roomId: message.roomId,
+    })
+    // Calculate tip amount based on positivity (simplified logic)
+    const tipAmount = Math.random() * 10 // Random tip for demonstration
+
+    // Append tip message to the response
+    const response = `Thank you for your positive message! You've been tipped $${tipAmount.toFixed(2)}.`
+
+    // Assuming the agent sends a response on Twitter/Farcaster
+    const platformResponse = `${message.content.text}\n\n${response}`
+
+    // Send the response (pseudo-code, replace with actual API call)
+    // await runtime.documentsManager.
+
+    // return true;
+  },
+
+  examples: [
+    [
+      {
+        user: '{{user1}}',
+        content: { text: 'This is a great service!' },
+      },
+      {
+        user: '{{agent}}',
+        content: {
+          text: "Thank you for your positive message! You've been tipped $5.00.",
+          action: 'TIP_USER',
+        },
+      },
+    ],
+  ],
+}
