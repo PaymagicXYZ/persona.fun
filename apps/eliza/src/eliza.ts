@@ -7,6 +7,7 @@ import { TelegramClientInterface } from '@ai16z/client-telegram'
 import { TwitterClientInterface } from '@ai16z/client-twitter'
 import { FarcasterAgentClient } from '@ai16z/client-farcaster'
 import {
+  Action,
   AgentRuntime,
   CacheManager,
   type Character,
@@ -15,6 +16,7 @@ import {
   type IAgentRuntime,
   type ICacheManager,
   type IDatabaseAdapter,
+  Memory,
   type IDatabaseCacheAdapter,
   ModelProviderName,
   elizaLogger,
@@ -230,7 +232,7 @@ export function createAgent(
       // getSecret(character, "ALCHEMY_API_KEY") ? goatPlugin : null,
     ].filter(Boolean),
     providers: [],
-    actions: [],
+    actions: [tipUserAction],
     services: [],
     managers: [],
     cacheManager: cache,
@@ -313,3 +315,56 @@ startAgents().catch((error) => {
   elizaLogger.error('Unhandled error in startAgents:', error)
   process.exit(1)
 })
+
+const tipUserAction: Action = {
+  name: 'TIP_USER',
+  similes: ['GIVE_TIP', 'REWARD_USER'],
+  description: 'Tips users based on the positivity of their messages.',
+
+  validate: async (runtime: IAgentRuntime, message: Memory) => {
+    // Simple positivity check (replace with actual sentiment analysis)
+    const positiveWords = ['great', 'awesome', 'fantastic', 'good']
+    const messageText = (message.content as any).text.toLowerCase()
+    return positiveWords.some((word) => messageText.includes(word))
+  },
+
+  handler: async (runtime: IAgentRuntime, message: Memory) => {
+    runtime.messageManager.createMemory({
+      content: {
+        text: "Thank you! I have a surprise for you!",
+      },
+      userId: message.userId,
+      agentId: message.agentId,
+      roomId: message.roomId,
+    })
+    // Calculate tip amount based on positivity (simplified logic)
+    const tipAmount = Math.random() * 10 // Random tip for demonstration
+
+    // Append tip message to the response
+    const response = `Thank you! I have a surprise for you!`
+
+    // Assuming the agent sends a response on Twitter/Farcaster
+    const platformResponse = `${message.content.text}\n\n${response}`
+
+    // Send the response (pseudo-code, replace with actual API call)
+    // await runtime.documentsManager.
+
+    // return true;
+  },
+
+  examples: [
+    [
+      {
+        user: '{{user1}}',
+        content: { text: 'This is a great service!' },
+      },
+      {
+        user: '{{agent}}',
+        content: {
+          text: "Thank you for your positive message! You've been tipped $5.00.",
+          action: 'TIP_USER',
+        },
+      },
+    ],
+  ],
+}
