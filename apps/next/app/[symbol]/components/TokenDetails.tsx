@@ -66,6 +66,23 @@ function TokenDetailsHeader({ persona }: { persona: Persona }) {
         </div>
       </div>
       <div className="flex items-center space-x-4">
+        {persona?.x_url && (
+          <Link
+            href={persona.x_url}
+            target="_blank"
+            className="flex items-center"
+          >
+            <div className="w-[30px] h-[30px] relative">
+              <Image
+                src="/x.svg"
+                alt="View"
+                fill
+                className="object-contain"
+                sizes="30px"
+              />
+            </div>
+          </Link>
+        )}
         <Link
           href={persona.fc_url ?? ""}
           target="_blank"

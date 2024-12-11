@@ -8,17 +8,27 @@ import {
 } from "twitter-api-v2";
 import { neynar } from "./neynar";
 import { Cast } from "./types";
+import { supabase } from "@persona/db";
 
 TwitterApiV2Settings.debug = true;
 
 const redis = new Redis(process.env.REDIS_URL as string);
 
-export const twitterClient = new TwitterApi({
-  appKey: process.env.TWITTER_API_KEY as string,
-  appSecret: process.env.TWITTER_API_SECRET as string,
-  accessToken: process.env.TWITTER_ACCESS_TOKEN as string,
-  accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET as string,
-});
+export async function getTwitterClient({ fid }: { fid: number }) {
+  const { data, error } = await supabase
+    .from("personas")
+    .select("x_credentials")
+    .eq("fid", fid)
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  const credentials = data.x_credentials;
+
+  return new TwitterApi(credentials as any);
+}
 
 export async function promoteToTwitter(
   cast: Cast,
@@ -75,6 +85,7 @@ export async function promoteToTwitter(
   return await formatAndSubmitToTwitter(
     text,
     images,
+    cast.author.fid,
     quoteTweetId,
     parentTweetId || replyToTweetId
   );
@@ -83,6 +94,7 @@ export async function promoteToTwitter(
 async function formatAndSubmitToTwitter(
   text: string,
   images: string[],
+  fid: number,
   quoteTweetId?: string,
   replyToTweetId?: string
 ) {
@@ -109,6 +121,7 @@ async function formatAndSubmitToTwitter(
           reject(e);
         });
     });
+    const twitterClient = await getTwitterClient({ fid });
     mediaIds.push(
       await twitterClient.v1.uploadMedia(binaryData as unknown as Buffer, {
         mimeType,
@@ -157,6 +170,7 @@ async function formatAndSubmitToTwitter(
   }
 
   try {
+    const twitterClient = await getTwitterClient({ fid });
     const result = await twitterClient.v2.tweet(text, params);
     if (result?.data?.id) {
       return result.data.id;

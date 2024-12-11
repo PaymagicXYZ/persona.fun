@@ -17,6 +17,10 @@ import { Noir } from "@noir-lang/noir_js";
 import { getValidRoots } from "@persona/utils/src/merkle-tree";
 import { augmentCasts } from "./feed";
 import { gpt } from "../services/gpt-service";
+<<<<<<< Updated upstream
+=======
+import { getTwitterClient, promoteToTwitter } from "src/services/twitter";
+>>>>>>> Stashed changes
 
 export function getPostRoutes(
   createPostBackend: Noir,
@@ -107,7 +111,15 @@ export function getPostRoutes(
         const postMapping = await getPostMapping(params.hash);
         if (postMapping) {
           if (postMapping.tweet_id) {
+<<<<<<< Updated upstream
             // await twitterClient.v2.deleteTweet(postMapping.tweetId)
+=======
+            const cast = await neynar.getCast(postMapping.cast_hash);
+            const twitterClient = await getTwitterClient({
+              fid: cast.cast.author.fid,
+            });
+            await twitterClient.v2.deleteTweet(postMapping.tweet_id);
+>>>>>>> Stashed changes
           }
           if (postMapping.best_of_hash) {
             await neynar.delete({

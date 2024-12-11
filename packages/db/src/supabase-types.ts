@@ -536,6 +536,7 @@ export type Database = {
           private_key: string | null
           signer_uuid: string
           token_id: number | null
+          x_credentials: Json | null
           x_url: string | null
         }
         Insert: {
@@ -551,6 +552,7 @@ export type Database = {
           private_key?: string | null
           signer_uuid: string
           token_id?: number | null
+          x_credentials?: Json | null
           x_url?: string | null
         }
         Update: {
@@ -566,6 +568,7 @@ export type Database = {
           private_key?: string | null
           signer_uuid?: string
           token_id?: number | null
+          x_credentials?: Json | null
           x_url?: string | null
         }
         Relationships: [

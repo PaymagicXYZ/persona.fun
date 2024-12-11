@@ -309,6 +309,24 @@ export default function Personas() {
       cell: ({ row }) => {
         return (
           <div className="flex items-center space-x-4">
+            {row.original?.x_url && (
+              <Link
+                href={row.original.x_url}
+                target="_blank"
+                className="flex items-center"
+                onClick={handleLinkClick}
+              >
+                <div className="w-[30px] h-[30px] relative">
+                  <Image
+                    src="/x.svg"
+                    alt="View"
+                    fill
+                    className="object-contain"
+                    sizes="30px"
+                  />
+                </div>
+              </Link>
+            )}
             <Link
               href={row.original.fc_url ?? ""}
               target="_blank"
