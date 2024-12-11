@@ -40,7 +40,6 @@ function formatNumber(num: number): string {
 
 export function Post({ cast, fid }: { cast: Cast; fid: number }) {
   const { address } = useAccount();
-
   const [reveal, setReveal] = useState(cast.reveal);
   const persona = usePersonaByFid(fid);
   const tokenAddress = persona?.token?.address;
@@ -50,13 +49,13 @@ export function Post({ cast, fid }: { cast: Cast; fid: number }) {
     address &&
     !!balance &&
     balance >= BigInt(persona?.token?.delete_amount ?? 0) &&
-    cast.tweetId;
+    cast.tweet_id;
 
   const canPromote =
     address &&
     !!balance &&
     balance >= BigInt(persona?.token?.promote_amount ?? 0) &&
-    !cast.tweetId;
+    !cast.tweet_id;
 
   const canReveal = address && !!cast.reveal && !cast.reveal.revealedAt;
 
@@ -127,9 +126,9 @@ export function Post({ cast, fid }: { cast: Cast; fid: number }) {
               >
                 <img src="/farcaster.svg" alt="Warpcast" className="w-4 h-4" />
               </a>
-              {cast.tweetId && (
+              {cast.tweet_id && (
                 <a
-                  href={`https://x.com/i/status/${cast.tweetId}`}
+                  href={`https://x.com/i/status/${cast.tweet_id}`}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -254,18 +253,20 @@ export function Post({ cast, fid }: { cast: Cast; fid: number }) {
                   tokenAddress={persona?.token?.address}
                 />
               )}
+             
+             */}
+              {canDelete && (
+                <DeleteButton
+                  cast={cast}
+                  tokenAddress={persona?.token?.address}
+                />
+              )}
               {canPromote && (
                 <PromoteButton
                   cast={cast}
                   tokenAddress={persona?.token?.address}
                 />
               )}
-              {canDelete && (
-                <DeleteButton
-                  cast={cast}
-                  tokenAddress={persona?.token?.address}
-                />
-              )} */}
             </div>
           </div>
         </div>

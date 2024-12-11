@@ -68,6 +68,13 @@ export default function ActionComponent() {
               string="Delete posts"
               isConnected={!!address && !isLoading}
             />
+            <TokenRequirement
+              tokenSymbol={persona?.token?.symbol}
+              tokenAmount={data}
+              tokenNeeded={BigInt(5000000)}
+              string="Edit character"
+              isConnected={!!address && !isLoading}
+            />
           </ul>
         </div>
 
