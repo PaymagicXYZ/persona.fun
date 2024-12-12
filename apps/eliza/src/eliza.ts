@@ -210,38 +210,8 @@ export function createAgent(
     token,
     modelProvider: character.modelProvider,
     evaluators: [],
-    character: { ...character, plugins: [tippingPlugin] },
-    plugins: [
-      bootstrapPlugin,
-      tippingPlugin,
-      // getSecret(character, "CONFLUX_CORE_PRIVATE_KEY") ? confluxPlugin : null,
-      nodePlugin,
-      getSecret(character, 'SOLANA_PUBLIC_KEY') ||
-      // (getSecret(character, "WALLET_PUBLIC_KEY") &&
-      // 	!getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith("0x"))
-      // 	? solanaPlugin
-      // 	: null,
-      getSecret(character, 'EVM_PRIVATE_KEY') ||
-      // (getSecret(character, "WALLET_PUBLIC_KEY") &&
-      // 	!getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith("0x"))
-      // 	? evmPlugin
-      // 	: null,
-      // getSecret(character, "ZEROG_PRIVATE_KEY") ? zgPlugin : null,
-      // getSecret(character, "COINBASE_COMMERCE_KEY")
-      // 	? coinbaseCommercePlugin
-      // 	: null,
-      getSecret(character, 'FAL_API_KEY') ||
-      getSecret(character, 'OPENAI_API_KEY') ||
-      getSecret(character, 'HEURIST_API_KEY')
-        ? imageGenerationPlugin
-        : null,
-      // ...(getSecret(character, "COINBASE_API_KEY") &&
-      // getSecret(character, "COINBASE_PRIVATE_KEY")
-      // 	? [coinbaseMassPaymentsPlugin, tradePlugin]
-      // 	: []),
-      // getSecret(character, "WALLET_SECRET_SALT") ? teePlugin : null,
-      // getSecret(character, "ALCHEMY_API_KEY") ? goatPlugin : null,
-    ].filter(Boolean),
+    character,
+    plugins: [bootstrapPlugin, tippingPlugin, nodePlugin].filter(Boolean),
     providers: [],
     services: [],
     managers: [],
@@ -358,6 +328,9 @@ const tipUserAction: Action = {
           return false
         }
       }
+    }
+    if (runtime.plugins) {
+      console.log('Plugins from root are: ', runtime.plugins)
     }
     // Check if plugins are loaded correctly
     if (runtime.character.plugins) {
