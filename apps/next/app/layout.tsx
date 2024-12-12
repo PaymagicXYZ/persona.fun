@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ConnectButton } from "@/components/connect-button";
 import { Logo } from "@/components/logo";
 import { Instrument_Sans } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const instrumentSans = Instrument_Sans({
   subsets: ["latin"],
@@ -49,6 +50,7 @@ export default function RootLayout({
         </Providers>
         <Toaster />
       </body>
+      <GoogleAnalytics gaId="G-Z6EFBFGRL6" />
     </html>
   );
 }
