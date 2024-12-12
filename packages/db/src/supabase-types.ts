@@ -531,10 +531,13 @@ export type Database = {
           fid: number
           id: number
           image_url: string | null
+          is_visible: boolean
           name: string
           personality: string
           private_key: string | null
+          shape_image_url: string | null
           signer_uuid: string
+          social_pfp_url: string | null
           token_id: number | null
           x_credentials: Json | null
           x_url: string | null
@@ -547,10 +550,13 @@ export type Database = {
           fid: number
           id?: number
           image_url?: string | null
+          is_visible?: boolean
           name: string
           personality: string
           private_key?: string | null
+          shape_image_url?: string | null
           signer_uuid: string
+          social_pfp_url?: string | null
           token_id?: number | null
           x_credentials?: Json | null
           x_url?: string | null
@@ -563,10 +569,13 @@ export type Database = {
           fid?: number
           id?: number
           image_url?: string | null
+          is_visible?: boolean
           name?: string
           personality?: string
           private_key?: string | null
+          shape_image_url?: string | null
           signer_uuid?: string
+          social_pfp_url?: string | null
           token_id?: number | null
           x_credentials?: Json | null
           x_url?: string | null

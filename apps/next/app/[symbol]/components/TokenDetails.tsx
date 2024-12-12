@@ -42,18 +42,18 @@ function TokenDetailsHeader({ persona }: { persona: Persona }) {
       <div className="flex items-center justify-between gap-4">
         <div className="relative flex">
           <Image
-            src="/xl-logo.svg"
+            src={persona.shape_image_url}
             alt="logo"
-            width={76}
-            height={76}
+            width={66}
+            height={66}
             className="rounded-md"
           />
           <Image
             src={persona.image_url}
             alt={persona?.name}
-            width={76}
-            height={76}
-            className="object-cover rounded-full absolute left-16"
+            width={66}
+            height={66}
+            className="object-cover rounded-full absolute left-14"
           />
         </div>
         <div className="flex flex-col ml-16 gap-2">
