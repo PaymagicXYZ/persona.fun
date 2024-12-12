@@ -11,6 +11,7 @@ const personaSelect = `
       image_url,
       fc_url,
       x_url,
+      shape_image_url,
       token:token_id (
         id,
         address,
@@ -31,7 +32,8 @@ const personaSelect = `
 export async function getPersonas(): Promise<any> {
   const { data: personas, error: personasError } = await supabase
     .from("personas")
-    .select(personaSelect);
+    .select(personaSelect)
+    .eq("is_visible", true);
 
   if (personasError) throw personasError;
 
@@ -68,6 +70,7 @@ export async function getPersonaByFid(fid: number): Promise<any | null> {
     .from("personas")
     .select(personaSelect)
     .eq("fid", fid)
+    .eq("is_visible", true)
     .limit(1)
     .single();
 
@@ -85,6 +88,7 @@ export async function getPersonaByTokenId(
     .from("personas")
     .select(personaSelect)
     .eq("token_id", tokenId)
+    .eq("is_visible", true)
     .limit(1)
     .single();
 

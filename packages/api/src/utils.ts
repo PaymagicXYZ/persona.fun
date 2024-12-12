@@ -112,3 +112,30 @@ export function generateRandomGradient() {
   // Return just the CSS string for storage
   return `linear-gradient(${angle}deg, ${color1}, ${color2})`;
 }
+
+export function aggregateTips(
+  tips: {
+    user_address: string;
+    token_address: string;
+    value: number;
+    image_url: string;
+    symbol: string;
+  }[]
+) {
+  return tips.reduce((acc, tip) => {
+    if (!acc[tip.token_address]) {
+      acc[tip.token_address] = {
+        amount: 0,
+        image_url: tip.image_url,
+        symbol: tip.symbol,
+      };
+    }
+
+    acc[tip.token_address].amount += tip.value;
+
+    return acc;
+  }, {} as Record<string, { amount: number; image_url: string; symbol: string }>);
+}
+
+export const delay = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));

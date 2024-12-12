@@ -5,6 +5,7 @@ export type Persona = {
   name: string;
   fid: number;
   image_url: string;
+  shape_image_url: string;
   fc_url: string;
   x_url: string;
   token?: TokenResponse;

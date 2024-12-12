@@ -57,4 +57,24 @@ export const tokensApi = {
 
     return response.data;
   },
+  checkEligibility: async ({ userAddress }: { userAddress: string }) => {
+    const response = await apiClient.request<{
+      [key: string]: { amount: number; image_url: string; symbol: string };
+    }>(`/tokens/eligibility/${userAddress}`);
+
+    return response.data;
+  },
+  claimTips: async ({ userAddress }: { userAddress: string }) => {
+    const response = await apiClient.request<{
+      user_address: string;
+      transactions: {
+        token_address: string;
+        amount: number;
+        hash: string;
+        status: "success" | "reverted";
+      }[];
+    }>(`/tokens/claim/${userAddress}`);
+
+    return response.data;
+  },
 };

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { ConnectButton } from "@/components/connect-button";
 import Link from "next/link";
+import TippingRewardsChecker from "./components/TippingRewards";
 
 type TabValue = "no-coiner" | "token-holders";
 
@@ -43,7 +44,6 @@ export default function Page({ params }: { params: { symbol: string } }) {
   }, [address, isConnecting]);
 
   useEffect(() => {
-    console.log(address, isLoading, data, persona?.token?.post_amount);
     if (address && !isLoading && data !== undefined) {
       const BALANCE = data ? data / BigInt(10 ** 18) : BigInt(0);
       const FARCASTER_POST =
@@ -113,7 +113,7 @@ function TokenDetailsTabs({
             value="no-coiner"
           >
             <Image
-              src="/table.svg"
+              src="/no-coiner.svg"
               alt="No Coiner View"
               width={45}
               height={49}
@@ -186,6 +186,7 @@ function NoCoinerView({ fid }: { fid: number }) {
   return (
     <div className="space-y-6">
       <TokenDetails fid={fid} />
+      <TippingRewardsChecker />
       <DexToolsChartView fid={fid} />
     </div>
   );
@@ -240,7 +241,6 @@ function BuyTokensDialog({
   symbol?: string;
   uniswap_url?: string;
 }) {
-  console.log(toggle);
   const [open, setOpen] = useState(toggle);
 
   useEffect(() => {

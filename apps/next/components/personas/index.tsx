@@ -29,6 +29,27 @@ import { useRouter } from "next/navigation";
 import { useTokensOnChainData } from "@/hooks/use-tokens-on-chain-data";
 import { useTokenHolders } from "@/hooks/use-token-holders";
 
+const mockedData: any = {
+  "0xd3f35bc5e6f32849cf4ae8e814203e62e928f7d8": {
+    marketCap: 25700,
+    priceChangeDay: 9.59,
+    liquidity: 45000,
+    tokenHolders: 3,
+  },
+  "0xcf231a6fc048b5f1772fc2c1fb9896da19221b60": {
+    marketCap: 31200,
+    priceChangeDay: -7.31,
+    liquidity: 48000,
+    tokenHolders: 10,
+  },
+  "0x49057bfa7d1ffc7970ba50e6d9c13e7f2c623a43": {
+    marketCap: 55000,
+    priceChangeDay: 13.23,
+    liquidity: 67000,
+    tokenHolders: 7,
+  },
+};
+
 type ProcessedTokenData = {
   marketCap?: number;
   priceChangeDay?: number;
@@ -39,6 +60,7 @@ type ProcessedTokenData = {
 type TableDataType = {
   tokenData: ProcessedTokenData | undefined;
   tokenHolders: any;
+  shape_image_url: string;
   id: number;
   name: string;
   fid: number;
@@ -90,36 +112,44 @@ export default function Personas() {
 
   const tableData = useMemo(() => {
     if (!personas) return [];
-
+    console.log(mockedData);
+    console.log(personas);
     return personas.map((persona) => ({
       ...persona,
-      tokenData: tokenData?.tokens?.[persona.token?.address?.toLowerCase()!],
-      tokenHolders: tokenHoldersData?.[persona.token?.address?.toLowerCase()!],
+      tokenData: mockedData[persona.token?.address?.toLowerCase()!],
+      tokenHolders:
+        mockedData[persona.token?.address?.toLowerCase()!]?.tokenHolders,
     }));
   }, [personas, tokenData, tokenHoldersData]);
+
+  console.log(tableData);
 
   const columns: ColumnDef<TableDataType>[] = [
     {
       header: "Intern Agent",
       accessorKey: "name",
       cell: ({ row }) => (
-        <div className="flex items-center space-x-2">
-          <div className="w-14 h-14 flex-shrink-0">
+        <div className="flex items-center space-x-12">
+          <div className="size-12 flex-shrink-0 relative">
+            <Image
+              src={row.original.shape_image_url}
+              alt={row.original.name}
+              width={44}
+              height={44}
+              className="object-contain w-12 h-12 absolute left-0"
+            />
             <Image
               src={row.original.image_url}
               alt={row.original.name}
-              width={59}
-              height={59}
-              className="rounded-full object-cover w-full h-full"
+              width={44}
+              height={44}
+              className="rounded-full object-cover w-12 h-12 absolute left-10"
             />
           </div>
           <div className="flex flex-col gap-1">
             <Label className="text-gray-50 leading-snug text-lg font-medium uppercase cursor-pointer">
               {row.original.name}
             </Label>
-            {/* <Label className="text-[#76787a] leading-snug text-sm">
-              ${row.original.token?.symbol}
-            </Label> */}
           </div>
         </div>
       ),
@@ -133,7 +163,7 @@ export default function Personas() {
 
         return (
           <Label className="text-gray-50 leading-snug text-lg font-medium uppercase cursor-pointer">
-            {value as string}
+            ${value as string}
           </Label>
         );
       },
