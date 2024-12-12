@@ -305,30 +305,28 @@ const tipUserAction: Action = {
     "Should tip the user based on the positivity of the message. Use a random tim amount between 1 and 10000 which should be included in the generated message's footer",
 
   validate: async (runtime: IAgentRuntime, message: Memory) => {
-    // biome-ignore lint/suspicious/noConsoleLog: <explanation>
-    console.log('Validating message: ', message)
     // Simple positivity check (replace with actual sentiment analysis)
-    const recentMessagesData = await runtime.messageManager.getMemories({
-      roomId: message.roomId,
-      count: 1,
-      unique: false,
-    })
-    const agentMessages = recentMessagesData.filter(
-      (m: { userId: any }) => m.userId === runtime.agentId
-    )
+    // const recentMessagesData = await runtime.messageManager.getMemories({
+    //   roomId: message.roomId,
+    //   count: 1,
+    //   unique: false,
+    // })
+    // const agentMessages = recentMessagesData.filter(
+    //   (m: { userId: any }) => m.userId === runtime.agentId
+    // )
 
-    // check if the last message was a tip
-    if (agentMessages) {
-      const lastMessages = agentMessages.slice(0, maxTipsInARow)
-      if (lastMessages.length >= maxTipsInARow) {
-        const allTips = lastMessages.every(
-          (m: { content: any }) => (m.content as Content).action === 'TIP_USER'
-        )
-        if (allTips) {
-          return false
-        }
-      }
-    }
+    // // check if the last message was a tip
+    // if (agentMessages) {
+    //   const lastMessages = agentMessages.slice(0, maxTipsInARow)
+    //   if (lastMessages.length >= maxTipsInARow) {
+    //     const allTips = lastMessages.every(
+    //       (m: { content: any }) => (m.content as Content).action === 'TIP_USER'
+    //     )
+    //     if (allTips) {
+    //       return false
+    //     }
+    //   }
+    // }
     if (runtime.plugins) {
       console.log('Plugins from root are: ', runtime.plugins)
     }
@@ -468,7 +466,21 @@ const tipUserAction: Action = {
         content: { text: 'This is a great service!' },
       },
       {
-        user: '{{agent}}',
+        user: '{{user2}}',
+        content: {
+          text: "Thank you for your positive message! You've been tipped $5.00.",
+          action: 'TIP_USER',
+        },
+      },
+    ],
+    [
+      {
+        user: '{{user1}}',
+        content: { text: 'awesome' },
+      },
+
+      {
+        user: '{{user2}}',
         content: {
           text: "Thank you for your positive message! You've been tipped $5.00.",
           action: 'TIP_USER',
