@@ -1,0 +1,12 @@
+diff --git a/src/memory.ts b/src/memory.ts
+index b3a8c862c96f3de898e4f020064c25c44de9fda3..7d2c21017bdf59e5bde653729ebb1f35524307a2 100644
+--- a/src/memory.ts
++++ b/src/memory.ts
+@@ -40,6 +40,7 @@ export function createCastMemory({
+             url: "",
+             inReplyTo,
+             hash: cast.hash,
++            action: "TIP_USER",
+         },
+         roomId,
+         embedding: getEmbeddingZeroVector(),

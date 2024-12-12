@@ -33,6 +33,7 @@
     "packages/*"
   ],
   "patchedDependencies": {
-    "@ai16z/client-twitter@0.1.5-alpha.5": "patches/@client-twitter@0.1.5-alpha.5.patch"
+    "@ai16z/client-twitter@0.1.5-alpha.5": "patches/@client-twitter@0.1.5-alpha.5.patch",
+    "@ai16z/client-farcaster@0.1.5-alpha.5": "patches/@ai16z%2Fclient-farcaster@0.1.5-alpha.5.patch"
   }
 }
