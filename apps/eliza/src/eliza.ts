@@ -399,9 +399,11 @@ const tipUserAction: Action = {
       context,
       modelClass: ModelClass.LARGE,
     })
+    // biome-ignore lint/suspicious/noConsoleLog: <explanation>
     console.log('💡 Generated response:', {
       action: response.action,
       hasText: !!response.text,
+      text: response.text,
     })
 
     response.inReplyTo = message.id
@@ -471,6 +473,16 @@ const tipUserAction: Action = {
           text: "Thank you for your positive message! You've been tipped $5.00.",
           action: 'TIP_USER',
         },
+      },
+    ],
+    [
+      {
+        user: '{{user1}}',
+        content: { text: "That's great!" },
+      },
+      {
+        user: '{{user2}}',
+        content: { text: 'Thank you for your positive message!' },
       },
     ],
     [
