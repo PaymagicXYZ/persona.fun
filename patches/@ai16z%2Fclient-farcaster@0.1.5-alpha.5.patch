@@ -1,14 +1,48 @@
-diff --git a/node_modules/@ai16z/client-farcaster/.bun-tag-63a49a2a4ae59d20 b/.bun-tag-63a49a2a4ae59d20
-new file mode 100644
-index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
-diff --git a/node_modules/@ai16z/client-farcaster/.bun-tag-f236fd9844a4b863 b/.bun-tag-f236fd9844a4b863
-new file mode 100644
-index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
 diff --git a/src/interactions.ts b/src/interactions.ts
-index d3a1e0b71289f27a85125a002c61fb0fe441b583..602471ee68d37dfef959fc8b38ffa42a9f6af7df 100644
+index d3a1e0b71289f27a85125a002c61fb0fe441b583..ca233946289068996faae4d23ec2622e5fb75b42 100644
 --- a/src/interactions.ts
 +++ b/src/interactions.ts
-@@ -202,6 +202,11 @@ export class FarcasterInteractionManager {
+@@ -53,6 +53,7 @@ export class FarcasterInteractionManager {
+ 
+     private async handleInteractions() {
+         const agentFid = Number(this.runtime.getSetting("FARCASTER_FID"));
++        const maxResponsesPerThread = 5; // Set your desired limit here
+ 
+         const mentions = await this.client.getMentions({
+             fid: agentFid,
+@@ -78,6 +79,18 @@ export class FarcasterInteractionManager {
+                 continue;
+             }
+ 
++            // Check the number of responses in the current thread
++            const thread = await buildConversationThread({
++                client: this.client,
++                runtime: this.runtime,
++                cast: mention,
++            });
++
++            if (thread.length >= maxResponsesPerThread) {
++                console.log(`Skipping thread with more than ${maxResponsesPerThread} responses`);
++                continue;
++            }
++
+             await this.runtime.ensureConnection(
+                 userId,
+                 roomId,
+@@ -86,12 +99,6 @@ export class FarcasterInteractionManager {
+                 "farcaster"
+             );
+ 
+-            const thread = await buildConversationThread({
+-                client: this.client,
+-                runtime: this.runtime,
+-                cast: mention,
+-            });
+-
+             const memory: Memory = {
+                 content: { text: mention.text },
+                 agentId: this.runtime.agentId,
+@@ -202,6 +209,11 @@ export class FarcasterInteractionManager {
              modelClass: ModelClass.LARGE,
          });
  
