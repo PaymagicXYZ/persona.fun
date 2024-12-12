@@ -359,6 +359,11 @@ const tipUserAction: Action = {
         }
       }
     }
+    // Check if plugins are loaded correctly
+    if (runtime.character.plugins) {
+      // biome-ignore lint/suspicious/noConsoleLog: <explanation>
+      console.log('Plugins are: ', runtime.character.plugins)
+    }
     // biome-ignore lint/suspicious/noConsoleLog: <explanation>
     console.log('Validating message: ', message)
     return true
