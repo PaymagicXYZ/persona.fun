@@ -7,7 +7,7 @@ import { TelegramClientInterface } from '@ai16z/client-telegram'
 import { TwitterClientInterface } from '@ai16z/client-twitter'
 import { FarcasterAgentClient } from '@ai16z/client-farcaster'
 import {
-  Action,
+  type Action,
   AgentRuntime,
   CacheManager,
   type Character,
@@ -16,7 +16,7 @@ import {
   type IAgentRuntime,
   type ICacheManager,
   type IDatabaseAdapter,
-  Memory,
+  type Memory,
   type IDatabaseCacheAdapter,
   ModelProviderName,
   elizaLogger,
@@ -322,6 +322,8 @@ const tipUserAction: Action = {
   description: 'Tips users based on the positivity of their messages.',
 
   validate: async (runtime: IAgentRuntime, message: Memory) => {
+    // biome-ignore lint/suspicious/noConsoleLog: <explanation>
+    console.log('Validating message: ', message)
     // Simple positivity check (replace with actual sentiment analysis)
     const positiveWords = ['great', 'awesome', 'fantastic', 'good']
     const messageText = (message.content as any).text.toLowerCase()
@@ -331,7 +333,7 @@ const tipUserAction: Action = {
   handler: async (runtime: IAgentRuntime, message: Memory) => {
     runtime.messageManager.createMemory({
       content: {
-        text: "Thank you! I have a surprise for you!",
+        text: 'Thank you! I have a surprise for you!',
       },
       userId: message.userId,
       agentId: message.agentId,
