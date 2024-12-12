@@ -23,6 +23,15 @@ import {
   settings,
   stringToUuid,
   validateCharacterConfig,
+  ModelClass,
+  HandlerCallback,
+  State,
+  composeContext,
+  booleanFooter,
+  messageCompletionFooter,
+  generateTrueOrFalse,
+  generateMessageResponse,
+  Content,
 } from '@ai16z/eliza'
 
 import { bootstrapPlugin } from '@ai16z/plugin-bootstrap'
@@ -316,42 +325,157 @@ startAgents().catch((error) => {
   process.exit(1)
 })
 
+const maxTipsInARow = 1
+
 const tipUserAction: Action = {
   name: 'TIP_USER',
   similes: ['GIVE_TIP', 'REWARD_USER'],
-  description: 'Tips users based on the positivity of their messages.',
+  description: 'Should tip the user based on the positivity of the message. Use a random tim amount between 1 and 10000 which should be included in the generated message\'s footer',
 
   validate: async (runtime: IAgentRuntime, message: Memory) => {
     // biome-ignore lint/suspicious/noConsoleLog: <explanation>
     console.log('Validating message: ', message)
     // Simple positivity check (replace with actual sentiment analysis)
-    const positiveWords = ['great', 'awesome', 'fantastic', 'good']
-    const messageText = (message.content as any).text.toLowerCase()
-    return positiveWords.some((word) => messageText.includes(word))
+    const recentMessagesData = await runtime.messageManager.getMemories({
+      roomId: message.roomId,
+      count: 1,
+      unique: false,
+    })
+    const agentMessages = recentMessagesData.filter(
+      (m: { userId: any }) => m.userId === runtime.agentId
+    )
+
+    // check if the last message was a tip
+    if (agentMessages) {
+      const lastMessages = agentMessages.slice(0, maxTipsInARow)
+      if (lastMessages.length >= maxTipsInARow) {
+        const allTips = lastMessages.every(
+          (m: { content: any }) => (m.content as Content).action === 'TIP_USER'
+        )
+        if (allTips) {
+          return false
+        }
+      }
+    }
+    // biome-ignore lint/suspicious/noConsoleLog: <explanation>
+    console.log('Validating message: ', message)
+    return true
   },
 
-  handler: async (runtime: IAgentRuntime, message: Memory) => {
-    runtime.messageManager.createMemory({
-      content: {
-        text: 'Thank you! I have a surprise for you!',
-      },
-      userId: message.userId,
-      agentId: message.agentId,
-      roomId: message.roomId,
+  handler: async (
+    runtime: IAgentRuntime,
+    message: Memory,
+    state: State,
+    options: any,
+    callback: HandlerCallback
+  ) => {
+    console.log('🎯 TipUserAction handler started:', { messageId: message.id, userId: message.userId })
+
+    if (!state) {
+      console.log('⚠️ No state provided, composing new state')
+      state = (await runtime.composeState(message)) as State
+    }
+
+    state = await runtime.updateRecentMessageState(state)
+    console.log('📝 Updated state with recent messages:', { 
+      messageCount: state.recentMessagesData?.length 
     })
-    // Calculate tip amount based on positivity (simplified logic)
-    const tipAmount = Math.random() * 10 // Random tip for demonstration
 
-    // Append tip message to the response
-    const response = `Thank you! I have a surprise for you!`
+    async function _shouldContinue(state: State): Promise<boolean> {
+      console.log('🤔 Checking if should continue with tip')
+      const shouldRespondContext = composeContext({
+        state,
+        template: shouldContinueTemplate,
+      })
 
-    // Assuming the agent sends a response on Twitter/Farcaster
-    const platformResponse = `${message.content.text}\n\n${response}`
+      const response = await generateTrueOrFalse({
+        context: shouldRespondContext,
+        modelClass: ModelClass.SMALL,
+        runtime,
+      })
+      console.log('✅ Should continue decision:', response)
+      return response
+    }
 
-    // Send the response (pseudo-code, replace with actual API call)
-    // await runtime.documentsManager.
+    const shouldContinue = await _shouldContinue(state)
+    if (!shouldContinue) {
+      elizaLogger.log('Not elaborating, returning')
+      return
+    }
 
-    // return true;
+    console.log('💬 Generating tip response')
+    const context = composeContext({
+      state,
+      template:
+        runtime.character.templates?.continueMessageHandlerTemplate ||
+        runtime.character.templates?.messageHandlerTemplate ||
+        messageHandlerTemplate,
+    })
+    const { userId, roomId } = message
+
+    const response = await generateMessageResponse({
+      runtime,
+      context,
+      modelClass: ModelClass.LARGE,
+    })
+    console.log('💡 Generated response:', { 
+      action: response.action,
+      hasText: !!response.text 
+    })
+
+    response.inReplyTo = message.id
+
+    runtime.databaseAdapter.log({
+      body: { message, context, response },
+      userId,
+      roomId,
+      type: 'TIP_USER',
+    })
+    console.log('📝 Logged action to database:', { type: 'TIP_USER', userId, roomId })
+
+    // prevent repetition
+    const messageExists = state.recentMessagesData
+      .filter((m: { userId: any }) => m.userId === runtime.agentId)
+      .slice(0, maxTipsInARow + 1)
+      .some((m: { content: any }) => m.content === message.content)
+
+    if (messageExists) {
+      console.log('⚠️ Message already exists, skipping response')
+      return
+    }
+
+    console.log('🚀 Executing callback with response')
+    await callback(response)
+
+    // if the action is TIP_USER, check if we are over maxTipsInARow
+    if (response.action === 'TIP_USER') {
+      console.log('🔍 Checking tip frequency limits')
+      const agentMessages = state.recentMessagesData
+        .filter((m: { userId: any }) => m.userId === runtime.agentId)
+        .map((m: { content: any }) => (m.content as Content).action)
+
+      const lastMessages = agentMessages.slice(0, maxTipsInARow)
+      console.log('📊 Recent tip history:', { 
+        recentTipCount: lastMessages.length,
+        maxAllowed: maxTipsInARow 
+      })
+
+      if (lastMessages.length >= maxTipsInARow) {
+        const allContinues = lastMessages.every(
+          (m: string | undefined) => m === 'TIP_USER'
+        )
+        if (allContinues) {
+          console.log('⛔ Max consecutive tips reached, nullifying action')
+          response.action = null
+        }
+      }
+    }
+
+    console.log('✅ Handler completed successfully:', { 
+      finalAction: response.action,
+      messageId: message.id 
+    })
+    return response
   },
 
   examples: [
@@ -370,3 +494,42 @@ const tipUserAction: Action = {
     ],
   ],
 }
+
+export const messageHandlerTemplate =
+  // {{goals}}
+  `# Action Examples
+{{actionExamples}}
+(Action examples are for reference only. Do not use the information from them in your response.)
+
+# Task: Generate dialog and actions for the character {{agentName}}.
+About {{agentName}}:
+{{bio}}
+{{lore}}
+{{knowledge}}
+
+{{providers}}
+
+{{attachments}}
+
+# Capabilities
+Note that {{agentName}} is capable of reading/seeing/hearing various forms of media, including images, videos, audio, plaintext and PDFs. Recent attachments have been included above under the "Attachments" section.
+
+{{messageDirections}}
+
+{{recentMessages}}
+
+{{actions}}
+
+# Instructions: Write the next message for {{agentName}} indicating the tipped amount from 1 to 1000 (randomly).
+` + messageCompletionFooter
+
+export const shouldContinueTemplate =
+  `# Task: Decide if {{agentName}} should tip the user based on the positivity of the message.
+
+{{agentName}} is brief, and doesn't want to be annoying. {{agentName}} will only tip if the message is positive.
+
+Based on the following conversation, should {{agentName}} tip the user? YES or NO
+
+{{recentMessages}}
+
+Should {{agentName}} tip the user? ` + booleanFooter
