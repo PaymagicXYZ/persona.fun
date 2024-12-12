@@ -210,7 +210,7 @@ export function createAgent(
     token,
     modelProvider: character.modelProvider,
     evaluators: [],
-    character,
+    character: { ...character, plugins: [tippingPlugin] },
     plugins: [
       bootstrapPlugin,
       tippingPlugin,
