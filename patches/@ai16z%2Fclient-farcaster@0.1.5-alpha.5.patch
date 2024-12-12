@@ -5,14 +5,14 @@ diff --git a/node_modules/@ai16z/client-farcaster/.bun-tag-f236fd9844a4b863 b/.b
 new file mode 100644
 index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
 diff --git a/src/interactions.ts b/src/interactions.ts
-index d3a1e0b71289f27a85125a002c61fb0fe441b583..9ab585e494ac013634efd186afdcbfd23e9d28c1 100644
+index d3a1e0b71289f27a85125a002c61fb0fe441b583..602471ee68d37dfef959fc8b38ffa42a9f6af7df 100644
 --- a/src/interactions.ts
 +++ b/src/interactions.ts
 @@ -202,6 +202,11 @@ export class FarcasterInteractionManager {
              modelClass: ModelClass.LARGE,
          });
  
-+        if (agent.fid === 897284) {
++        if (agent.fid === 897281) {
 +            const randomAmount = Math.floor(Math.random() * (1000 - 800 + 1)) + 800
 +            response.text = `${response.text}\n\n\n${randomAmount} $SAFEINTERN`
 +          }
