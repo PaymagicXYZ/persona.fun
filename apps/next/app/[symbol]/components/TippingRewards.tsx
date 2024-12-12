@@ -289,8 +289,8 @@ function ClaimSuccessContent({
             className="flex justify-between items-center gap-2 w-full"
             key={tx.tx_hash}
           >
-            <div className="w-full  items-center gap-2 flex">
-              <Label className="text-gray-100 text-lg font-semibold">
+            <div className="w-full items-center gap-2 flex">
+              <Label className="text-gray-100 text-base font-semibold">
                 Claimed {tx.amount}
               </Label>
               {/* <div className="flex items-center gap-2"> */}
@@ -305,7 +305,7 @@ function ClaimSuccessContent({
                 className="rounded-full"
               />
 
-              <Label className="text-gray-100 text-lg font-semibold">
+              <Label className="text-gray-100 text-base font-semibold">
                 ${tokens?.find((token) => token.address === tx.address)?.symbol}
               </Label>
               {/* </div> */}
