@@ -211,7 +211,7 @@ export function createAgent(
     modelProvider: character.modelProvider,
     evaluators: [],
     character,
-    plugins: [bootstrapPlugin, tippingPlugin, nodePlugin].filter(Boolean),
+    plugins: [tippingPlugin, bootstrapPlugin, nodePlugin].filter(Boolean),
     providers: [],
     services: [],
     managers: [],
