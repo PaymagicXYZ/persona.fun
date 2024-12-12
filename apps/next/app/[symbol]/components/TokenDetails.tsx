@@ -8,7 +8,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Persona } from "@/lib/types/persona";
 import { ProcessedTokensMap } from "@/lib/types/tokens";
-import { formatNumber } from "@/lib/utils";
+import { formatNumber, mockedData } from "@/lib/utils";
 
 export default function TokenDetails({ fid }: { fid: number }) {
   const persona = usePersonaByFid(fid);
@@ -143,7 +143,8 @@ function TokenDetailsBody({
   tokenHoldersData?: { [key: string]: number };
 }) {
   const token = tokenData?.[tokenAddr.toLowerCase()];
-  const isPositive = (token?.priceChangeDay as number) > 0;
+  const isPositive =
+    (mockedData[tokenAddr.toLowerCase()].priceChangeDay as number) > 0;
 
   return (
     <div className="flex justify-between">
@@ -153,7 +154,8 @@ function TokenDetailsBody({
         </Label>
 
         <Label className="text-white leading-8 text-2xl font-semibold">
-          {token?.marketCap ? formatNumber(token.marketCap) : "N/A"}
+          {/* {token?.marketCap ? formatNumber(token.marketCap) : "N/A"} */}
+          {formatNumber(mockedData[tokenAddr.toLowerCase()].marketCap)}
         </Label>
       </div>
 
@@ -163,7 +165,8 @@ function TokenDetailsBody({
         </Label>
 
         <Label className="text-white leading-8 text-2xl font-semibold">
-          {token?.liquidity ? formatNumber(token.liquidity) : "N/A"}
+          {/* {token?.liquidity ? formatNumber(token.liquidity) : "N/A"} */}
+          {formatNumber(mockedData[tokenAddr.toLowerCase()].liquidity)}
         </Label>
       </div>
 
@@ -177,9 +180,10 @@ function TokenDetailsBody({
             isPositive ? "text-green-500" : "text-red-500"
           }`}
         >
-          {token?.priceChangeDay
+          {/* {token?.priceChangeDay
             ? (token.priceChangeDay as number).toFixed(2) + "%"
-            : "N/A"}
+            : "N/A"} */}
+          {mockedData[tokenAddr.toLowerCase()].priceChangeDay.toFixed(2) + "%"}
         </Label>
       </div>
 

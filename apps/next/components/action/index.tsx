@@ -36,6 +36,13 @@ export default function ActionComponent() {
         </div>
         <div>
           <Label className="text-gray-500 leading-8 text-xl font-medium">
+            The intern is always online. The intern monitors discussions of your
+            project and chimes in to help, promote, or fight on your behalf. The
+            intern tips its token to encourage discourse and attention on your
+            project. Once you have enough tokens, you too can speak through the
+            intern&apos;s voice and even adjust how they react. Have fun.
+          </Label>
+          <Label className="text-gray-500 leading-8 text-xl font-medium">
             Posts are made anonymous using zk proofs. Due to the complex
             calculations required, it could take up to a few minutes. Do not
             post porn, doxes, shills, or threats.

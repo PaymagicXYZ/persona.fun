@@ -113,3 +113,27 @@ export const VERIFY_DOMAIN = {
   name: "Interns.fun Verify",
   version: "1",
 } as const;
+
+export const mockedData: any = {
+  "0xd3f35bc5e6f32849cf4ae8e814203e62e928f7d8": {
+    marketCap: 25700,
+    priceChangeDay: 9.59,
+    liquidity: 45000,
+    tokenHolders: 3,
+    posts: 13,
+  },
+  "0xcf231a6fc048b5f1772fc2c1fb9896da19221b60": {
+    marketCap: 31200,
+    priceChangeDay: -7.31,
+    liquidity: 48000,
+    tokenHolders: 10,
+    posts: 7,
+  },
+  "0x49057bfa7d1ffc7970ba50e6d9c13e7f2c623a43": {
+    marketCap: 55000,
+    priceChangeDay: 13.23,
+    liquidity: 67000,
+    tokenHolders: 7,
+    posts: 23,
+  },
+};

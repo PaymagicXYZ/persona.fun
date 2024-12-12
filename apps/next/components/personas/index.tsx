@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/table";
 import { Label } from "../ui/label";
 import { tokensApi } from "@/lib/api/tokens";
-import { formatNumber } from "@/lib/utils";
+import { formatNumber, mockedData } from "@/lib/utils";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { TokenResponse } from "@/lib/types/tokens";
@@ -28,27 +28,6 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTokensOnChainData } from "@/hooks/use-tokens-on-chain-data";
 import { useTokenHolders } from "@/hooks/use-token-holders";
-
-const mockedData: any = {
-  "0xd3f35bc5e6f32849cf4ae8e814203e62e928f7d8": {
-    marketCap: 25700,
-    priceChangeDay: 9.59,
-    liquidity: 45000,
-    tokenHolders: 3,
-  },
-  "0xcf231a6fc048b5f1772fc2c1fb9896da19221b60": {
-    marketCap: 31200,
-    priceChangeDay: -7.31,
-    liquidity: 48000,
-    tokenHolders: 10,
-  },
-  "0x49057bfa7d1ffc7970ba50e6d9c13e7f2c623a43": {
-    marketCap: 55000,
-    priceChangeDay: 13.23,
-    liquidity: 67000,
-    tokenHolders: 7,
-  },
-};
 
 type ProcessedTokenData = {
   marketCap?: number;
@@ -112,8 +91,7 @@ export default function Personas() {
 
   const tableData = useMemo(() => {
     if (!personas) return [];
-    console.log(mockedData);
-    console.log(personas);
+
     return personas.map((persona) => ({
       ...persona,
       tokenData: mockedData[persona.token?.address?.toLowerCase()!],
@@ -320,7 +298,8 @@ export default function Personas() {
           )}
         </div>
       ),
-      accessorFn: (row) => row.post_count ?? "-",
+      accessorFn: (row) =>
+        mockedData[row.token?.address?.toLowerCase()!].posts ?? "-",
       cell: ({ getValue }) => {
         const value = getValue() as number;
         return value ? (
