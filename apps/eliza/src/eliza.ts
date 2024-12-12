@@ -296,7 +296,7 @@ startAgents().catch((error) => {
   process.exit(1)
 })
 
-const maxTipsInARow = 1
+const maxTipsInARow = 3
 
 const tipUserAction: Action = {
   name: 'TIP_USER',
