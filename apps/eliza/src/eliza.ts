@@ -24,14 +24,15 @@ import {
   stringToUuid,
   validateCharacterConfig,
   ModelClass,
-  HandlerCallback,
-  State,
+  type HandlerCallback,
+  type State,
   composeContext,
   booleanFooter,
   messageCompletionFooter,
   generateTrueOrFalse,
   generateMessageResponse,
-  Content,
+  type Content,
+  type Plugin,
 } from '@ai16z/eliza'
 
 import { bootstrapPlugin } from '@ai16z/plugin-bootstrap'
@@ -212,6 +213,7 @@ export function createAgent(
     character,
     plugins: [
       bootstrapPlugin,
+      tippingPlugin,
       // getSecret(character, "CONFLUX_CORE_PRIVATE_KEY") ? confluxPlugin : null,
       nodePlugin,
       getSecret(character, 'SOLANA_PUBLIC_KEY') ||
@@ -241,7 +243,6 @@ export function createAgent(
       // getSecret(character, "ALCHEMY_API_KEY") ? goatPlugin : null,
     ].filter(Boolean),
     providers: [],
-    actions: [tipUserAction],
     services: [],
     managers: [],
     cacheManager: cache,
@@ -330,7 +331,8 @@ const maxTipsInARow = 1
 const tipUserAction: Action = {
   name: 'TIP_USER',
   similes: ['GIVE_TIP', 'REWARD_USER'],
-  description: 'Should tip the user based on the positivity of the message. Use a random tim amount between 1 and 10000 which should be included in the generated message\'s footer',
+  description:
+    "Should tip the user based on the positivity of the message. Use a random tim amount between 1 and 10000 which should be included in the generated message's footer",
 
   validate: async (runtime: IAgentRuntime, message: Memory) => {
     // biome-ignore lint/suspicious/noConsoleLog: <explanation>
@@ -369,7 +371,10 @@ const tipUserAction: Action = {
     options: any,
     callback: HandlerCallback
   ) => {
-    console.log('🎯 TipUserAction handler started:', { messageId: message.id, userId: message.userId })
+    console.log('🎯 TipUserAction handler started:', {
+      messageId: message.id,
+      userId: message.userId,
+    })
 
     if (!state) {
       console.log('⚠️ No state provided, composing new state')
@@ -377,8 +382,8 @@ const tipUserAction: Action = {
     }
 
     state = await runtime.updateRecentMessageState(state)
-    console.log('📝 Updated state with recent messages:', { 
-      messageCount: state.recentMessagesData?.length 
+    console.log('📝 Updated state with recent messages:', {
+      messageCount: state.recentMessagesData?.length,
     })
 
     async function _shouldContinue(state: State): Promise<boolean> {
@@ -418,9 +423,9 @@ const tipUserAction: Action = {
       context,
       modelClass: ModelClass.LARGE,
     })
-    console.log('💡 Generated response:', { 
+    console.log('💡 Generated response:', {
       action: response.action,
-      hasText: !!response.text 
+      hasText: !!response.text,
     })
 
     response.inReplyTo = message.id
@@ -455,9 +460,9 @@ const tipUserAction: Action = {
         .map((m: { content: any }) => (m.content as Content).action)
 
       const lastMessages = agentMessages.slice(0, maxTipsInARow)
-      console.log('📊 Recent tip history:', { 
+      console.log('📊 Recent tip history:', {
         recentTipCount: lastMessages.length,
-        maxAllowed: maxTipsInARow 
+        maxAllowed: maxTipsInARow,
       })
 
       if (lastMessages.length >= maxTipsInARow) {
@@ -471,9 +476,9 @@ const tipUserAction: Action = {
       }
     }
 
-    console.log('✅ Handler completed successfully:', { 
+    console.log('✅ Handler completed successfully:', {
       finalAction: response.action,
-      messageId: message.id 
+      messageId: message.id,
     })
     return response
   },
@@ -533,3 +538,11 @@ Based on the following conversation, should {{agentName}} tip the user? YES or N
 {{recentMessages}}
 
 Should {{agentName}} tip the user? ` + booleanFooter
+
+const tippingPlugin: Plugin = {
+  name: 'tipping',
+  description: 'Agent tipping with basic actions and evaluators',
+  actions: [tipUserAction],
+  evaluators: [],
+  providers: [],
+}
