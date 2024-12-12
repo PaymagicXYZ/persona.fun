@@ -11,6 +11,7 @@ export interface TokenResponse {
   dex_screener_url: string;
   uniswap_url: string;
   pair_address: string;
+  image_url: string;
 }
 
 export interface TokenDexScreenerResponse {

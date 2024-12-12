@@ -148,7 +148,7 @@ export async function getTokens() {
   const { data, error } = await supabase
     .from("tokens")
     .select(
-      "address, name, symbol, supply, post_amount, delete_amount, promote_amount, decimals"
+      "address, name, symbol, supply, post_amount, delete_amount, promote_amount, decimals, image_url"
     );
   if (error) {
     throw error;

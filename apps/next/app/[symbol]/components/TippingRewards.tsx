@@ -67,14 +67,6 @@ function ClaimDialog({ address }: { address: string }) {
   );
 }
 
-const tokens = [
-  {
-    name: "EIGENINTERN",
-    balance: 0.3213,
-    img_url: "/anon.png",
-  },
-];
-
 enum ClaimView {
   CLAIMING = "claiming",
   SUCCESS = "success",
@@ -93,7 +85,9 @@ function ClaimContent({
   };
 }) {
   const [claimView, setClaimView] = useState(ClaimView.CLAIMING);
-  const [txHash, setTxHash] = useState<string | null>(null);
+  const [txHashes, setTxHashes] = useState<
+    { tx_hash: string; address: string; amount: number }[]
+  >([]);
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -102,11 +96,11 @@ function ClaimContent({
           address={address}
           setClaimView={setClaimView}
           eligibilityData={eligibilityData}
-          setTxHash={setTxHash}
+          setTxHashes={setTxHashes}
         />
       )}
       {claimView === ClaimView.SUCCESS && (
-        <ClaimSuccessContent setIsOpen={setIsOpen} txHash={txHash} />
+        <ClaimSuccessContent setIsOpen={setIsOpen} txHashes={txHashes} />
       )}
       {claimView === ClaimView.FAILED && (
         <ClaimFailedContent setIsOpen={setIsOpen} />
@@ -151,14 +145,20 @@ function TokensForClaiming({
   address,
   setClaimView,
   eligibilityData,
-  setTxHash,
+  setTxHashes,
 }: {
   address: string;
   setClaimView: (claimView: ClaimView) => void;
   eligibilityData: {
     [key: string]: { amount: number; image_url: string; symbol: string };
   };
-  setTxHash: (txHash: string | null) => void;
+  setTxHashes: (
+    txHashes: {
+      tx_hash: string;
+      address: string;
+      amount: number;
+    }[]
+  ) => void;
 }) {
   const { mutateAsync: claimRewardsAsync, isPending } = useMutation({
     mutationFn: () => tokensApi.claimTips({ userAddress: address }),
@@ -167,13 +167,25 @@ function TokensForClaiming({
   const claimRewards = async () => {
     const response = await claimRewardsAsync();
 
+    if (!response) {
+      return;
+    }
+
+    setTxHashes(
+      response?.transactions.map((tx) => ({
+        tx_hash: tx.hash,
+        address: tx.token_address,
+        amount: tx.amount,
+      }))
+    );
+
     const txHash = response?.transactions.find(
       (tx) => tx.status === "success"
     )?.hash;
 
     // If there is a success tx, set the tx hash and claim view to success
     if (txHash) {
-      setTxHash(txHash);
+      // setTxHash(txHash);
       setClaimView(ClaimView.SUCCESS);
       return;
     }
@@ -247,11 +259,16 @@ function TokensForClaiming({
 
 function ClaimSuccessContent({
   setIsOpen,
-  txHash,
+  txHashes,
 }: {
   setIsOpen: (isOpen: boolean) => void;
-  txHash: string | null;
+  txHashes: { tx_hash: string; address: string; amount: number }[];
 }) {
+  const { data: tokens } = useQuery({
+    queryKey: ["tokens"],
+    queryFn: () => tokensApi.getTokens(),
+  });
+
   return (
     <div className="flex flex-col items-center w-full">
       <div className="rounded-full bg-[#231f20] my-2 w-[226px] h-[226px] relative flex justify-center items-center overflow-hidden">
@@ -266,17 +283,47 @@ function ClaimSuccessContent({
       <Label className="text-center text-2xl font-bold leading-normal">
         Claim successful!
       </Label>
-      <div className="mt-6 w-full flex flex-col gap-4 justify-center items-center">
-        <Link
-          href={`https://basescan.org/tx/${txHash}`}
-          target="_blank"
-          className="bg-[#C83FD3] hover:bg-[#C83FD3]/90 text-white text-xl font-bold rounded-xl w-[185px] h-[48px] flex justify-center items-center"
-        >
-          View transaction
-        </Link>
+      <div className="mt-6 w-full flex flex-col gap-8 justify-center items-center">
+        {txHashes.map((tx) => (
+          <div
+            className="flex justify-between items-center gap-2 w-full"
+            key={tx.tx_hash}
+          >
+            <div className="w-full  items-center gap-2 flex">
+              <Label className="text-gray-100 text-lg font-semibold">
+                Claimed {tx.amount}
+              </Label>
+              {/* <div className="flex items-center gap-2"> */}
+              <Image
+                src={
+                  tokens?.find((token) => token.address === tx.address)
+                    ?.image_url || ""
+                }
+                alt="token"
+                width={20}
+                height={20}
+                className="rounded-full"
+              />
+
+              <Label className="text-gray-100 text-lg font-semibold">
+                ${tokens?.find((token) => token.address === tx.address)?.symbol}
+              </Label>
+              {/* </div> */}
+            </div>
+            <Link
+              href={`https://basescan.org/tx/${tx.tx_hash}`}
+              target="_blank"
+              className="bg-[#C83FD3] hover:bg-[#C83FD3]/90  p-2 text-base font-bold rounded-xl flex justify-center items-center"
+            >
+              <Label className="text-white text-base font-bold cursor-pointer">
+                Transaction
+              </Label>
+            </Link>
+          </div>
+        ))}
         <Button
           onClick={() => setIsOpen(false)}
-          className="bg-[#C83FD3] hover:bg-[#C83FD3]/90 text-white text-xl font-bold rounded-xl w-[185px] h-[48px]"
+          className="bg-[#C83FD3] hover:bg-[#C83FD3]/90 text-white text-xl font-bold rounded-xl w-[185px] h-[48px] mt-6"
         >
           Close
         </Button>
