@@ -1,8 +1,24 @@
 diff --git a/src/interactions.ts b/src/interactions.ts
-index d3a1e0b71289f27a85125a002c61fb0fe441b583..ca233946289068996faae4d23ec2622e5fb75b42 100644
+index d3a1e0b71289f27a85125a002c61fb0fe441b583..a7e79a6c40513816821b22b59a7bbfa1fa2786c7 100644
 --- a/src/interactions.ts
 +++ b/src/interactions.ts
-@@ -53,6 +53,7 @@ export class FarcasterInteractionManager {
+@@ -29,10 +29,11 @@ export class FarcasterInteractionManager {
+         public cache: Map<string, any>
+     ) {}
+ 
+-    public async start() {
+-        const handleInteractionsLoop = async () => {
+-            try {
+-                await this.handleInteractions();
++  public async start() {
++    console.log('STARTING FARCASER INTERACTIONS')
++    const handleInteractionsLoop = async () => {
++      try {
++        await this.handleInteractions()
+             } catch (error) {
+                 console.error(error);
+                 return;
+@@ -53,6 +54,7 @@ export class FarcasterInteractionManager {
  
      private async handleInteractions() {
          const agentFid = Number(this.runtime.getSetting("FARCASTER_FID"));
@@ -10,7 +26,7 @@ index d3a1e0b71289f27a85125a002c61fb0fe441b583..ca233946289068996faae4d23ec2622e
  
          const mentions = await this.client.getMentions({
              fid: agentFid,
-@@ -78,6 +79,18 @@ export class FarcasterInteractionManager {
+@@ -78,6 +80,18 @@ export class FarcasterInteractionManager {
                  continue;
              }
  
@@ -29,7 +45,7 @@ index d3a1e0b71289f27a85125a002c61fb0fe441b583..ca233946289068996faae4d23ec2622e
              await this.runtime.ensureConnection(
                  userId,
                  roomId,
-@@ -86,12 +99,6 @@ export class FarcasterInteractionManager {
+@@ -86,12 +100,6 @@ export class FarcasterInteractionManager {
                  "farcaster"
              );
  
@@ -42,7 +58,7 @@ index d3a1e0b71289f27a85125a002c61fb0fe441b583..ca233946289068996faae4d23ec2622e
              const memory: Memory = {
                  content: { text: mention.text },
                  agentId: this.runtime.agentId,
-@@ -202,6 +209,11 @@ export class FarcasterInteractionManager {
+@@ -202,6 +210,11 @@ export class FarcasterInteractionManager {
              modelClass: ModelClass.LARGE,
          });
  
