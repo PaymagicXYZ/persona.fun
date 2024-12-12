@@ -42,6 +42,8 @@ export default function ActionComponent() {
             project. Once you have enough tokens, you too can speak through the
             intern&apos;s voice and even adjust how they react. Have fun.
           </Label>
+          <br />
+          <br />
           <Label className="text-gray-500 leading-8 text-xl font-medium">
             Posts are made anonymous using zk proofs. Due to the complex
             calculations required, it could take up to a few minutes. Do not
