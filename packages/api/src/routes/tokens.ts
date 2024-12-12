@@ -47,10 +47,26 @@ let MOCKED_TIPS = [
   {
     user_address: "0x74427681c620DE258Aa53a382d6a4C865738A06C",
     token_address: "0xcf231a6fc048b5f1772fc2c1fb9896da19221b60",
-    value: 0.03,
+    value: 2300,
     image_url:
       "https://res.cloudinary.com/duhvlptwp/image/upload/v1733851919/IMG_3578_clcp4a.png",
     symbol: "SAFEINTERN",
+  },
+  {
+    user_address: "0x74427681c620DE258Aa53a382d6a4C865738A06C",
+    token_address: "0xd3f35bc5e6f32849cf4ae8e814203e62e928f7d8",
+    value: 2300,
+    image_url:
+      "https://res.cloudinary.com/duhvlptwp/image/upload/v1733850896/IMG_3575_wmcubu.png",
+    symbol: "EIGENINTERN",
+  },
+  {
+    user_address: "0x74427681c620DE258Aa53a382d6a4C865738A06C",
+    token_address: "0x49057bfa7d1ffc7970ba50e6d9c13e7f2c623a43",
+    value: 2300,
+    image_url:
+      "https://res.cloudinary.com/duhvlptwp/image/upload/v1733850896/IMG_3575_wmcubu.png",
+    symbol: "BASEINTERN",
   },
 ];
 
