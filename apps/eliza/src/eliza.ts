@@ -426,7 +426,7 @@ const tipUserAction: Action = {
     }
 
     console.log('🚀 Executing callback with response')
-    await callback(response)
+    await callback?.(response)
 
     // if the action is TIP_USER, check if we are over maxTipsInARow
     if (response.action === 'TIP_USER') {
