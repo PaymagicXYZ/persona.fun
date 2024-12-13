@@ -2,11 +2,13 @@ import { getToken, getTokenBySymbol, getTokens, supabase } from "@persona/db";
 import { aggregateTips, createElysia, delay, TipWithToken } from "../utils";
 import { t } from "elysia";
 import {
+  Address,
   createPublicClient,
   createWalletClient,
   erc20Abi,
   Hex,
   http,
+  parseEther,
 } from "viem";
 import { base } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
@@ -166,11 +168,11 @@ export const tokensRoutes = createElysia({ prefix: "/tokens" })
       try {
         const hash = await walletClient.writeContract({
           abi: erc20Abi,
-          address: tokenAddress as `0x${string}`,
+          address: tokenAddress as Address,
           functionName: "transfer",
           args: [
-            params.user_address as `0x${string}`,
-            BigInt(Math.floor(data.amount * 1e18)),
+            params.user_address as Address,
+            parseEther(data.amount.toString()),
           ],
         });
 
