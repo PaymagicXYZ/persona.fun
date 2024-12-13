@@ -19,6 +19,7 @@ import {
   idRegistryABI,
 } from "@farcaster/hub-nodejs";
 import { neynar } from "./services/neynar";
+import { Tables } from "@persona/db/src/supabase-types";
 
 const publicClient = createPublicClient({
   chain: optimism,
@@ -112,30 +113,48 @@ export function generateRandomGradient() {
   // Return just the CSS string for storage
   return `linear-gradient(${angle}deg, ${color1}, ${color2})`;
 }
-
-export function aggregateTips(
-  tips: {
-    user_address: string;
-    token_address: string;
-    value: number;
-    image_url: string;
+export type TipWithToken = Tables<"tips"> & {
+  token: {
+    id: number;
+    address: string;
     symbol: string;
-  }[]
-) {
-  return tips.reduce((acc, tip) => {
-    if (!acc[tip.token_address]) {
-      acc[tip.token_address] = {
-        amount: 0,
-        image_url: tip.image_url,
-        symbol: tip.symbol,
-      };
-    }
+    name: string;
+    image_url: string;
+  };
+};
 
-    acc[tip.token_address].amount += tip.value;
+export function aggregateTips(tips: TipWithToken[]) {
+  return tips.reduce(
+    (acc, tip) => {
+      const tokenAddress = tip.token?.address;
 
-    return acc;
-  }, {} as Record<string, { amount: number; image_url: string; symbol: string }>);
+      if (!tokenAddress) return acc;
+
+      if (!acc[tokenAddress]) {
+        acc[tokenAddress] = {
+          amount: 0,
+          address: tokenAddress,
+          symbol: tip.token.symbol,
+          name: tip.token.name,
+          image_url: tip.token.image_url,
+        };
+      }
+
+      acc[tokenAddress].amount += tip.value ?? 0;
+
+      return acc;
+    },
+    {} as Record<
+      string,
+      {
+        amount: number;
+        address: string;
+        symbol: string;
+        name: string;
+        image_url: string;
+      }
+    >
+  );
 }
-
 export const delay = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));

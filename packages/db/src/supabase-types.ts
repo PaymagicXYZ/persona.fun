@@ -758,6 +758,54 @@ export type Database = {
         }
         Relationships: []
       }
+      tips: {
+        Row: {
+          address: string
+          created_at: string
+          id: number
+          persona_id: number
+          status: Database["public"]["Enums"]["tip_status"]
+          token_id: number
+          tx_hash: string | null
+          value: number
+        }
+        Insert: {
+          address?: string
+          created_at?: string
+          id?: number
+          persona_id: number
+          status?: Database["public"]["Enums"]["tip_status"]
+          token_id: number
+          tx_hash?: string | null
+          value?: number
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          id?: number
+          persona_id?: number
+          status?: Database["public"]["Enums"]["tip_status"]
+          token_id?: number
+          tx_hash?: string | null
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tips_persona_id_fkey"
+            columns: ["persona_id"]
+            isOneToOne: false
+            referencedRelation: "personas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tips_token_id_fkey"
+            columns: ["token_id"]
+            isOneToOne: false
+            referencedRelation: "tokens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tokens: {
         Row: {
           address: string
@@ -1051,7 +1099,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      tip_status: "pending" | "processed"
     }
     CompositeTypes: {
       [_ in never]: never
