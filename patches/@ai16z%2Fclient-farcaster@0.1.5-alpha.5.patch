@@ -1,5 +1,14 @@
+diff --git a/node_modules/@ai16z/client-farcaster/.bun-tag-3999805c5501d2d6 b/.bun-tag-3999805c5501d2d6
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/node_modules/@ai16z/client-farcaster/.bun-tag-95639498b341252f b/.bun-tag-95639498b341252f
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/node_modules/@ai16z/client-farcaster/.bun-tag-f3bfc7d76c8a68be b/.bun-tag-f3bfc7d76c8a68be
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
 diff --git a/dist/index.js b/dist/index.js
-index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..3ac117250e3a53bba57a8ce0fdae9079ce8d8b01 100644
+index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..9ccda9df9eb6aad4a037d29e175d8a2bd2fc1010 100644
 --- a/dist/index.js
 +++ b/dist/index.js
 @@ -599,6 +599,11 @@ import {
@@ -34,7 +43,7 @@ index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..3ac117250e3a53bba57a8ce0fdae9079
        const memory = {
          content: { text: mention.text },
          agentId: this.runtime.agentId,
-@@ -737,6 +748,22 @@ var FarcasterInteractionManager = class {
+@@ -737,6 +748,23 @@ var FarcasterInteractionManager = class {
        modelClass: ModelClass2.LARGE
      });
      response.inReplyTo = memoryId;
@@ -42,7 +51,7 @@ index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..3ac117250e3a53bba57a8ce0fdae9079
 +      (cast) => cast.profile.fid === agent.fid
 +  ).length;
 +
-+  if (agentMessagesCount === 1) {
++  if (agentMessagesCount === 1 && cast.profile.verifiedAddress) {
 +    const tokenName = this.runtime.getSetting("TOKEN_NAME");
 +    const tokenId = this.runtime.getSetting("TOKEN_ID");
 +    const personaId = this.runtime.getSetting("PERSONA_ID");
@@ -51,7 +60,8 @@ index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..3ac117250e3a53bba57a8ce0fdae9079
 +      await supabase.from('tips').insert({
 +        value: randomValue,
 +        persona_id: personaId,
-+        token_id: tokenId
++        token_id: tokenId,
++        address: cast.profile.verifiedAddress
 +      });
 +  }
      if (!response.text) return;
@@ -71,3 +81,27 @@ index 576f7ea48854adc0c777b0824f532e3cac31a74d..ec7223664265f01d0e6b417500c4fc3d
      },
      "devDependencies": {
          "tsup": "^8.3.5"
+diff --git a/src/client.ts b/src/client.ts
+index 9aa780dc4f13cf8b47d7f1c5f290fdc6462e314a..f31da415a9376763c836da5a14ba472ebaead734 100644
+--- a/src/client.ts
++++ b/src/client.ts
+@@ -150,6 +150,7 @@ export class FarcasterClient {
+                     fid: notification.cast!.author.fid,
+                     name: notification.cast!.author.display_name || "anon",
+                     username: notification.cast!.author.username,
++                    verifiedAddress: notification.cast!.author.verified_addresses?.eth_addresses?.[0] || "",
+                 },
+                 ...(notification.cast!.parent_hash
+                     ? {
+diff --git a/src/types.ts b/src/types.ts
+index 929216d138b18796ae5b3f08ea8a0fb4a5e7838a..ec434524f790ebf0308474f3e85dce01553940b0 100644
+--- a/src/types.ts
++++ b/src/types.ts
+@@ -5,6 +5,7 @@ export type Profile = {
+     pfp?: string;
+     bio?: string;
+     url?: string;
++    verifiedAddress?: string;
+     // location?: string;
+     // twitter?: string;
+     // github?: string;
