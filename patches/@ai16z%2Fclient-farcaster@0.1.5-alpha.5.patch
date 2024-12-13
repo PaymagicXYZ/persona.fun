@@ -1,17 +1,30 @@
-diff --git a/node_modules/@ai16z/client-farcaster/.bun-tag-3999805c5501d2d6 b/.bun-tag-3999805c5501d2d6
-new file mode 100644
-index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
-diff --git a/node_modules/@ai16z/client-farcaster/.bun-tag-95639498b341252f b/.bun-tag-95639498b341252f
-new file mode 100644
-index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
-diff --git a/node_modules/@ai16z/client-farcaster/.bun-tag-f3bfc7d76c8a68be b/.bun-tag-f3bfc7d76c8a68be
-new file mode 100644
-index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/dist/index.d.ts b/dist/index.d.ts
+index 8009da1edcdd98f1ed70b9126bd1ae5217900cb3..ff6c99c4f622073d6a27939415920c2f4ae2ea16 100644
+--- a/dist/index.d.ts
++++ b/dist/index.d.ts
+@@ -8,6 +8,7 @@ type Profile = {
+     pfp?: string;
+     bio?: string;
+     url?: string;
++    verifiedAddress?: string;
+ };
+ type NeynarCastResponse = {
+     hash: string;
 diff --git a/dist/index.js b/dist/index.js
-index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..9ccda9df9eb6aad4a037d29e175d8a2bd2fc1010 100644
+index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..972981ce063cfd977cf5d94f14de190196412c56 100644
 --- a/dist/index.js
 +++ b/dist/index.js
-@@ -599,6 +599,11 @@ import {
+@@ -128,7 +128,8 @@ var FarcasterClient = class {
+         profile: {
+           fid: notification.cast.author.fid,
+           name: notification.cast.author.display_name || "anon",
+-          username: notification.cast.author.username
++          username: notification.cast.author.username,
++          verifiedAddress: notification.cast!.author.verified_addresses.eth_addresses?.[0] || "",
+         },
+         ...notification.cast.parent_hash ? {
+           inReplyTo: {
+@@ -599,6 +600,11 @@ import {
    ModelClass as ModelClass2,
    stringToUuid as stringToUuid4
  } from "@ai16z/eliza";
@@ -23,7 +36,7 @@ index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..9ccda9df9eb6aad4a037d29e175d8a2b
  var FarcasterInteractionManager = class {
    constructor(client, runtime, signerUuid, cache) {
      this.client = client;
-@@ -627,6 +632,8 @@ var FarcasterInteractionManager = class {
+@@ -627,6 +633,8 @@ var FarcasterInteractionManager = class {
    }
    async handleInteractions() {
      const agentFid = Number(this.runtime.getSetting("FARCASTER_FID"));
@@ -32,7 +45,7 @@ index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..9ccda9df9eb6aad4a037d29e175d8a2b
      const mentions = await this.client.getMentions({
        fid: agentFid,
        pageSize: 10
-@@ -657,6 +664,10 @@ var FarcasterInteractionManager = class {
+@@ -657,6 +665,10 @@ var FarcasterInteractionManager = class {
          runtime: this.runtime,
          cast: mention
        });
@@ -43,7 +56,7 @@ index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..9ccda9df9eb6aad4a037d29e175d8a2b
        const memory = {
          content: { text: mention.text },
          agentId: this.runtime.agentId,
-@@ -737,6 +748,23 @@ var FarcasterInteractionManager = class {
+@@ -737,6 +749,23 @@ var FarcasterInteractionManager = class {
        modelClass: ModelClass2.LARGE
      });
      response.inReplyTo = memoryId;
@@ -67,41 +80,15 @@ index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..9ccda9df9eb6aad4a037d29e175d8a2b
      if (!response.text) return;
      try {
        console.log(`Replying to cast ${cast.hash}.`);
-diff --git a/package.json b/package.json
-index 576f7ea48854adc0c777b0824f532e3cac31a74d..ec7223664265f01d0e6b417500c4fc3d945e1052 100644
---- a/package.json
-+++ b/package.json
-@@ -6,7 +6,8 @@
-     "types": "dist/index.d.ts",
-     "dependencies": {
-         "@ai16z/eliza": "0.1.5-alpha.5",
--        "@neynar/nodejs-sdk": "^2.0.3"
-+        "@neynar/nodejs-sdk": "^2.0.3",
-+        "@supabase/supabase-js": "^2.46.1"
-     },
-     "devDependencies": {
-         "tsup": "^8.3.5"
 diff --git a/src/client.ts b/src/client.ts
-index 9aa780dc4f13cf8b47d7f1c5f290fdc6462e314a..f31da415a9376763c836da5a14ba472ebaead734 100644
+index 9aa780dc4f13cf8b47d7f1c5f290fdc6462e314a..1ac3a0032f7dde93418fa8e3bde465d8ffe61ebb 100644
 --- a/src/client.ts
 +++ b/src/client.ts
 @@ -150,6 +150,7 @@ export class FarcasterClient {
                      fid: notification.cast!.author.fid,
                      name: notification.cast!.author.display_name || "anon",
                      username: notification.cast!.author.username,
-+                    verifiedAddress: notification.cast!.author.verified_addresses?.eth_addresses?.[0] || "",
++                    verifiedAddress: notification.cast!.author.verified_addresses.eth_addresses?.[0] || "",
                  },
                  ...(notification.cast!.parent_hash
                      ? {
-diff --git a/src/types.ts b/src/types.ts
-index 929216d138b18796ae5b3f08ea8a0fb4a5e7838a..ec434524f790ebf0308474f3e85dce01553940b0 100644
---- a/src/types.ts
-+++ b/src/types.ts
-@@ -5,6 +5,7 @@ export type Profile = {
-     pfp?: string;
-     bio?: string;
-     url?: string;
-+    verifiedAddress?: string;
-     // location?: string;
-     // twitter?: string;
-     // github?: string;
