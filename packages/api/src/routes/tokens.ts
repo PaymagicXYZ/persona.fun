@@ -1,5 +1,5 @@
-import { getToken, getTokenBySymbol, getTokens } from "@persona/db";
-import { aggregateTips, createElysia, delay } from "../utils";
+import { getToken, getTokenBySymbol, getTokens, supabase } from "@persona/db";
+import { aggregateTips, createElysia, delay, TipWithToken } from "../utils";
 import { t } from "elysia";
 import {
   createPublicClient,
@@ -111,7 +111,7 @@ export const tokensRoutes = createElysia({ prefix: "/tokens" })
         }
 
         const rawData = await response.json();
-        console.log("rawData", rawData);
+
         const data = rawData?.fungibles
           ? rawData.fungibles
           : rawData
@@ -158,11 +158,29 @@ export const tokensRoutes = createElysia({ prefix: "/tokens" })
     async ({ params }) => {
       const user_address = params.user_address;
 
-      const tips = MOCKED_TIPS.filter(
-        (tip) => tip.user_address === user_address
-      );
+      const { data: tips, error } = await supabase
+        .from("tips")
+        .select(
+          `
+          *,
+          token:tokens(
+            id,
+            address,
+            symbol,
+            name,
+            image_url
+          )
+        `
+        )
+        .ilike("address", `%${user_address}%`)
+        .eq("status", "pending");
 
-      const aggregatedTips = aggregateTips(tips);
+      if (error) {
+        console.error("Error fetching tips", error);
+        throw new Error("Error fetching tips");
+      }
+
+      const aggregatedTips = aggregateTips(tips as TipWithToken[]);
 
       return Object.keys(aggregatedTips).length ? aggregatedTips : null;
     },
@@ -172,62 +190,70 @@ export const tokensRoutes = createElysia({ prefix: "/tokens" })
       }),
     }
   )
-  .get(
-    "/claim/:user_address",
-    async ({ params }) => {
-      const user_address = params.user_address;
+  .get("/claim/:user_address", async ({ params }) => {
+    const { data: tips, error } = await supabase
+      .from("tips")
+      .select(
+        `
+        *,
+        token:tokens(
+          id,
+          address,
+          symbol,
+          name,
+          image_url
+        )
+      `
+      )
+      .ilike("address", `%${params.user_address}%`)
+      .eq("status", "pending");
 
-      const tips = MOCKED_TIPS.filter(
-        (tip) => tip.user_address === user_address
-      );
+    if (error) throw new Error("Error fetching tips");
 
-      const aggregatedTips = aggregateTips(tips);
+    const aggregatedTips = aggregateTips(tips as TipWithToken[]);
+    const results = [];
 
-      const results = [];
+    for (const [tokenAddress, data] of Object.entries(aggregatedTips)) {
+      try {
+        const hash = await walletClient.writeContract({
+          abi: erc20Abi,
+          address: tokenAddress as `0x${string}`,
+          functionName: "transfer",
+          args: [
+            params.user_address as `0x${string}`,
+            BigInt(Math.floor(data.amount * 1e18)),
+          ],
+        });
 
-      for (const [tokenAddress, data] of Object.entries(aggregatedTips)) {
-        try {
-          const hash = await walletClient.writeContract({
-            abi: erc20Abi,
-            address: tokenAddress as `0x${string}`,
-            functionName: "transfer",
-            args: [
-              user_address as `0x${string}`,
-              BigInt(Math.floor(data.amount * 1e18)), // Converting to wei
-            ],
-          });
+        await publicClient.waitForTransactionReceipt({ hash });
 
-          const receipt = await publicClient.waitForTransactionReceipt({
-            hash,
-          });
+        const tipsToUpdate = tips
+          .filter((tip) => tip.token?.address === tokenAddress)
+          .map(({ token, ...tipData }) => ({
+            ...tipData,
+            status: "processed" as const,
+            tx_hash: hash,
+          }));
 
-          results.push({
-            token_address: tokenAddress,
-            amount: data.amount,
-            hash,
-            status: receipt.status,
-          });
+        await supabase.from("tips").upsert(tipsToUpdate);
 
-          // Small delay to avoid nonce issues
-          await delay(300);
-        } catch (error) {
-          results.push({
-            token_address: tokenAddress,
-            amount: data.amount,
-            error: (error as Error).message,
-            status: "failed",
-          });
-        }
+        results.push({
+          token_address: tokenAddress,
+          amount: data.amount,
+          hash,
+          status: "success",
+        });
+
+        await delay(300);
+      } catch (error) {
+        results.push({
+          token_address: tokenAddress,
+          amount: data.amount,
+          error: (error as Error).message,
+          status: "failed",
+        });
       }
-
-      return {
-        user_address,
-        transactions: results,
-      };
-    },
-    {
-      params: t.Object({
-        user_address: t.String(),
-      }),
     }
-  );
+
+    return { user_address: params.user_address, transactions: results };
+  });
