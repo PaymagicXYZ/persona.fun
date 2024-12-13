@@ -1,8 +1,20 @@
 diff --git a/dist/index.js b/dist/index.js
-index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..58347a677763258e4da1b60f06412f13c14593ab 100644
+index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..3ac117250e3a53bba57a8ce0fdae9079ce8d8b01 100644
 --- a/dist/index.js
 +++ b/dist/index.js
-@@ -627,6 +627,8 @@ var FarcasterInteractionManager = class {
+@@ -599,6 +599,11 @@ import {
+   ModelClass as ModelClass2,
+   stringToUuid as stringToUuid4
+ } from "@ai16z/eliza";
++import { createClient } from "@supabase/supabase-js";
++const supabase = createClient(
++  process.env.SUPABASE_URL,
++  process.env.SUPABASE_SERVICE_ROLE_KEY
++);
+ var FarcasterInteractionManager = class {
+   constructor(client, runtime, signerUuid, cache) {
+     this.client = client;
+@@ -627,6 +632,8 @@ var FarcasterInteractionManager = class {
    }
    async handleInteractions() {
      const agentFid = Number(this.runtime.getSetting("FARCASTER_FID"));
@@ -11,7 +23,7 @@ index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..58347a677763258e4da1b60f06412f13
      const mentions = await this.client.getMentions({
        fid: agentFid,
        pageSize: 10
-@@ -657,6 +659,10 @@ var FarcasterInteractionManager = class {
+@@ -657,6 +664,10 @@ var FarcasterInteractionManager = class {
          runtime: this.runtime,
          cast: mention
        });
@@ -22,7 +34,7 @@ index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..58347a677763258e4da1b60f06412f13
        const memory = {
          content: { text: mention.text },
          agentId: this.runtime.agentId,
-@@ -737,6 +743,13 @@ var FarcasterInteractionManager = class {
+@@ -737,6 +748,22 @@ var FarcasterInteractionManager = class {
        modelClass: ModelClass2.LARGE
      });
      response.inReplyTo = memoryId;
@@ -31,8 +43,31 @@ index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..58347a677763258e4da1b60f06412f13
 +  ).length;
 +
 +  if (agentMessagesCount === 1) {
-+      response.text += "\n\nNote: This is test";
++    const tokenName = this.runtime.getSetting("TOKEN_NAME");
++    const tokenId = this.runtime.getSetting("TOKEN_ID");
++    const personaId = this.runtime.getSetting("PERSONA_ID");
++    const randomValue = Math.floor(Math.random() * (1000 - 400 + 1)) + 400;
++      response.text += "\n\n\n" + `${randomValue} $${tokenName}`;
++      await supabase.from('tips').insert({
++        value: randomValue,
++        persona_id: personaId,
++        token_id: tokenId
++      });
 +  }
      if (!response.text) return;
      try {
        console.log(`Replying to cast ${cast.hash}.`);
+diff --git a/package.json b/package.json
+index 576f7ea48854adc0c777b0824f532e3cac31a74d..ec7223664265f01d0e6b417500c4fc3d945e1052 100644
+--- a/package.json
++++ b/package.json
+@@ -6,7 +6,8 @@
+     "types": "dist/index.d.ts",
+     "dependencies": {
+         "@ai16z/eliza": "0.1.5-alpha.5",
+-        "@neynar/nodejs-sdk": "^2.0.3"
++        "@neynar/nodejs-sdk": "^2.0.3",
++        "@supabase/supabase-js": "^2.46.1"
+     },
+     "devDependencies": {
+         "tsup": "^8.3.5"
