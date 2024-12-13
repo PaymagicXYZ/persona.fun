@@ -11,7 +11,7 @@ index 8009da1edcdd98f1ed70b9126bd1ae5217900cb3..ff6c99c4f622073d6a27939415920c2f
  type NeynarCastResponse = {
      hash: string;
 diff --git a/dist/index.js b/dist/index.js
-index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..972981ce063cfd977cf5d94f14de190196412c56 100644
+index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..75b271279b05f3514e7b8b0ad063020e0159f81e 100644
 --- a/dist/index.js
 +++ b/dist/index.js
 @@ -128,7 +128,8 @@ var FarcasterClient = class {
@@ -20,7 +20,7 @@ index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..972981ce063cfd977cf5d94f14de1901
            name: notification.cast.author.display_name || "anon",
 -          username: notification.cast.author.username
 +          username: notification.cast.author.username,
-+          verifiedAddress: notification.cast!.author.verified_addresses.eth_addresses?.[0] || "",
++          verifiedAddress: notification.cast.author.verified_addresses.eth_addresses?.[0] || "",
          },
          ...notification.cast.parent_hash ? {
            inReplyTo: {
