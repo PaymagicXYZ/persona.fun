@@ -1,72 +1,38 @@
-diff --git a/src/interactions.ts b/src/interactions.ts
-index d3a1e0b71289f27a85125a002c61fb0fe441b583..a7e79a6c40513816821b22b59a7bbfa1fa2786c7 100644
---- a/src/interactions.ts
-+++ b/src/interactions.ts
-@@ -29,10 +29,11 @@ export class FarcasterInteractionManager {
-         public cache: Map<string, any>
-     ) {}
- 
--    public async start() {
--        const handleInteractionsLoop = async () => {
--            try {
--                await this.handleInteractions();
-+  public async start() {
-+    console.log('STARTING FARCASER INTERACTIONS')
-+    const handleInteractionsLoop = async () => {
-+      try {
-+        await this.handleInteractions()
-             } catch (error) {
-                 console.error(error);
-                 return;
-@@ -53,6 +54,7 @@ export class FarcasterInteractionManager {
- 
-     private async handleInteractions() {
-         const agentFid = Number(this.runtime.getSetting("FARCASTER_FID"));
-+        const maxResponsesPerThread = 5; // Set your desired limit here
- 
-         const mentions = await this.client.getMentions({
-             fid: agentFid,
-@@ -78,6 +80,18 @@ export class FarcasterInteractionManager {
-                 continue;
-             }
- 
-+            // Check the number of responses in the current thread
-+            const thread = await buildConversationThread({
-+                client: this.client,
-+                runtime: this.runtime,
-+                cast: mention,
-+            });
+diff --git a/dist/index.js b/dist/index.js
+index 2e20c76ac103c81e982e6d4c47568eb53e12cb5f..58347a677763258e4da1b60f06412f13c14593ab 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -627,6 +627,8 @@ var FarcasterInteractionManager = class {
+   }
+   async handleInteractions() {
+     const agentFid = Number(this.runtime.getSetting("FARCASTER_FID"));
++    const maxResponsesPerThread = 4; // Set your desired limit here
 +
-+            if (thread.length >= maxResponsesPerThread) {
-+                console.log(`Skipping thread with more than ${maxResponsesPerThread} responses`);
-+                continue;
-+            }
+     const mentions = await this.client.getMentions({
+       fid: agentFid,
+       pageSize: 10
+@@ -657,6 +659,10 @@ var FarcasterInteractionManager = class {
+         runtime: this.runtime,
+         cast: mention
+       });
++      if (thread.length >= maxResponsesPerThread) {
++        console.log(`Skipping thread with more than ${maxResponsesPerThread} responses`);
++        continue;
++    }
+       const memory = {
+         content: { text: mention.text },
+         agentId: this.runtime.agentId,
+@@ -737,6 +743,13 @@ var FarcasterInteractionManager = class {
+       modelClass: ModelClass2.LARGE
+     });
+     response.inReplyTo = memoryId;
++    const agentMessagesCount = thread.filter(
++      (cast) => cast.profile.fid === agent.fid
++  ).length;
 +
-             await this.runtime.ensureConnection(
-                 userId,
-                 roomId,
-@@ -86,12 +100,6 @@ export class FarcasterInteractionManager {
-                 "farcaster"
-             );
- 
--            const thread = await buildConversationThread({
--                client: this.client,
--                runtime: this.runtime,
--                cast: mention,
--            });
--
-             const memory: Memory = {
-                 content: { text: mention.text },
-                 agentId: this.runtime.agentId,
-@@ -202,6 +210,11 @@ export class FarcasterInteractionManager {
-             modelClass: ModelClass.LARGE,
-         });
- 
-+        if (agent.fid === 897281) {
-+            const randomAmount = Math.floor(Math.random() * (1000 - 800 + 1)) + 800
-+            response.text = `${response.text}\n\n\n${randomAmount} $SAFEINTERN`
-+          }
-+
-         response.inReplyTo = memoryId;
- 
-         if (!response.text) return;
++  if (agentMessagesCount === 1) {
++      response.text += "\n\nNote: This is test";
++  }
+     if (!response.text) return;
+     try {
+       console.log(`Replying to cast ${cast.hash}.`);
